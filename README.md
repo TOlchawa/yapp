@@ -34,7 +34,8 @@ This project was born from the need for:
 ## Getting Started
 
 ### Prerequisites
-- [List any tools/software needed, e.g., Node.js, npm/yarn]
+- Java 21+
+- Maven 3.8.1+
 
 ### Installation
 1. Clone the repository:
