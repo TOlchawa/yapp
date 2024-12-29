@@ -49,8 +49,7 @@ jobs:
           cd server
           mvn clean package spring-boot:repackage
           java -jar target/server-1.0-SNAPSHOT.jar &
-          sleep 20 # Wait for the application to start
-                - name: Build and start the Server
+          sleep 10 # Wait for the application to start
 
       - name: Start E2E tests
         run: |
