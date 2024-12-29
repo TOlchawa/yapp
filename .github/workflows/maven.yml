@@ -47,7 +47,7 @@ jobs:
       - name: Build and start the Spring Boot application
         run: |
           mvn clean package
-          java -jar target/web-1.0-SNAPSHOT.jar &
+          java -jar target/server-1.0-SNAPSHOT.jar &
           sleep 20 # Wait for the application to start
 
       - name: Run E2E Tests
