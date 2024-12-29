@@ -7,5 +7,4 @@ import lombok.Setter;
 @Getter
 public class ServerConfig {
     private String version = "1.0.0";
-
 }
