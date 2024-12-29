@@ -53,4 +53,5 @@ jobs:
 
       - name: Start E2E tests
         run: |
+          cd server
           mvn test -Dtest=integration
