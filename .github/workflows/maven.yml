@@ -46,7 +46,7 @@ jobs:
 
       - name: Build and start the Spring Boot application
         run: |
-          mvn clean package
+          mvn clean package spring-boot:repackage
           java -jar server/target/server-1.0-SNAPSHOT.jar &
           sleep 20 # Wait for the application to start &
           mvn test -Dtest=integration
