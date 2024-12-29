@@ -52,4 +52,4 @@ jobs:
 
       - name: Run E2E Tests
         run: |
-          ./mvnw clean package test -Dtest=integration
+          mvn clean package test -Dtest=integration
