@@ -48,7 +48,7 @@ jobs:
         run: |
           cd server
           mvn clean package spring-boot:repackage
-          java -jar server/target/server-1.0-SNAPSHOT.jar &
+          java -jar target/server-1.0-SNAPSHOT.jar &
           sleep 20 # Wait for the application to start
                 - name: Build and start the Server
 
