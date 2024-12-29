@@ -51,7 +51,7 @@ jobs:
           java -jar target/server-1.0-SNAPSHOT.jar &
           sleep 10 # Wait for the application to start
 
-      - name: Start E2E tests
+      - name: Start E2E the Server tests
         run: |
           cd server
           mvn test -Dtest=integration
