@@ -44,9 +44,14 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
-      - name: Build and start the Spring Boot application
+      - name: Build and start the Server
         run: |
+          cd server
           mvn clean package spring-boot:repackage
           java -jar server/target/server-1.0-SNAPSHOT.jar &
-          sleep 20 # Wait for the application to start &
+          sleep 20 # Wait for the application to start
+                - name: Build and start the Server
+
+      - name: Start E2E tests
+        run: |
           mvn test -Dtest=integration
