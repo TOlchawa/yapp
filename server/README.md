@@ -10,3 +10,23 @@ To start the application locally, run:
 
 ```bash
 mvn spring-boot:run
+```
+
+## Setting Up Redis with Spring Boot
+
+To configure Redis in your Spring Boot application, add the following settings to your `application.yml` file:
+
+```yaml
+spring:
+  redis:
+    host: localhost
+    port: 6379
+    password: 
+    database: 0
+```
+
+Ensure that Redis is running locally on port `6379` before starting the application. You can start Redis using Docker with:
+
+```bash
+docker run --name redis -d -p 6379:6379 redis
+```

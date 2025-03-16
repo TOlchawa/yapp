@@ -6,6 +6,13 @@ logging:
     com.memoritta: debug
     root: info
 
+spring:
+  redis:
+    host: localhost
+    port: 6379
+    password: qazxsw123
+    database: 0
+
 serverConfig:
   version: "1.0.0"
 
