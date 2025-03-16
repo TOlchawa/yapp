@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
@@ -20,7 +21,10 @@ public class AddItemIT {
 
         RestAssured.baseURI = "http://localhost:9090";
 
+        File file = new File("src/test/resources/picture.jpg");
+
         Response response = given()
+                .multiPart("picture", file)
                 .param("name", "sample name")
                 .param("note", "sample note")
                 .param("barCode", "1234567abcd")
