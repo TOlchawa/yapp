@@ -74,7 +74,7 @@ jobs:
           echo "-- GET --"
           curl -v -u "admin:admin" http://localhost:9090/version
           echo "-- POST --"
-          curl -v -X POST http://localhost:9090/ping -H "Content-Type: application/x-www-form-urlencoded" --data-urlencode "ping=pong"
+          curl -v -X POST http://localhost:9090/ping -u admin:admin -H "Content-Type: application/x-www-form-urlencoded" --data-urlencode "ping=pong"
   
 
       - name: Start E2E the Server tests
