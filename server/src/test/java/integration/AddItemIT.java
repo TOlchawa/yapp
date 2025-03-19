@@ -25,12 +25,12 @@ public class AddItemIT {
         File file = new File("src/test/resources/picture.jpg");
 
         Response response = given()
-                .auth().basic("admin", "admin")
                 .multiPart("picture", file)
                 .param("name", "sample name")
                 .param("note", "sample note")
                 .param("barCode", "1234567abcd")
                 .when()
+                .auth().basic("admin", "admin")
                 .post("/registerItem")
                 .then()
                 .statusCode(200)
