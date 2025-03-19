@@ -26,7 +26,7 @@ public class EmbeddedRedisTest {
 
     @BeforeAll
     public static void setUp() throws IOException {
-        redisServer = new RedisServer(6379); // Uruchamiamy Redis na porcie 6379
+        redisServer = new RedisServer(7777);
         redisServer.start();
     }
 
@@ -48,7 +48,7 @@ public class EmbeddedRedisTest {
     public static class TestConfig {
         @Bean
         public RedisConnectionFactory redisConnectionFactory() {
-            return new LettuceConnectionFactory("localhost", 6379);
+            return new LettuceConnectionFactory("localhost", 7777);
         }
 
         @Bean
