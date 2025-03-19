@@ -61,11 +61,10 @@ jobs:
           mvn clean package spring-boot:repackage
           java -jar target/server-1.0-SNAPSHOT.jar  2>&1 | tee server-output.log &
           sleep 10 # Wait for the application to start
-          cat server-output.log || true
 
       - name: Capture Logs if Server Fails
         if: failure()
-        run: cat server/logs/application.log || true
+        run: cat server-output.log || true
 
       - name: Start E2E the Server tests
         run: |
@@ -74,4 +73,4 @@ jobs:
 
       - name: Capture Logs if Tests Fails
         if: failure()
-        run: cat server/logs/application.log || true
+        run: cat server-output.log || true
