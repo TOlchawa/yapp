@@ -85,6 +85,8 @@ public class ItemController {
         }
 
         // TODO: make it proper - this is only PoC
+        // save image bytes to REDIS
+        // update imageId by id from REDIS
         UUID id = itemManager.save(item);
         itemRepository.save(ItemMapper.INSTANCE.toItemDao(item));
         return id;
