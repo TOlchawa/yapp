@@ -62,7 +62,15 @@ jobs:
           java -jar target/server-1.0-SNAPSHOT.jar &
           sleep 10 # Wait for the application to start
 
+      - name: Capture Logs if Server Fails
+        if: failure()
+        run: cat server/logs/application.log || true
+
       - name: Start E2E the Server tests
         run: |
           cd server
           mvn test -Dtest=*IT
+
+      - name: Capture Logs if Tests Fails
+        if: failure()
+        run: cat server/logs/application.log || true
