@@ -23,6 +23,7 @@
         <org.projectlombok.version>1.18.36</org.projectlombok.version>
         <rest-assured.version>5.5.0</rest-assured.version>
         <gson.version>2.11.0</gson.version>
+        <embedded-redis.version>0.7.3</embedded-redis.version>
     </properties>
     <dependencies>
 
@@ -90,14 +91,7 @@
         <dependency>
             <groupId>it.ozimov</groupId>
             <artifactId>embedded-redis</artifactId>
-            <version>0.7.3</version>
-            <scope>test</scope>
-        </dependency>
-
-
-        <dependency>
-            <groupId>de.flapdoodle.embed</groupId>
-            <artifactId>de.flapdoodle.embed.mongo</artifactId>
+            <version>${embedded-redis.version}</version>
             <scope>test</scope>
         </dependency>
 
