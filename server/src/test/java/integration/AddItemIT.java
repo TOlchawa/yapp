@@ -17,7 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Tag("integration")
 public class AddItemIT {
 
-    @Disabled
     @Test
     void testAddItem() {
 
