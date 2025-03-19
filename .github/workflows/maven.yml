@@ -65,7 +65,7 @@ jobs:
       - name: Wait for Server to Be Ready
         run: |
           echo "Waiting for Spring Boot application to be ready..."
-          until --silent --head --fail --user admin:admin http://localhost:9090/actuator/health; do
+          until --user admin:admin http://localhost:9090/actuator/health; do
             echo "Server not yet ready, retrying..."
             sleep 2
           done
