@@ -18,8 +18,6 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/**").authenticated()  // GET requests are public
-                        .requestMatchers(HttpMethod.POST, "/**").authenticated() // POST requires auth
                         .anyRequest().authenticated()
                 )
                 .httpBasic(withDefaults());

@@ -52,7 +52,7 @@ public class ItemController {
     public UUID registerItemWithImage(@RequestParam String name,
                                       @RequestParam(required = false) String note,
                                       @RequestParam(required = false) String barCode,
-                                      @RequestBody(required = false) MultipartFile picture) {
+                                      @RequestParam(required = false) MultipartFile picture) {
         return saveItem(name, note, barCode, picture);
     }
 
