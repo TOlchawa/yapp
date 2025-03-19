@@ -61,18 +61,19 @@ jobs:
           mvn clean package spring-boot:repackage
           java -jar target/server-1.0-SNAPSHOT.jar  2>&1 | tee server-output.log &
           sleep 10 # Wait for the application to start
+          cat server-output.log || echo "No log file found"
 
       - name: Check Running Processes
         run: |
           echo "Checking open ports..."
           netstat -tulnp | grep java || echo "No Java process found"
 
-      - name: Wait for Server to Be Ready
-        run: |
-          echo "Waiting for Spring Boot application to be ready..."
-          curl -v -u "admin:admin" http://localhost:9090/version
-
       - name: Start E2E the Server tests
         run: |
           cd server
           mvn test -Dtest=*IT
+
+      - name: Checking version of server
+        run: |
+          echo "Checking version of server..."
+          curl -v -u "admin:admin" http://localhost:9090/version
