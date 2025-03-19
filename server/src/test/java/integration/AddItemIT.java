@@ -19,7 +19,7 @@ public class AddItemIT {
     @Test
     void testAddItem() {
 
-        RestAssured.baseURI = "http://localhost:9090";
+        RestAssured.baseURI = "http://my-app:9090";
 
         File file = new File("src/test/resources/picture.jpg");
 
