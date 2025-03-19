@@ -21,7 +21,7 @@ public class SampleIT {
 
         given()
                 .when()
-                .auth().basic("user", "qazxsw123")
+                .auth().basic("admin", "admin")
                 .get("/version")
                 .then()
                 .statusCode(200)
