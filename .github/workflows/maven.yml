@@ -61,16 +61,17 @@ jobs:
           mvn clean package spring-boot:repackage
           java -jar target/server-1.0-SNAPSHOT.jar  2>&1 | tee server-output.log &
           sleep 10 # Wait for the application to start
-
-      - name: Capture Logs if Server Fails
-        if: failure()
-        run: cat server-output.log || true
+          
+      - name: Wait for Server to Be Ready
+        run: |
+          echo "Waiting for Spring Boot application to be ready..."
+          until curl --output /dev/null --silent --head --fail --user admin:admin http://localhost:9090/actuator/health; do
+            echo "Server not yet ready, retrying..."
+            sleep 2
+          done
+          echo "Server is ready!"
 
       - name: Start E2E the Server tests
         run: |
           cd server
           mvn test -Dtest=*IT
-
-      - name: Capture Logs if Tests Fails
-        if: failure()
-        run: cat server-output.log || true
