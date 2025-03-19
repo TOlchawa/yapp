@@ -46,13 +46,12 @@ public class ItemController {
      * @param picture the picture file of the item
      * @return the UUID of the registered item
      */
-    @SneakyThrows
-    @PostMapping("/registerItem")
+    @PostMapping("/item")
     // TODO: add support for authentication
     public UUID registerItemWithImage(@RequestParam String name,
                                       @RequestParam(required = false) String note,
                                       @RequestParam(required = false) String barCode,
-                                      @RequestParam(required = false) MultipartFile picture) {
+                                      @RequestParam(required = false) MultipartFile picture) throws IOException {
         return saveItem(name, note, barCode, picture);
     }
 

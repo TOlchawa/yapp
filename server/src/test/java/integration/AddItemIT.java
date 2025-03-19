@@ -33,7 +33,7 @@ public class AddItemIT {
                 .param("note", "sample note")
                 .param("barCode", "1234567abcd")
                 .when()
-                .post("/registerItem")
+                .post("/item")
                 .then()
                 .statusCode(200)
                 .contentType("application/json")
