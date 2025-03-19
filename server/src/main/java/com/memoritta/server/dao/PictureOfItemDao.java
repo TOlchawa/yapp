@@ -1,4 +1,4 @@
-package com.memoritta.server.model;
+package com.memoritta.server.dao;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-public class PictureOfItem {
+public class PictureOfItemDao {
     private UUID id;
     private byte[] picture;
     private String metadata;

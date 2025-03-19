@@ -32,7 +32,18 @@ jobs:
 
   e2e-tests:
     runs-on: ubuntu-latest
-
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+      mongodb:
+        image: mongo:latest
+        env:
+          MONGO_INITDB_ROOT_USERNAME: user
+          MONGO_INITDB_ROOT_PASSWORD: qazxsw123
+        ports:
+          - 27017:27017
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
@@ -48,8 +59,23 @@ jobs:
         run: |
           cd server
           mvn clean package spring-boot:repackage
-          java -jar target/server-1.0-SNAPSHOT.jar &
+          java -jar target/server-1.0-SNAPSHOT.jar  2>&1 | tee server-output.log &
           sleep 10 # Wait for the application to start
+          cat server-output.log || echo "No log file found"
+
+      - name: Check Running Processes
+        run: |
+          echo "Checking open ports..."
+          netstat -tulnp | grep java || echo "No Java process found"
+
+      - name: Checking version of server
+        run: |
+          echo "Checking version of server..."
+          echo "-- GET --"
+          curl -v -u "admin:admin" http://localhost:9090/version
+          echo "-- POST --"
+          curl -v -X POST http://localhost:9090/ping -u admin:admin -H "Content-Type: application/x-www-form-urlencoded" --data-urlencode "ping=pong"
+  
 
       - name: Start E2E the Server tests
         run: |

@@ -25,3 +25,4 @@ replay_pid*
 /.idea/
 /server/target/
 /web/target/
+/server/server.iml
