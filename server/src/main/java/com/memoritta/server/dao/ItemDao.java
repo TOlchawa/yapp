@@ -1,5 +1,6 @@
-package com.memoritta.server.model;
+package com.memoritta.server.dao;
 
+import com.memoritta.server.model.Description;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,9 +10,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-public class Item {
+public class ItemDao {
     private UUID id;
     private UUID createdBy;
     private String name;
-    private Description description;
+    private DescriptionDao description;
 }

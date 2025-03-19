@@ -42,6 +42,7 @@ public class EmbeddedRedisTest {
         redisTemplate.opsForValue().set("key", "value");
         Object v = redisTemplate.opsForValue().get("key");
         assertThat(v).isEqualTo("value");
+        assertThat(v).isNotEqualTo("something"); // stupid - I know
     }
 
     public static class TestConfig {

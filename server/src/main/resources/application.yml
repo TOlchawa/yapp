@@ -12,6 +12,10 @@ spring:
     port: 6379
     password: qazxsw123
     database: 0
+  data:
+    mongodb:
+      uri: mongodb://admin:qazxsw123@localhost:27017/yapp-db?authSource=admin
+
 
 serverConfig:
   version: "1.0.0"
