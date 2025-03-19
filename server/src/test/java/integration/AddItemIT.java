@@ -24,6 +24,8 @@ public class AddItemIT {
 
         File file = new File("src/test/resources/picture.jpg");
 
+        assertThat(file.exists()).isTrue();
+
         Response response = given()
                 .auth().basic("admin", "admin")
                 .multiPart("picture", file)
