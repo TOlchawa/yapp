@@ -7,6 +7,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -14,14 +16,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable() // Disable CSRF if you are using Postman and REST-assured tests
+                .csrf(csrf -> csrf.disable()) // ✅ Updated
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/registerItem").authenticated()
+                        .requestMatchers("/public/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .httpBasic();
+                .httpBasic(withDefaults()); // ✅ Updated
 
         return http.build();
     }
+
 }
