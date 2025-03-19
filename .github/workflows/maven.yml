@@ -33,6 +33,10 @@ jobs:
   e2e-tests:
     runs-on: ubuntu-latest
     services:
+      my-app:
+        image: my-spring-boot-app:latest
+        ports:
+          - 9090:9090
       redis:
         image: redis:latest
         ports:
