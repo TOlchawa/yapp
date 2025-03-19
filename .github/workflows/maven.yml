@@ -61,7 +61,12 @@ jobs:
           mvn clean package spring-boot:repackage
           java -jar target/server-1.0-SNAPSHOT.jar  2>&1 | tee server-output.log &
           sleep 10 # Wait for the application to start
-          
+
+      - name: Check Running Processes
+        run: |
+          echo "Checking open ports..."
+          netstat -tulnp | grep java || echo "No Java process found"
+
       - name: Wait for Server to Be Ready
         run: |
           echo "Waiting for Spring Boot application to be ready..."
