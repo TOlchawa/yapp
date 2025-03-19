@@ -17,7 +17,7 @@ public class SampleIT {
     @Test
     void testIntegrationScenario() {
 
-        RestAssured.baseURI = "http://my-app:9090";
+        RestAssured.baseURI = "http://localhost:9090";
 
         given()
                 .when()
