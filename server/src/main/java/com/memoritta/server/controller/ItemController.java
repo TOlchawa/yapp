@@ -26,6 +26,18 @@ public class ItemController {
     private final ItemRepository itemRepository;
 
     /**
+     * Registers a ping.
+     *
+     * @return the UUID of the registered item
+     */
+    @SneakyThrows
+    @PostMapping("/ping")
+        public UUID registerItemWithImage(@RequestParam String ping) {
+        return UUID.randomUUID();
+    }
+
+
+    /**
      * Registers a new item with an picture.
      *
      * @param name the name of the item

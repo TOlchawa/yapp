@@ -71,9 +71,13 @@ jobs:
       - name: Checking version of server
         run: |
           echo "Checking version of server..."
+          echo "-- GET --"
           curl -v -u "admin:admin" http://localhost:9090/version
+          echo "-- POST --"
+          curl -v -X POST http://localhost:9090/ping -H "Content-Type: application/x-www-form-urlencoded" --data-urlencode "ping=pong"
+  
 
-      - name: Start E2E the Server tests
+    - name: Start E2E the Server tests
         run: |
           cd server
           mvn test -Dtest=*IT
