@@ -32,7 +32,18 @@ jobs:
 
   e2e-tests:
     runs-on: ubuntu-latest
-
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+      mongodb:
+        image: mongo:latest
+        env:
+          MONGO_INITDB_ROOT_USERNAME: user
+          MONGO_INITDB_ROOT_PASSWORD: qazxsw123
+        ports:
+          - 27017:27017
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
