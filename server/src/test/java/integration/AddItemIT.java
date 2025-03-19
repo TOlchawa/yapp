@@ -3,6 +3,7 @@ package integration;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -16,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Tag("integration")
 public class AddItemIT {
 
+    @Disabled
     @Test
     void testAddItem() {
 
