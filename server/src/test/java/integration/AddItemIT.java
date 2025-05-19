@@ -3,9 +3,9 @@ package integration;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.junit.jupiter.EnabledIf;
 
 import java.io.File;
 import java.util.UUID;
@@ -38,9 +38,8 @@ public class AddItemIT {
         assertThat(uuidResult).isNotNull(); // ✅ Validate response is a UUID
     }
 
-
-    @Disabled // TODO
-    // make it work in github flow - localy it is working fine.
+    // test logic that should not run on GitHub Actions
+    @EnabledIf(expression = "#{systemEnvironment['CI'] == null}", reason = "Disabled in CI environment")
     @Test
     void testAddItem() {
 
@@ -55,7 +54,7 @@ public class AddItemIT {
                 .multiPart("picture", file)
                 .param("name", "sample name")
                 .param("note", "sample note")
-                .param("barCode", "1234567abcd")
+                .param("barCode", "1234567")
                 .when()
                 .post("/item")
                 .then()
@@ -68,5 +67,4 @@ public class AddItemIT {
         UUID uuidResult = finalResponseReturn.as(UUID.class);
         assertThat(uuidResult).isNotNull();
     }
-
 }
