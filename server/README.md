@@ -30,3 +30,8 @@ Ensure that Redis is running locally on port `6379` before starting the applicat
 ```bash
 docker run --name redis -d -p 6379:6379 redis
 ```
+
+* Mongo
+  mongosh --host 127.0.0.1 --port 27017 --password **** --username admin
+* Redis
+  redis-cli  --user default  --pass ****
