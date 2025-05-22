@@ -64,6 +64,7 @@ public class AddItemIT {
                 .response();
 
         Response finalResponseReturn = response.andReturn();
+
         UUID uuidResult = finalResponseReturn.as(UUID.class);
         assertThat(uuidResult).isNotNull();
     }
