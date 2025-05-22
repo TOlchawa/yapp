@@ -32,6 +32,10 @@ docker run --name redis -d -p 6379:6379 redis
 ```
 
 * Mongo
-  mongosh --host 127.0.0.1 --port 27017 --password **** --username admin
+```bash
+  mongosh --password **** --username admin
+```
 * Redis
+```bash
   redis-cli  --user default  --pass ****
+```
