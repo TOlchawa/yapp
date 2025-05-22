@@ -39,7 +39,7 @@ public class AddItemIT {
     }
 
     // test logic that should not run on GitHub Actions
-    @EnabledIf(expression = "#{systemEnvironment['CI'] == null}", reason = "Disabled in CI environment")
+    @EnabledIf(expression = "#{systemEnvironment['PROD'] == null}", reason = "Disabled in PROD environment")
     @Test
     void testAddItem() {
 

@@ -26,18 +26,6 @@ public class ItemController {
     private final ItemRepository itemRepository;
 
     /**
-     * Registers a ping.
-     *
-     * @return the UUID of the registered item
-     */
-    @SneakyThrows
-    @PostMapping("/ping")
-        public UUID registerItemWithImage(@RequestParam String ping) {
-        return UUID.randomUUID();
-    }
-
-
-    /**
      * Registers a new item with an picture.
      *
      * @param name the name of the item
@@ -47,7 +35,6 @@ public class ItemController {
      * @return the UUID of the registered item
      */
     @PostMapping("/item")
-    // TODO: add support for authentication
     public UUID registerItemWithImage(@RequestParam String name,
                                       @RequestParam(required = false) String note,
                                       @RequestParam(required = false) String barCode,
@@ -84,13 +71,9 @@ public class ItemController {
             item.setDescription(description);
         }
 
-        // TODO: make it proper - this is only PoC
-        // save image bytes to REDIS
-        // update imageId by id from REDIS
         UUID id = itemManager.save(item);
         itemRepository.save(ItemMapper.INSTANCE.toItemDao(item));
         return id;
-        // TODO: make it proper - this is only PoC
     }
 
 
