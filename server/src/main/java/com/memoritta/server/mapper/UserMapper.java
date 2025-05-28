@@ -9,10 +9,7 @@ import org.mapstruct.factory.Mappers;
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
+    @Mapping(target = "encryptedPassword", ignore = true)
     UserDao toUserDao(User user);
-
-    @Mapping(source = "user.id", target = "id")
-    @Mapping(source = "user.nickname", target = "nickname")
-    @Mapping(source = "user.email", target = "email")
     User toUser(UserDao user);
 }
