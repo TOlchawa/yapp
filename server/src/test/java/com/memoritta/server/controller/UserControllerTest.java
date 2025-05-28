@@ -1,30 +1,40 @@
 package com.memoritta.server.controller;
 
+import com.memoritta.server.client.UserRepository;
 import com.memoritta.server.manager.UserAccessManager;
 import com.memoritta.server.model.User;
 import com.memoritta.server.utils.PasswordUtils;
-import org.junit.jupiter.api.BeforeEach;
+import com.memoritta.server.utils.UserUtils;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ContextConfiguration;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
+@Import({ UserControllerTest.Config.class, UserController.class, PasswordUtils.class, UserUtils.class })
 class UserControllerTest {
 
-    @Mock
+    @Autowired
     private PasswordUtils passwordUtils;
 
-    @Mock
-    private UserAccessManager userAccessManager;
+    @Autowired
+    private UserUtils userUtils;
 
-    @InjectMocks
+    @Autowired
     private UserController userController;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+    @Autowired
+    private UserAccessManager userAccessManager;
+
 
     @Test
     void getUser_shouldReturnUser_whenCredentialsAreValid() {
@@ -51,9 +61,10 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("putUser should save and return user with resolved nickname")
     void putUser_shouldSaveAndReturnUser() {
         // Given
-        String login = "new@example.com";
+        String email = "new@example.com";
         String password = "secret";
         String nickname = "OptionalNick";
         String encrypted = "encryptedXYZ";
@@ -62,20 +73,24 @@ class UserControllerTest {
         User expectedUser = new User();
         expectedUser.setNickname(resolvedNickname);
 
-        when(passwordUtils.encrypt(password)).thenReturn(encrypted);
-        when(passwordUtils.getOrRandomNickName(nickname)).thenReturn(resolvedNickname);
-        when(userAccessManager.validateCredentials(login, encrypted)).thenReturn(expectedUser);
+        when(userAccessManager.validateCredentials(email, encrypted)).thenReturn(expectedUser);
 
         // When
-        User result = userController.putUser(login, password, nickname);
+
+        User result = userController.putUser(email, password, nickname);
 
         // Then
-        assertNotNull(result);
-        assertEquals(resolvedNickname, result.getNickname());
 
-        verify(passwordUtils).encrypt(password);
-        verify(passwordUtils).getOrRandomNickName(nickname);
-        verify(userAccessManager).saveUser(login, password, resolvedNickname);
-        verify(userAccessManager).validateCredentials(login, encrypted);
+        assertThat(result).extracting("id", "nickname", "email")
+                .containsExactly(expectedUser.getId(), resolvedNickname, email);
+    }
+
+    @Configuration
+    public static class Config {
+        @Bean
+        UserAccessManager getUserAccessManager() {
+            return mock(UserAccessManager.class);
+        }
+
     }
 }

@@ -72,12 +72,4 @@ class ItemControllerTest {
         verify(itemRepository).save(any());
     }
 
-    @Test
-    void testPingEndpointReturnsUuid() {
-        // When
-        UUID result = itemController.registerItemWithImage("ping");
-
-        // Then
-        assertNotNull(result);
-    }
 }

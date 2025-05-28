@@ -10,5 +10,5 @@ import java.util.UUID;
 public class User {
     private UUID id;
     private String nickname;
-    private Credentials credentials;
+    private String email;
 }

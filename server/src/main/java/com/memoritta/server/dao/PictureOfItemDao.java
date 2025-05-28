@@ -3,6 +3,8 @@ package com.memoritta.server.dao;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.index.Indexed;
 
 import java.util.UUID;
 
@@ -10,7 +12,9 @@ import java.util.UUID;
 @Setter
 @Builder
 public class PictureOfItemDao {
+    @Id
     private UUID id;
     private byte[] picture;
+    @Indexed
     private String metadata;
 }

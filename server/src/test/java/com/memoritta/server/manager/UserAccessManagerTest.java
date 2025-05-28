@@ -1,7 +1,7 @@
 package com.memoritta.server.manager;
 
 import com.memoritta.server.client.UserRepository;
-import com.memoritta.server.dao.CredentialsDao;
+import com.memoritta.server.config.PasswordEncoderConfig;
 import com.memoritta.server.dao.UserDao;
 import com.memoritta.server.mapper.UserMapper;
 import com.memoritta.server.model.Credentials;
@@ -10,20 +10,28 @@ import com.memoritta.server.utils.PasswordUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
+@ContextConfiguration(classes = { UserAccessManagerTest.Config.class, PasswordEncoderConfig.class } )
 class UserAccessManagerTest {
+
+    @Autowired
+    private PasswordUtils passwordUtils;
 
     @Mock
     private UserRepository userRepository;
-
-    @Mock
-    private PasswordUtils passwordUtils;
 
     @Mock
     private UserMapper userMapper;
@@ -38,18 +46,18 @@ class UserAccessManagerTest {
 
     @Test
     void testValidateCredentials_shouldReturnUser_whenCredentialsMatch() {
+
+
         // Given
         String nickname = "testnickname";
-        String login = "test@example.com";
+        String email = "test@example.com";
         String rawPassword = "secret";
-        String encryptedPassword = "encrypted123";
+        String encryptedPassword = passwordUtils.encrypt(rawPassword);
 
         UserDao userDao = new UserDao();
-        CredentialsDao credentialsDao = new CredentialsDao();
-        credentialsDao.setEmail(login);
-        credentialsDao.setEncryptedPassword(encryptedPassword);
-        userDao.setCredentials(credentialsDao);
+        userDao.setEmail(email);
         userDao.setNickname(nickname);
+        userDao.setEncryptedPassword(encryptedPassword);
 
         User expectedUser = new User();
         expectedUser.setId(UUID.randomUUID());
@@ -57,14 +65,13 @@ class UserAccessManagerTest {
         Credentials credentials = new Credentials();
         credentials.setEmail("email");
         credentials.setEncryptedPassword("encryptedpassword");
-        expectedUser.setCredentials(credentials);
 
         when(passwordUtils.encrypt(rawPassword)).thenReturn(encryptedPassword);
-        when(userRepository.findByCredentials(login, encryptedPassword)).thenReturn(Optional.of(userDao));
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(userDao));
         when(userMapper.toUser(userDao)).thenReturn(expectedUser);
 
         // When
-        User result = userAccessManager.validateCredentials(login, rawPassword);
+        User result = userAccessManager.validateCredentials(email, rawPassword);
 
         // Then
         assertNotNull(result);
@@ -72,32 +79,37 @@ class UserAccessManagerTest {
         assertEquals(expectedUser.getNickname(), result.getNickname());
 
         verify(passwordUtils).encrypt(rawPassword);
-        verify(userRepository).findByCredentials(login, encryptedPassword);
+        verify(userRepository).findByEmail(email);
         verify(userMapper).toUser(userDao);
     }
 
     @Test
     void testSaveUser_shouldSaveUserDaoToRepository() {
         // Given
-        String login = "save@example.com";
-        String encryptedPassword = "encPwd123";
+        String email = "save@example.com";
+        String rawPassword = "password";
+        String encryptedPassword = passwordUtils.encrypt(rawPassword);
         String nickname = "testNick";
 
         ArgumentCaptor<UserDao> captor = ArgumentCaptor.forClass(UserDao.class);
 
         // When
-        userAccessManager.saveUser(login, encryptedPassword, nickname);
+        UUID userId = userAccessManager.createUser(email, encryptedPassword, nickname);
 
         // Then
         verify(userRepository).save(captor.capture());
         UserDao savedUserDao = captor.getValue();
 
-        assertNotNull(savedUserDao);
-        assertNotNull(savedUserDao.getUser());
-        assertEquals(nickname, savedUserDao.getUser().getNickname());
+        assertThat(savedUserDao.getEmail()).isEqualTo(email);
+        assertThat(savedUserDao.getNickname()).isEqualTo(nickname);
+        assertThat(savedUserDao.getEncryptedPassword()).isEqualTo(encryptedPassword);
+        passwordUtils.verifyPassword(encryptedPassword, rawPassword);
+    }
 
-        assertNotNull(savedUserDao.getCredentials());
-        assertEquals(login, savedUserDao.getCredentials().getEmail());
-        assertEquals(encryptedPassword, savedUserDao.getCredentials().getEncryptedPassword());
+    public static class Config {
+        @Bean
+        public PasswordUtils getPasswordUtils(BCryptPasswordEncoder encoder) {
+            return new PasswordUtils(encoder);
+        }
     }
 }

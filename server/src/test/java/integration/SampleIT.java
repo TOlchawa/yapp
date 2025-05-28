@@ -15,15 +15,15 @@ public class SampleIT {
     @Test
     void testIntegrationScenario() {
 
-        RestAssured.baseURI = "http://localhost:9090";
+        RestAssured.baseURI = "http://memoritta.com:19991";
 
         given()
-                .when()
-                .auth().basic("admin", "admin")
-                .get("/version")
+                .auth().basic("user1", "1resu")
+                .when().get("/version")
                 .then()
                 .statusCode(200)
-                .body(equalTo("1.0.0"));
+                .body(equalTo("1.0.0"))
+                .log().all();;
 
     }
 
