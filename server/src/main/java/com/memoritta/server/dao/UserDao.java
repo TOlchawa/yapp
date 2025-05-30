@@ -2,6 +2,7 @@ package com.memoritta.server.dao;
 
 import com.memoritta.server.model.Credentials;
 import com.memoritta.server.model.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -11,6 +12,7 @@ import java.util.UUID;
 
 @Setter
 @Getter
+@Builder
 public class UserDao {
     @Id
     private UUID id;

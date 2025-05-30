@@ -1,7 +1,11 @@
 package com.memoritta.server.controller;
 
 import com.memoritta.server.client.UserRepository;
+import com.memoritta.server.config.PasswordEncoderConfig;
+import com.memoritta.server.dao.UserDao;
 import com.memoritta.server.manager.UserAccessManager;
+import com.memoritta.server.mapper.UserMapper;
+import com.memoritta.server.mapper.UserMapperImpl;
 import com.memoritta.server.model.User;
 import com.memoritta.server.utils.PasswordUtils;
 import com.memoritta.server.utils.UserUtils;
@@ -9,19 +13,24 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ContextConfiguration;
+
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-@Import({ UserControllerTest.Config.class, UserController.class, PasswordUtils.class, UserUtils.class })
+//@ContextConfiguration(classes = { UserControllerTest.Config.class, PasswordEncoderConfig.class })
+@Import({ PasswordEncoderConfig.class, PasswordUtils.class, UserUtils.class, UserController.class, UserAccessManager.class })
 class UserControllerTest {
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private PasswordUtils passwordUtils;
@@ -37,60 +46,78 @@ class UserControllerTest {
 
 
     @Test
-    void getUser_shouldReturnUser_whenCredentialsAreValid() {
-        // Given
-        String login = "test@example.com";
-        String password = "plaintext";
-        String encrypted = "encrypted123";
-
-        User expectedUser = new User();
-        expectedUser.setNickname("Tester");
-
-        when(passwordUtils.encrypt(password)).thenReturn(encrypted);
-        when(userAccessManager.validateCredentials(login, encrypted)).thenReturn(expectedUser);
-
-        // When
-        User result = userController.getUser(login, password);
-
-        // Then
-        assertNotNull(result);
-        assertEquals("Tester", result.getNickname());
-
-        verify(passwordUtils).encrypt(password);
-        verify(userAccessManager).validateCredentials(login, encrypted);
-    }
-
-    @Test
-    @DisplayName("putUser should save and return user with resolved nickname")
-    void putUser_shouldSaveAndReturnUser() {
+    @DisplayName("createUser should encrypt password and resolve nickname")
+    void createUser_shouldEncryptPasswordAndResolveNickname() {
         // Given
         String email = "new@example.com";
         String password = "secret";
         String nickname = "OptionalNick";
-        String encrypted = "encryptedXYZ";
+        String encrypted = passwordUtils.encrypt(password);
         String resolvedNickname = "ResolvedNick";
 
-        User expectedUser = new User();
-        expectedUser.setNickname(resolvedNickname);
+        UserDao userDao = UserDao.builder()
+                .id(UUID.randomUUID())
+                .nickname(resolvedNickname)
+                .email(email)
+                .encryptedPassword(encrypted)
+                .build();
 
-        when(userAccessManager.validateCredentials(email, encrypted)).thenReturn(expectedUser);
+        when(userRepository.save(any())).thenReturn(userDao);
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(userDao));
 
         // When
-
-        User result = userController.putUser(email, password, nickname);
+        UUID newUserId = userController.createUser(email, password, nickname);
+        User user = userController.fetchUser(email, password);
 
         // Then
 
-        assertThat(result).extracting("id", "nickname", "email")
-                .containsExactly(expectedUser.getId(), resolvedNickname, email);
+        assertThat(newUserId).isNotNull();
+        assertThat(user).extracting("id", "nickname", "email")
+                .containsExactly(userDao.getId(), resolvedNickname, email);
     }
 
     @Configuration
     public static class Config {
+//        @Bean
+//        public UserAccessManager getUserAccessManager() {
+//            return mock(UserAccessManager.class);
+//        }
+
         @Bean
-        UserAccessManager getUserAccessManager() {
-            return mock(UserAccessManager.class);
+        public UserMapper getUserMapper() {
+            return new UserMapperImpl();
         }
+
+//        @Bean
+//        public PasswordUtils getPasswordUtils(BCryptPasswordEncoder encoder) {
+//            return new PasswordUtils(encoder);
+//        }
+//
+//        @Bean
+//        public UserUtils getUserUtils() {
+//            return new UserUtils();
+//        }
+
+//        @Bean
+//        public UserController getUserController(PasswordUtils passwordUtils, UserUtils userUtils, UserAccessManager userAccesManager) {
+//            return new UserController(passwordUtils, userUtils, userAccesManager);
+//        }
+//
+//        @Bean
+//        public UserAccessManager getuserAccessManager(UserMapper userMapper, PasswordUtils passwordUtils, UserRepository userRepository) {
+//            return new UserAccessManager(userMapper, passwordUtils, userRepository);
+//        }
+
+
+        @Bean
+        public UserRepository getUserRepository() {
+            return mock(UserRepository.class);
+        }
+
+//        @Bean
+//        public PasswordEncoderConfig getPasswordEncoderConfig() {
+//            return new PasswordEncoderConfig();
+//        }
 
     }
 }

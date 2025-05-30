@@ -45,7 +45,7 @@ class UserAccessManagerTest {
     }
 
     @Test
-    void testValidateCredentials_shouldReturnUser_whenCredentialsMatch() {
+    void testValidateCredentials_shouldReturnUser_whenCredentialsAndRetrieveUserMatch() {
 
 
         // Given
@@ -54,14 +54,19 @@ class UserAccessManagerTest {
         String rawPassword = "secret";
         String encryptedPassword = passwordUtils.encrypt(rawPassword);
 
-        UserDao userDao = new UserDao();
-        userDao.setEmail(email);
-        userDao.setNickname(nickname);
-        userDao.setEncryptedPassword(encryptedPassword);
+        UserDao userDao = UserDao.builder()
+                .id(UUID.randomUUID())
+                .email(email)
+                .nickname(nickname)
+                .encryptedPassword(encryptedPassword)
+                .build();
 
-        User expectedUser = new User();
-        expectedUser.setId(UUID.randomUUID());
-        expectedUser.setNickname("nickname");
+        User expectedUser = User.builder()
+                .id(userDao.getId())
+                .email(userDao.getEmail())
+                .nickname(userDao.getNickname())
+                .build();
+
         Credentials credentials = new Credentials();
         credentials.setEmail("email");
         credentials.setEncryptedPassword("encryptedpassword");
@@ -71,7 +76,7 @@ class UserAccessManagerTest {
         when(userMapper.toUser(userDao)).thenReturn(expectedUser);
 
         // When
-        User result = userAccessManager.validateCredentials(email, rawPassword);
+        User result = userAccessManager.authenticateAndFetchUser(email, rawPassword);
 
         // Then
         assertNotNull(result);

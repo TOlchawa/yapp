@@ -22,10 +22,11 @@ class UserMapperTest {
         UUID id = UUID.randomUUID();
         String nickname = "TestNick";
         String email = "email@adres.com";
-        User user = new User();
-        user.setId(id);
-        user.setNickname(nickname);
-        user.setEmail(email);
+        User user = User.builder()
+                .id(id)
+                .email(email)
+                .nickname(nickname)
+                .build();
 
         // When
         UserDao result = mapper.toUserDao(user);
@@ -42,10 +43,11 @@ class UserMapperTest {
         String nickname = "MappedNick";
         String email = "email@adres.com";
 
-        UserDao userDao = new UserDao();
-        userDao.setId(id);
-        userDao.setNickname(nickname);
-        userDao.setEmail(email);
+        UserDao userDao = UserDao.builder()
+                .id(id)
+                .email(email)
+                .nickname(nickname)
+                .build();
 
         // When
         User result = mapper.toUser(userDao);
