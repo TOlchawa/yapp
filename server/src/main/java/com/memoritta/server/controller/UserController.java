@@ -20,8 +20,8 @@ public class UserController {
     private UserAccessManager userAccessManager;
 
     @GetMapping("/user")
-    public User fetchUser(String login, String password) {
-        User user = userAccessManager.authenticateAndFetchUser(login, password);
+    public User fetchUser(String email, String password) {
+        User user = userAccessManager.authenticateAndFetchUser(email, password);
         return user;
     }
 
