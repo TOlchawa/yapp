@@ -5,6 +5,7 @@ import com.memoritta.server.model.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 
@@ -19,5 +20,6 @@ public class UserDao {
     private String nickname;
     @Indexed(unique = true)
     private String email;
+    private boolean verified;
     private String encryptedPassword;
 }

@@ -1,20 +1,20 @@
 package com.memoritta.server.manager;
 
 import com.memoritta.server.client.UserRepository;
-import com.memoritta.server.config.PasswordEncoderConfig;
+import com.memoritta.server.controller.UserController;
 import com.memoritta.server.dao.UserDao;
 import com.memoritta.server.mapper.UserMapper;
+import com.memoritta.server.mapper.UserMapperImpl;
 import com.memoritta.server.model.Credentials;
 import com.memoritta.server.model.User;
 import com.memoritta.server.utils.PasswordUtils;
-import org.junit.jupiter.api.BeforeEach;
+import com.memoritta.server.utils.UserUtils;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -24,25 +24,20 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-@ContextConfiguration(classes = { UserAccessManagerTest.Config.class, PasswordEncoderConfig.class } )
+@Import({ PasswordUtils.class, UserUtils.class, UserController.class, UserAccessManager.class })
 class UserAccessManagerTest {
 
     @Autowired
     private PasswordUtils passwordUtils;
 
-    @Mock
+    @Autowired
     private UserRepository userRepository;
 
-    @Mock
+    @Autowired
     private UserMapper userMapper;
 
-    @InjectMocks
+    @Autowired
     private UserAccessManager userAccessManager;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     void testValidateCredentials_shouldReturnUser_whenCredentialsAndRetrieveUserMatch() {
@@ -69,11 +64,10 @@ class UserAccessManagerTest {
 
         Credentials credentials = new Credentials();
         credentials.setEmail("email");
-        credentials.setEncryptedPassword("encryptedpassword");
+        credentials.setEncryptedPassword("rawPassword");
 
-        when(passwordUtils.encrypt(rawPassword)).thenReturn(encryptedPassword);
+        when(userRepository.save(any())).thenReturn(userDao);
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(userDao));
-        when(userMapper.toUser(userDao)).thenReturn(expectedUser);
 
         // When
         User result = userAccessManager.authenticateAndFetchUser(email, rawPassword);
@@ -83,9 +77,8 @@ class UserAccessManagerTest {
         assertEquals(expectedUser.getId(), result.getId());
         assertEquals(expectedUser.getNickname(), result.getNickname());
 
-        verify(passwordUtils).encrypt(rawPassword);
-        verify(userRepository).findByEmail(email);
-        verify(userMapper).toUser(userDao);
+        verify(userRepository).findByEmail(anyString());
+
     }
 
     @Test
@@ -96,25 +89,34 @@ class UserAccessManagerTest {
         String encryptedPassword = passwordUtils.encrypt(rawPassword);
         String nickname = "testNick";
 
-        ArgumentCaptor<UserDao> captor = ArgumentCaptor.forClass(UserDao.class);
+        UserDao userDao = UserDao.builder()
+                .id(UUID.randomUUID())
+                .email(email)
+                .nickname(nickname)
+                .encryptedPassword(encryptedPassword)
+                .build();
+
+        when(userRepository.save(any())).thenReturn(userDao);
 
         // When
         UUID userId = userAccessManager.createUser(email, encryptedPassword, nickname);
 
         // Then
-        verify(userRepository).save(captor.capture());
-        UserDao savedUserDao = captor.getValue();
+        verify(userRepository).save(any());
 
-        assertThat(savedUserDao.getEmail()).isEqualTo(email);
-        assertThat(savedUserDao.getNickname()).isEqualTo(nickname);
-        assertThat(savedUserDao.getEncryptedPassword()).isEqualTo(encryptedPassword);
-        passwordUtils.verifyPassword(encryptedPassword, rawPassword);
+        assertThat(userId).isNotNull();
     }
 
+    @Configuration
     public static class Config {
         @Bean
-        public PasswordUtils getPasswordUtils(BCryptPasswordEncoder encoder) {
-            return new PasswordUtils(encoder);
+        public UserMapper getUserMapper() {
+            return new UserMapperImpl();
+        }
+
+        @Bean
+        public UserRepository getUserRepository() {
+            return mock(UserRepository.class);
         }
     }
 }

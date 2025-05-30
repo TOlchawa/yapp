@@ -20,12 +20,6 @@ public class UserAccessManager {
     private final PasswordUtils passwordUtils;
     private final UserRepository userRepository;
 
-//    public UserAccessManager(UserMapper userMapper, PasswordUtils passwordUtils, UserRepository userRepository) {
-//        this.userMapper = userMapper;
-//        this.passwordUtils = passwordUtils;
-//        this.userRepository = userRepository;
-//    }
-
     @SneakyThrows
     public User authenticateAndFetchUser(String email, String password) {
         Optional<UserDao> userDao = userRepository.findByEmail(email);

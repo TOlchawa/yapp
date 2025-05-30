@@ -1,7 +1,6 @@
 package com.memoritta.server.controller;
 
 import com.memoritta.server.client.UserRepository;
-import com.memoritta.server.config.PasswordEncoderConfig;
 import com.memoritta.server.dao.UserDao;
 import com.memoritta.server.manager.UserAccessManager;
 import com.memoritta.server.mapper.UserMapper;
@@ -21,12 +20,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-//@ContextConfiguration(classes = { UserControllerTest.Config.class, PasswordEncoderConfig.class })
-@Import({ PasswordEncoderConfig.class, PasswordUtils.class, UserUtils.class, UserController.class, UserAccessManager.class })
+@Import({ PasswordUtils.class, UserUtils.class, UserController.class, UserAccessManager.class })
 class UserControllerTest {
 
     @Autowired
@@ -74,50 +71,21 @@ class UserControllerTest {
         assertThat(newUserId).isNotNull();
         assertThat(user).extracting("id", "nickname", "email")
                 .containsExactly(userDao.getId(), resolvedNickname, email);
+
+        verify(userRepository).save(any());
+        verify(userRepository).findByEmail(anyString());
     }
 
     @Configuration
     public static class Config {
-//        @Bean
-//        public UserAccessManager getUserAccessManager() {
-//            return mock(UserAccessManager.class);
-//        }
-
         @Bean
         public UserMapper getUserMapper() {
             return new UserMapperImpl();
         }
 
-//        @Bean
-//        public PasswordUtils getPasswordUtils(BCryptPasswordEncoder encoder) {
-//            return new PasswordUtils(encoder);
-//        }
-//
-//        @Bean
-//        public UserUtils getUserUtils() {
-//            return new UserUtils();
-//        }
-
-//        @Bean
-//        public UserController getUserController(PasswordUtils passwordUtils, UserUtils userUtils, UserAccessManager userAccesManager) {
-//            return new UserController(passwordUtils, userUtils, userAccesManager);
-//        }
-//
-//        @Bean
-//        public UserAccessManager getuserAccessManager(UserMapper userMapper, PasswordUtils passwordUtils, UserRepository userRepository) {
-//            return new UserAccessManager(userMapper, passwordUtils, userRepository);
-//        }
-
-
         @Bean
         public UserRepository getUserRepository() {
             return mock(UserRepository.class);
         }
-
-//        @Bean
-//        public PasswordEncoderConfig getPasswordEncoderConfig() {
-//            return new PasswordEncoderConfig();
-//        }
-
     }
 }

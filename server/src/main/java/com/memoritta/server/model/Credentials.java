@@ -2,7 +2,6 @@ package com.memoritta.server.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Setter
 @Getter

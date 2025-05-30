@@ -1,20 +1,21 @@
 package com.memoritta.server.utils;
 
-import com.memoritta.server.config.PasswordEncoderConfig;
-import org.junit.jupiter.api.BeforeEach;
+import com.memoritta.server.controller.UserController;
+import com.memoritta.server.manager.UserAccessManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootApplication
-@ContextConfiguration( classes = { PasswordUtilsTest.Config.class, PasswordEncoderConfig.class } )
+@SpringBootTest
+@Import({ PasswordUtils.class, UserUtils.class, UserController.class, UserAccessManager.class })
 class PasswordUtilsTest {
 
     @Autowired
@@ -67,8 +68,8 @@ class PasswordUtilsTest {
 
     public static class Config {
         @Bean
-        PasswordUtils getPasswordUtils(BCryptPasswordEncoder bCryptPasswordEncoder) {
-            return new PasswordUtils(bCryptPasswordEncoder);
+        PasswordUtils getPasswordUtils() {
+            return new PasswordUtils();
         }
     }
 }

@@ -20,7 +20,7 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails user = User.withUsername("admin")
-                .password("{noop}admin") // <-- kluczowe: brak szyfrowania
+                .password("{noop}admin")
                 .roles("USER")
                 .build();
         return new InMemoryUserDetailsManager(user);
@@ -31,23 +31,11 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().authenticated()
+                    .anyRequest().authenticated()
                 )
                 .httpBasic(withDefaults());
 
         return http.build();
     }
-
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .authorizeHttpRequests(auth -> auth
-//                        .anyRequest().authenticated()
-//                )
-//                .httpBasic()
-//                .and()
-//                .csrf().disable();
-//        return http.build();
-//    }
 
 }
