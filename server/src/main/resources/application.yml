@@ -11,12 +11,12 @@ spring:
     user:
       name: admin
       password: admin
-  redis:
-    host: localhost
-    port: 6379
-    password: qazxsw123
-    database: 0
   data:
+    redis:
+      host: localhost
+      port: 6379
+      password: qazxsw123
+      database: 0
     mongodb:
       uri: "mongodb://user:qazxsw123@localhost:27017/yapp-db?authSource=admin"
       auto-index-creation: true
