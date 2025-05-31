@@ -21,7 +21,7 @@ class ServerControllerTest {
     @Test
     void testPingEndpointReturnsUuid() {
         // When
-        UUID result = serverController.registerItemWithImage("ping");
+        UUID result = serverController.pingPost("ping");
 
         // Then
         assertNotNull(result);
