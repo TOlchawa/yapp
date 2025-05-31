@@ -14,8 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-@Import({ PasswordUtils.class, UserUtils.class, UserController.class, UserAccessManager.class })
+@SpringBootTest(classes = { PasswordUtils.class, UserUtils.class })
 class PasswordUtilsTest {
 
     @Autowired
