@@ -1,20 +1,15 @@
 package com.memoritta.server.utils;
 
-import com.memoritta.server.controller.UserController;
-import com.memoritta.server.manager.UserAccessManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = { PasswordUtils.class, UserUtils.class })
+@SpringBootTest(classes = {PasswordUtils.class, UserUtils.class})
 class PasswordUtilsTest {
 
     @Autowired

@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -22,8 +21,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
-@Import({ PasswordUtils.class, UserUtils.class, UserController.class, UserAccessManager.class })
+@SpringBootTest(classes = {PasswordUtils.class, UserUtils.class, UserController.class, UserAccessManager.class})
 class UserControllerTest {
 
     @Autowired
@@ -46,7 +44,7 @@ class UserControllerTest {
     @DisplayName("createUser should encrypt password and resolve nickname")
     void createUser_shouldEncryptPasswordAndResolveNickname() {
         // Given
-        String email = "new"+UUID.randomUUID()+"@example.com";
+        String email = "new" + UUID.randomUUID() + "@example.com";
         String password = "secret";
         String nickname = "OptionalNick";
         String encrypted = passwordUtils.encrypt(password);
