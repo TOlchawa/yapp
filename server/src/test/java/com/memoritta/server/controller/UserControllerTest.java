@@ -46,7 +46,7 @@ class UserControllerTest {
     @DisplayName("createUser should encrypt password and resolve nickname")
     void createUser_shouldEncryptPasswordAndResolveNickname() {
         // Given
-        String email = "new@example.com";
+        String email = "new"+UUID.randomUUID()+"@example.com";
         String password = "secret";
         String nickname = "OptionalNick";
         String encrypted = passwordUtils.encrypt(password);
@@ -60,7 +60,7 @@ class UserControllerTest {
                 .build();
 
         when(userRepository.save(any())).thenReturn(userDao);
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(userDao));
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty()).thenReturn(Optional.of(userDao));
 
         // When
         UUID newUserId = userController.createUser(email, password, nickname);
@@ -73,7 +73,7 @@ class UserControllerTest {
                 .containsExactly(userDao.getId(), resolvedNickname, email);
 
         verify(userRepository).save(any());
-        verify(userRepository).findByEmail(anyString());
+        verify(userRepository, times(2)).findByEmail(anyString());
     }
 
     @Configuration

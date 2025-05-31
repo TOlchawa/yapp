@@ -20,7 +20,6 @@ public class UserAccessManager {
     private final PasswordUtils passwordUtils;
     private final UserRepository userRepository;
 
-    @SneakyThrows
     public User authenticateAndFetchUser(String email, String password) {
         Optional<UserDao> userDao = userRepository.findByEmail(email);
         passwordUtils.verifyPassword(userDao.get().getEncryptedPassword(), password);
@@ -28,8 +27,10 @@ public class UserAccessManager {
         return result;
     }
 
-    @SneakyThrows
     public UUID createUser(String email, String encryptedPassword, String nickname) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new IllegalStateException("User with this email already exists");
+        }
         UserDao userDao = UserDao.builder()
                 .id(UUID.randomUUID())
                 .nickname(nickname)

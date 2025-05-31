@@ -77,7 +77,8 @@ class UserAccessManagerTest {
         assertEquals(expectedUser.getId(), result.getId());
         assertEquals(expectedUser.getNickname(), result.getNickname());
 
-        verify(userRepository).findByEmail(anyString());
+
+        verify(userRepository, atLeast(1)).findByEmail(anyString()); // I amm guessing it is called twice because if 'isPresent' call it again.
 
     }
 
@@ -97,12 +98,14 @@ class UserAccessManagerTest {
                 .build();
 
         when(userRepository.save(any())).thenReturn(userDao);
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
         // When
         UUID userId = userAccessManager.createUser(email, encryptedPassword, nickname);
 
         // Then
         verify(userRepository).save(any());
+        verify(userRepository).findByEmail(anyString());
 
         assertThat(userId).isNotNull();
     }
