@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -21,7 +22,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest(classes = {PasswordUtils.class, UserUtils.class, UserController.class, UserAccessManager.class})
+@SpringBootTest
+@ContextConfiguration(classes = {UserControllerTest.Config.class, PasswordUtils.class, UserUtils.class, UserController.class, UserAccessManager.class, UserRepository.class})
 class UserControllerTest {
 
     @Autowired
