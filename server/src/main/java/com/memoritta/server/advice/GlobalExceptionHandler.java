@@ -14,7 +14,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<String> handleIllegalState(IllegalStateException ex) {
-        log.error("IllegalStateException", ex);
+        if (ex.getMessage().equals("User with this email already exists")) { // TODO make it better
+            log.warn("User creation conflict: {}", ex.getMessage());
+        } else {
+            log.error("IllegalStateException", ex);
+        }
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
