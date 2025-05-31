@@ -4,19 +4,21 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.redis.core.index.Indexed;
 
 import java.util.UUID;
 
-@Getter
 @Setter
+@Getter
 @Builder
-@Document(collection = "pictures")
-public class PictureOfItemDao {
+@Document(collection = "items")
+public class UserDao {
     @Id
     private UUID id;
-    private byte[] picture;
-    @Indexed
-    private String metadata;
+    private String nickname;
+    @Indexed(unique = true)
+    private String email;
+    private boolean verified;
+    private String encryptedPassword;
 }

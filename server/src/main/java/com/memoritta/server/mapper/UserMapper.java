@@ -1,0 +1,15 @@
+package com.memoritta.server.mapper;
+
+import com.memoritta.server.dao.UserDao;
+import com.memoritta.server.model.User;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
+
+@org.mapstruct.Mapper(componentModel = "spring")
+public interface UserMapper {
+    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
+
+    @Mapping(target = "encryptedPassword", ignore = true)
+    UserDao toUserDao(User user);
+    User toUser(UserDao user);
+}

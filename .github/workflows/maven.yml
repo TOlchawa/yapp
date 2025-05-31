@@ -78,6 +78,9 @@ jobs:
   
 
       - name: Start E2E the Server tests
+        env:
+          MONGO_INITDB_ROOT_USERNAME: user
+          MONGO_INITDB_ROOT_PASSWORD: qazxsw123
         run: |
           cd server
           mvn test -Dtest=*IT

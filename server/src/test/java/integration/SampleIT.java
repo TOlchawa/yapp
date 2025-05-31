@@ -18,12 +18,12 @@ public class SampleIT {
         RestAssured.baseURI = "http://localhost:9090";
 
         given()
-                .when()
                 .auth().basic("admin", "admin")
-                .get("/version")
+                .when().get("/version")
                 .then()
                 .statusCode(200)
-                .body(equalTo("1.0.0"));
+                .body(equalTo("1.0.0"))
+                .log().all();;
 
     }
 
