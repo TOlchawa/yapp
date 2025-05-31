@@ -18,7 +18,7 @@ spring:
     database: 0
   data:
     mongodb:
-      uri: "mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@localhost:27017/yapp-db?authSource=admin"
+      uri: "mongodb://user:qazxsw123@localhost:27017/yapp-db?authSource=admin"
       auto-index-creation: true
 
 
