@@ -1,7 +1,9 @@
 package com.memoritta.server.manager;
 
 import com.memoritta.server.client.ItemRepository;
+import com.memoritta.server.client.UserRepository;
 import com.memoritta.server.dao.ItemDao;
+import com.memoritta.server.dao.UserDao;
 import com.memoritta.server.mapper.ItemMapper;
 import com.memoritta.server.model.Description;
 import com.memoritta.server.model.Item;
@@ -21,6 +23,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ItemManager {
 
+    private final UserRepository userRepository; // TODO: add support for JWT and remove this dependency (repository is not needed for JWT)
     private final ItemRepository itemRepository;
     private final RedisTemplate<String, String> redisTemplate;
     private final BinaryDataManager binaryDataManager;
@@ -67,5 +70,15 @@ public class ItemManager {
 
     public Item fetchItem(String id) {
         return null;
+    }
+
+    public List<UUID> listItems(String email) {
+        UserDao user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
+        UUID userId = user.getId();
+        List<ItemDao> items = itemRepository.findByCreatedBy(userId);
+        return items.stream()
+                .map(ItemDao::getId)
+                .toList();
     }
 }

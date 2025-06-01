@@ -6,6 +6,8 @@ import com.memoritta.server.mapper.ItemMapper;
 import com.memoritta.server.model.Description;
 import com.memoritta.server.model.Item;
 import com.memoritta.server.model.PictureOfItem;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +18,7 @@ import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/item")
+@RequestMapping
 public class ItemController {
 
     private final ItemManager itemManager;
@@ -30,7 +32,7 @@ public class ItemController {
      * @param picture the picture file of the item
      * @return the UUID of the registered item
      */
-    @PostMapping
+    @PostMapping("/item")
     public UUID createItem(@RequestParam String name,
                            @RequestParam(required = false) String note,
                            @RequestParam(required = false) String barCode,
@@ -44,10 +46,25 @@ public class ItemController {
      * @para m id the UUID of the item to fetch
      * @return the UUID of the registered item
      */
-    @GetMapping
+    @GetMapping("/item")
     public Item fetchItem(@RequestParam String id) throws IOException {
         return itemManager.fetchItem(id);
     }
 
+
+    @PostMapping("/items/user")
+    @Operation(
+            summary = "Get list of item IDs by user email",
+            description = "Returns a list of item UUIDs that were created by the user with the provided email address. " +
+                    "Note: This version uses email as a parameter, but support for JWT authentication will be added later."
+    )
+    public List<UUID> listItems(
+            @RequestParam
+            @Parameter(description = "Email address of the user whose items should be returned", example = "user@example.com")
+            String email
+    ) {
+        List<UUID> listItems = itemManager.listItems(email); // TODO add support for JWT
+        return listItems;
+    }
 
 }
