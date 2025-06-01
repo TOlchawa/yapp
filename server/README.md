@@ -39,3 +39,9 @@ docker run --name redis -d -p 6379:6379 redis
 ```bash
   redis-cli  --user default  --pass ****
 ```
+## Certificates generate
+
+````aiignore
+openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:2048
+openssl rsa -pubout -in private.pem -out public.pem
+````

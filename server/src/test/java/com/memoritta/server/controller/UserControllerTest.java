@@ -5,6 +5,8 @@ import com.memoritta.server.dao.UserDao;
 import com.memoritta.server.manager.UserAccessManager;
 import com.memoritta.server.mapper.UserMapper;
 import com.memoritta.server.mapper.UserMapperImpl;
+import com.memoritta.server.model.AuthenticatedUser;
+import com.memoritta.server.model.Credentials;
 import com.memoritta.server.model.User;
 import com.memoritta.server.utils.PasswordUtils;
 import com.memoritta.server.utils.UserUtils;
@@ -64,12 +66,13 @@ class UserControllerTest {
 
         // When
         UUID newUserId = userController.createUser(email, password, nickname);
-        User user = userController.fetchUser(email, password);
+        AuthenticatedUser authUser = userController.login(Credentials.builder().email(email).password(password).build());
 
         // Then
 
         assertThat(newUserId).isNotNull();
-        assertThat(user).extracting("id", "nickname", "email")
+        assertThat(authUser).extracting("user")
+                .extracting("id", "nickname", "email")
                 .containsExactly(userDao.getId(), resolvedNickname, email);
 
         verify(userRepository).save(any());

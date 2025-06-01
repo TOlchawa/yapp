@@ -10,6 +10,10 @@ public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
     @Mapping(target = "encryptedPassword", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "verified", ignore = true)
+    @Mapping(target = "modifiedAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
     UserDao toUserDao(User user);
     User toUser(UserDao user);
 }
