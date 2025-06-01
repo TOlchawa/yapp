@@ -1,6 +1,7 @@
 package com.memoritta.server.controller;
 
 import com.memoritta.server.client.ItemRepository;
+import com.memoritta.server.client.UserRepository;
 import com.memoritta.server.config.ServerConfig;
 import com.memoritta.server.dao.ItemDao;
 import com.memoritta.server.manager.BinaryDataManager;
@@ -29,11 +30,17 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-@ContextConfiguration(classes = {ItemControllerTest.Config.class, ItemManager.class, ItemController.class})
+@ContextConfiguration(classes = {ItemControllerTest.Config.class, ItemManager.class, ItemController.class, UserRepository.class})
+// TODO: remove UserRepository - use JWT with userId
 class ItemControllerTest {
 
     @Configuration
     public static class Config {
+
+        @Bean
+        UserRepository getUserRepository() {
+            return mock(UserRepository.class); // TODO remove it - instead use userId from JWT
+        }
 
         @Bean
         ItemRepository getItemRepository() {
