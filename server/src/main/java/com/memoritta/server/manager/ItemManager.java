@@ -1,20 +1,50 @@
 package com.memoritta.server.manager;
 
+import com.memoritta.server.client.ItemRepository;
+import com.memoritta.server.dao.ItemDao;
+import com.memoritta.server.mapper.ItemMapper;
 import com.memoritta.server.model.Description;
 import com.memoritta.server.model.Item;
 import com.memoritta.server.model.PictureOfItem;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class ItemManager {
+
+    private final ItemRepository itemRepository;
     private final RedisTemplate<String, String> redisTemplate;
     private final BinaryDataManager binaryDataManager;
+
+    public UUID saveItem(String name, String note, String barCode, MultipartFile picture) throws IOException {
+        Item item = Item.builder()
+                .name(name)
+                .id(UUID.randomUUID())
+                .build();
+        Description description = null;
+        if (picture != null) {
+            description = Description.builder().build();
+            byte[] imageBytes = picture.getBytes();
+            PictureOfItem pictureOfItem = PictureOfItem.builder().build();
+            pictureOfItem.setPicture(imageBytes);
+            description.setPictures(List.of(pictureOfItem));
+            description.setNote(note);
+            description.setBarcode(barCode);
+            item.setDescription(description);
+        }
+        UUID id = save(item);
+
+        return id;
+    }
 
     public UUID save(Item item) {
         Description description = item.getDescription();
@@ -26,14 +56,16 @@ public class ItemManager {
                 picture.setId(pictureId);
             }
         }
-        // TODO: map item to json and save in mongodb or something similar maybe something like neo4j
-        item.setId(UUID.randomUUID());
-        return item.getId();
+
+        log.info("Saving item: {}", item);
+        ItemDao itemDao = itemRepository.save(ItemMapper.INSTANCE.toItemDao(item));
+
+        UUID id = itemDao.getId();
+        item.setId(id);
+        return id;
     }
 
-    public Item load(UUID id) {
-        // TODO: add implementation
+    public Item fetchItem(String id) {
         return null;
     }
-
 }

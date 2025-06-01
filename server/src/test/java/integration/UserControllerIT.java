@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.EnabledIf;
 
 import java.util.UUID;
@@ -22,6 +21,7 @@ public class UserControllerIT {
     @Test
     void testCreateUser() {
         RestAssured.baseURI = "http://localhost:9090";
+//        RestAssured.baseURI = "https://memoritta.com/api";
 
         String emailAddress = "newuser" + UUID.randomUUID() + "@example.com";
 
@@ -83,19 +83,32 @@ public class UserControllerIT {
 
         Response response = given()
                 .auth().basic("admin", "admin")
-                .param("email", emailAddress)
-                .param("password", "testPassword")
+                .contentType("application/json")
+                .body("""
+                        {
+                          "email": "%s",
+                          "password": "testPassword"
+                        }
+                        """.formatted(emailAddress))
                 .when()
-                .get("/user")
+                .post("/user")
                 .then()
                 .statusCode(200)
                 .contentType("application/json")
                 .extract()
                 .response();
 
-        // Validate the response contains a User object
-        String userNickname = response.jsonPath().getString("nickname");
-        assertThat(userNickname).isNotEmpty();
+        String userIdStr = response.path("user.id");
+        String nickname = response.path("user.nickname");
+        String returnedEmail = response.path("user.email");
+
+
+        assertThat(nickname).isEqualTo("NewUser");
+        assertThat(returnedEmail).isEqualTo(emailAddress);
+
+        // Walidacja UUID
+        UUID userId = UUID.fromString(userIdStr);
+        assertThat(userId).isNotNull();
     }
 
 

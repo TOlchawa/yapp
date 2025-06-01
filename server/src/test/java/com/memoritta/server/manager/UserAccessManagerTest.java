@@ -63,9 +63,10 @@ class UserAccessManagerTest {
                 .nickname(userDao.getNickname())
                 .build();
 
-        Credentials credentials = new Credentials();
-        credentials.setEmail("email");
-        credentials.setEncryptedPassword("rawPassword");
+//        Credentials credentials = Credentials.builder()
+//                .email(email)
+//                .password(rawPassword)
+//                .build();
 
         when(userRepository.save(any())).thenReturn(userDao);
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(userDao));
