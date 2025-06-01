@@ -1,6 +1,8 @@
 package com.memoritta.server.controller;
 
 import com.memoritta.server.config.ServerConfig;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +20,12 @@ import java.util.UUID;
 public class ServerController {
     private ServerConfig serverConfig;
 
+
     @GetMapping("/version")
+    @Operation(
+            summary = "Get application version",
+            description = "Returns the current version string of the running server instance. Useful for health checks and diagnostics."
+    )
     public String getVersion() {
         log.debug("getVersion");
         return serverConfig.getVersion();
@@ -27,17 +34,29 @@ public class ServerController {
     /**
      * Registers a ping.
      *
-     * @return the UUID of the registered item
+     * @param ping arbitrary string used to register a ping event
+     * @return a randomly generated UUID confirming the ping registration
      */
     @SneakyThrows
     @PostMapping("/ping")
-    public UUID pingPost(@RequestParam String ping) {
+    @Operation(
+            summary = "Register a ping event",
+            description = "Accepts a ping value and returns a randomly generated UUID to acknowledge the request."
+    )
+    public UUID pingPost(
+            @RequestParam
+            @Parameter(description = "Ping value to register (any arbitrary string)", example = "heartbeat-123")
+            String ping
+    ) {
         return UUID.randomUUID();
     }
 
     @GetMapping("/ping")
+    @Operation(
+            summary = "Ping check",
+            description = "Simple ping endpoint that returns a 'pong' string. Useful for checking service availability."
+    )
     public ResponseEntity<String> ping() {
         return ResponseEntity.ok("pong");
     }
-
 }

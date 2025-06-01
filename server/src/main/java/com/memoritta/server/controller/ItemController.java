@@ -1,11 +1,7 @@
 package com.memoritta.server.controller;
 
-import com.memoritta.server.client.ItemRepository;
 import com.memoritta.server.manager.ItemManager;
-import com.memoritta.server.mapper.ItemMapper;
-import com.memoritta.server.model.Description;
 import com.memoritta.server.model.Item;
-import com.memoritta.server.model.PictureOfItem;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
@@ -23,31 +19,49 @@ public class ItemController {
 
     private final ItemManager itemManager;
 
-    /**
-     * Registers a new item with an picture.
-     *
-     * @param name the name of the item
-     * @param note an optional note for the item
-     * @param barCode an optional barcode for the item
-     * @param picture the picture file of the item
-     * @return the UUID of the registered item
-     */
     @PostMapping("/item")
-    public UUID createItem(@RequestParam String name,
-                           @RequestParam(required = false) String note,
-                           @RequestParam(required = false) String barCode,
-                           @RequestParam(required = false) MultipartFile picture) throws IOException {
+    @Operation(
+            summary = "Register a new item with optional image",
+            description = "Registers a new item using its name, optional note, optional barcode, and an optional picture. " +
+                    "The endpoint returns the UUID of the newly created item."
+    )
+    public UUID createItem(
+            @RequestParam
+            @Parameter(description = "Name of the item", required = true, example = "Notebook")
+            String name,
+
+            @RequestParam(required = false)
+            @Parameter(description = "Optional note about the item", example = "This is a test item")
+            String note,
+
+            @RequestParam(required = false)
+            @Parameter(description = "Optional barcode of the item", example = "1234567890123")
+            String barCode,
+
+            @RequestParam(required = false)
+            @Parameter(description = "Optional picture file of the item (image/jpeg or image/png)")
+            MultipartFile picture
+    ) throws IOException {
         return itemManager.saveItem(name, note, barCode, picture);
     }
 
     /**
      * Fetches an item by its UUID.
      *
-     * @para m id the UUID of the item to fetch
-     * @return the UUID of the registered item
+     * @param id the UUID of the item to fetch
+     * @return the full item object
      */
     @GetMapping("/item")
-    public Item fetchItem(@RequestParam String id) throws IOException {
+    @Operation(
+            summary = "Fetch a single item by ID",
+            description = "Returns the full item object for a given UUID. " +
+                    "Useful for retrieving item details by ID after creation or from a list."
+    )
+    public Item fetchItem(
+            @RequestParam
+            @Parameter(description = "UUID of the item to retrieve", example = "123e4567-e89b-12d3-a456-426614174000")
+            String id
+    ) throws IOException {
         return itemManager.fetchItem(id);
     }
 
