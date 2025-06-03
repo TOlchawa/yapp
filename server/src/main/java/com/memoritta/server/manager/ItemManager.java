@@ -33,19 +33,26 @@ public class ItemManager {
                 .name(name)
                 .id(UUID.randomUUID())
                 .build();
+
         Description description = null;
-        if (picture != null) {
+
+        // Create description if any optional field was provided
+        if (picture != null || note != null || barCode != null) {
             description = Description.builder().build();
-            byte[] imageBytes = picture.getBytes();
-            PictureOfItem pictureOfItem = PictureOfItem.builder().build();
-            pictureOfItem.setPicture(imageBytes);
-            description.setPictures(List.of(pictureOfItem));
+
+            if (picture != null) {
+                byte[] imageBytes = picture.getBytes();
+                PictureOfItem pictureOfItem = PictureOfItem.builder().build();
+                pictureOfItem.setPicture(imageBytes);
+                description.setPictures(List.of(pictureOfItem));
+            }
+
             description.setNote(note);
             description.setBarcode(barCode);
             item.setDescription(description);
         }
-        UUID id = save(item);
 
+        UUID id = save(item);
         return id;
     }
 
