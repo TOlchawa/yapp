@@ -39,9 +39,18 @@ docker run --name redis -d -p 6379:6379 redis
 ```bash
   redis-cli  --user default  --pass ****
 ```
-## Certificates generate
+## JWT Secret
 
-````aiignore
-openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:2048
-openssl rsa -pubout -in private.pem -out public.pem
-````
+The application now uses an HMAC secret for signing JWT tokens. Configure the
+secret in `application.yml`:
+
+```yaml
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          secret: <your-very-long-secret>
+```
+
+Ensure the secret is at least 32 characters long.
