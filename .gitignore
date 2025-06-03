@@ -26,3 +26,8 @@ replay_pid*
 /server/target/
 /web/target/
 /server/server.iml
+
+# Node modules and build output
+node_modules/
+**/node_modules/
+**/dist/

@@ -23,9 +23,9 @@ This project was born from the need for:
 
 ---
 
-## Tech Stack
-- **Programming Language:** [Your chosen language, e.g., JavaScript, TypeScript, Python]
-- **Frameworks:** [Frameworks being used, e.g., React Native, Node.js]
+-## Tech Stack
+- **Programming Language:** Java and JavaScript
+- **Frameworks:** Spring Boot on the backend and React with Vite on the frontend
 - **AI Tools:** ChatGPT, GitHub Copilot
 - **Deployment:** [Your hosting solution, e.g., AWS, Netlify, Vercel]
 
