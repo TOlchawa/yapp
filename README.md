@@ -41,3 +41,8 @@ This project was born from the need for:
 1. Clone the repository:
    ```bash
    git clone https://github.com/TOlchawa/yapp
+   ```
+
+## API Documentation
+You can explore the REST API using the online Swagger UI:
+[https://memoritta.com/swagger-ui/index.html](https://memoritta.com/swagger-ui/index.html)
