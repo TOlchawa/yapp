@@ -20,7 +20,7 @@ import java.util.UUID;
 @Builder
 @Document(collection = "items")
 @CompoundIndexes({
-        @CompoundIndex(name = "description_barcode_idx", def = "{'description.barcode': 1}")
+        @CompoundIndex(def = "{'description.barcode': 1}", useGeneratedName = true)
 })
 public class ItemDao {
     @Id
