@@ -10,6 +10,7 @@ import com.memoritta.server.model.Credentials;
 import com.memoritta.server.model.User;
 import com.memoritta.server.utils.PasswordUtils;
 import com.memoritta.server.utils.UserUtils;
+import com.memoritta.server.security.JwtUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-@ContextConfiguration(classes = {UserControllerTest.Config.class, PasswordUtils.class, UserUtils.class, UserController.class, UserAccessManager.class, UserRepository.class})
+@ContextConfiguration(classes = {UserControllerTest.Config.class, PasswordUtils.class, UserUtils.class, JwtUtil.class, UserController.class, UserAccessManager.class, UserRepository.class})
 class UserControllerTest {
 
     @Autowired

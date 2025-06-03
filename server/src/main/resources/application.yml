@@ -11,7 +11,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          public-key-location: classpath:public.pem
+          secret: Q+FQIAMDM+KevA+A3qnUiHO0eo27QB3tm2ahv3WqDlw=
     user:
       name: admin
       password: admin
