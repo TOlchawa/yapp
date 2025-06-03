@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -96,6 +97,33 @@ public class ItemManager {
         List<ItemDao> items = itemRepository.findByCreatedBy(userId);
         return items.stream()
                 .map(ItemDao::getId)
+                .toList();
+    }
+
+    public List<Item> searchItemsByTags(List<String> tags, boolean matchAll) {
+        List<ItemDao> all = itemRepository.findAll();
+
+        Map<String, String> searchTags = tags.stream()
+                .map(t -> t.startsWith("#") ? t.substring(1) : t)
+                .map(t -> t.split("=", 2))
+                .collect(java.util.stream.Collectors.toMap(a -> a[0], a -> a.length > 1 ? a[1] : ""));
+
+        return all.stream()
+                .filter(dao -> {
+                    Map<String, String> itemTags = dao.getTags();
+                    if (itemTags == null || itemTags.isEmpty()) {
+                        return false;
+                    }
+
+                    if (matchAll) {
+                        return searchTags.entrySet().stream()
+                                .allMatch(e -> e.getValue().equals(itemTags.get(e.getKey())));
+                    } else {
+                        return searchTags.entrySet().stream()
+                                .anyMatch(e -> e.getValue().equals(itemTags.get(e.getKey())));
+                    }
+                })
+                .map(ItemMapper.INSTANCE::toItem)
                 .toList();
     }
 }
