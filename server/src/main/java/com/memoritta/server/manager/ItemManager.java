@@ -128,7 +128,7 @@ public class ItemManager {
     }
 
     public List<UUID> listItemsByBarcode(String barcode) {
-        List<ItemDao> items = itemRepository.findByBarcode(barcode);
+        List<ItemDao> items = itemRepository.findByDescriptionBarcode(barcode);
         return items.stream()
                 .map(ItemDao::getId)
                 .toList();

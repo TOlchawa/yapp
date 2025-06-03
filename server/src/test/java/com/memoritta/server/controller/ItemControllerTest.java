@@ -182,14 +182,14 @@ class ItemControllerTest {
                 .description(com.memoritta.server.dao.DescriptionDao.builder().barcode(barcode).build())
                 .build();
 
-        when(itemRepository.findByBarcode(barcode)).thenReturn(List.of(item1, item2));
+        when(itemRepository.findByDescriptionBarcode(barcode)).thenReturn(List.of(item1, item2));
 
         // When
         List<UUID> result = itemController.listItemsByBarcode(barcode);
 
         // Then
         assertEquals(List.of(id1, id2), result);
-        verify(itemRepository).findByBarcode(barcode);
+        verify(itemRepository).findByDescriptionBarcode(barcode);
     }
 
 }

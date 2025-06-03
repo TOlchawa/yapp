@@ -12,5 +12,5 @@ import java.util.UUID;
 public interface ItemRepository extends MongoRepository<ItemDao, UUID> {
     Optional<ItemDao> findById(UUID id);
     List<ItemDao> findByCreatedBy(UUID userId);
-    List<ItemDao> findByBarcode(String barcode);
+    List<ItemDao> findByDescriptionBarcode(String barcode);
 }
