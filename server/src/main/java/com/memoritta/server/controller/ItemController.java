@@ -3,11 +3,13 @@ package com.memoritta.server.controller;
 import com.memoritta.server.manager.ItemManager;
 import com.memoritta.server.model.Item;
 import com.memoritta.server.model.SearchSimilarRequest;
+import com.memoritta.server.model.TagSearchRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 
 import java.io.IOException;
 import java.util.List;
@@ -93,6 +95,17 @@ public class ItemController {
             SearchSimilarRequest request
     ) {
         return itemManager.searchSimilarItems(request.getId());
+    }
+
+    @PostMapping("/items/tags")
+    @Operation(
+            summary = "Search items by tags",
+            description = "Returns a list of items filtered by tags. Set matchAll to true to require all tags or false to match at least one."
+    )
+    public List<Item> searchItemsByTags(
+            @RequestBody TagSearchRequest request
+    ) {
+        return itemManager.searchItemsByTags(request.getTags(), request.isMatchAll());
     }
 
 }

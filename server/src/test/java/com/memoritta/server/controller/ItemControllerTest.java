@@ -9,6 +9,7 @@ import com.memoritta.server.manager.ItemManager;
 import com.memoritta.server.mapper.ItemMapper;
 import com.memoritta.server.model.Item;
 import com.memoritta.server.model.SearchSimilarRequest;
+import com.memoritta.server.model.TagSearchRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -25,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -135,6 +137,33 @@ class ItemControllerTest {
         assertEquals(id, result.get(0).getId());
 
         verify(itemRepository).findById(id);
+    }
+
+    @Test
+    void testSearchItemsByTags_shouldReturnMatchingItem() {
+        // Given
+        UUID beerId = UUID.randomUUID();
+        ItemDao beer = ItemDao.builder()
+                .id(beerId)
+                .tags(Map.of("category", "beer"))
+                .build();
+        ItemDao wine = ItemDao.builder()
+                .id(UUID.randomUUID())
+                .tags(Map.of("category", "wine"))
+                .build();
+        when(itemRepository.findAll()).thenReturn(List.of(beer, wine));
+
+        // When
+        TagSearchRequest request = TagSearchRequest.builder()
+                .tags(List.of("#category=beer"))
+                .matchAll(true)
+                .build();
+        List<Item> result = itemController.searchItemsByTags(request);
+
+        // Then
+        assertEquals(1, result.size());
+        assertEquals(beerId, result.get(0).getId());
+        verify(itemRepository).findAll();
     }
 
 }
