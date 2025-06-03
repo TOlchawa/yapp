@@ -2,6 +2,7 @@ package com.memoritta.server.controller;
 
 import com.memoritta.server.manager.ItemManager;
 import com.memoritta.server.model.Item;
+import com.memoritta.server.model.SearchSimilarRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
@@ -79,6 +80,19 @@ public class ItemController {
     ) {
         List<UUID> listItems = itemManager.listItems(email); // TODO add support for JWT
         return listItems;
+    }
+
+    @PostMapping("/items/search")
+    @Operation(
+            summary = "Search items similar to the given item ID",
+            description = "Returns a list of items similar to the provided ID. Currently returns a single item list with the requested item."
+    )
+    public List<Item> searchSimilarItems(
+            @RequestBody
+            @Parameter(description = "Search parameters containing the item ID")
+            SearchSimilarRequest request
+    ) {
+        return itemManager.searchSimilarItems(request.getId());
     }
 
 }

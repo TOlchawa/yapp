@@ -76,7 +76,17 @@ public class ItemManager {
     }
 
     public Item fetchItem(String id) {
-        return null;
+        return itemRepository.findById(UUID.fromString(id))
+                .map(ItemMapper.INSTANCE::toItem)
+                .orElse(null);
+    }
+
+    public List<Item> searchSimilarItems(String id) {
+        Item item = fetchItem(id);
+        if (item == null) {
+            return List.of();
+        }
+        return List.of(item);
     }
 
     public List<UUID> listItems(String email) {
