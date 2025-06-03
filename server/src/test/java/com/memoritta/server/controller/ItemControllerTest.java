@@ -166,4 +166,30 @@ class ItemControllerTest {
         verify(itemRepository).findAll();
     }
 
+    @Test
+    void testListItemsByBarcode_shouldReturnMatchingIds() {
+        // Given
+        String barcode = "1234567890";
+        UUID id1 = UUID.randomUUID();
+        UUID id2 = UUID.randomUUID();
+
+        ItemDao item1 = ItemDao.builder()
+                .id(id1)
+                .description(com.memoritta.server.dao.DescriptionDao.builder().barcode(barcode).build())
+                .build();
+        ItemDao item2 = ItemDao.builder()
+                .id(id2)
+                .description(com.memoritta.server.dao.DescriptionDao.builder().barcode(barcode).build())
+                .build();
+
+        when(itemRepository.findByDescriptionBarcode(barcode)).thenReturn(List.of(item1, item2));
+
+        // When
+        List<UUID> result = itemController.listItemsByBarcode(barcode);
+
+        // Then
+        assertEquals(List.of(id1, id2), result);
+        verify(itemRepository).findByDescriptionBarcode(barcode);
+    }
+
 }

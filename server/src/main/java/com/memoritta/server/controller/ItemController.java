@@ -108,4 +108,17 @@ public class ItemController {
         return itemManager.searchItemsByTags(request.getTags(), request.isMatchAll());
     }
 
+    @PostMapping("/items/barcode")
+    @Operation(
+            summary = "Get list of item IDs by barcode",
+            description = "Returns a list of item UUIDs that share the provided barcode."
+    )
+    public List<UUID> listItemsByBarcode(
+            @RequestParam
+            @Parameter(description = "Barcode value to search for", example = "1234567890123")
+            String barcode
+    ) {
+        return itemManager.listItemsByBarcode(barcode);
+    }
+
 }

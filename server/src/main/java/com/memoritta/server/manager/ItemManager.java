@@ -126,4 +126,11 @@ public class ItemManager {
                 .map(ItemMapper.INSTANCE::toItem)
                 .toList();
     }
+
+    public List<UUID> listItemsByBarcode(String barcode) {
+        List<ItemDao> items = itemRepository.findByDescriptionBarcode(barcode);
+        return items.stream()
+                .map(ItemDao::getId)
+                .toList();
+    }
 }
