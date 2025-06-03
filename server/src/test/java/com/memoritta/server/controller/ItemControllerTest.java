@@ -8,6 +8,7 @@ import com.memoritta.server.manager.BinaryDataManager;
 import com.memoritta.server.manager.ItemManager;
 import com.memoritta.server.mapper.ItemMapper;
 import com.memoritta.server.model.Item;
+import com.memoritta.server.model.SearchSimilarRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -23,6 +24,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -112,6 +114,27 @@ class ItemControllerTest {
         assertThat(parsedUuid).isNotNull();
 
         verify(itemRepository).save(any(ItemDao.class));
+    }
+
+    @Test
+    void testSearchSimilarItems_shouldReturnSingleItem() {
+        // Given
+        UUID id = UUID.randomUUID();
+        when(itemRepository.findById(id)).thenReturn(java.util.Optional.of(ItemDao.builder().id(id).build()));
+
+        SearchSimilarRequest request = SearchSimilarRequest.builder()
+                .id(id.toString())
+                .build();
+
+        // When
+        List<Item> result = itemController.searchSimilarItems(request);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(id, result.get(0).getId());
+
+        verify(itemRepository).findById(id);
     }
 
 }
