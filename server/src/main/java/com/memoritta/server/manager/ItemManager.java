@@ -30,7 +30,11 @@ public class ItemManager {
     private final RedisTemplate<String, String> redisTemplate;
     private final BinaryDataManager binaryDataManager;
 
-    public UUID saveItem(String name, String note, String barCode, MultipartFile picture) throws IOException {
+    public UUID saveItem(String name,
+                        String note,
+                        String barCode,
+                        MultipartFile picture,
+                        String pictureBase64) throws IOException {
         Item item = Item.builder()
                 .name(name)
                 .id(UUID.randomUUID())
@@ -39,11 +43,16 @@ public class ItemManager {
         Description description = null;
 
         // Create description if any optional field was provided
-        if (picture != null || note != null || barCode != null) {
+        if (picture != null || pictureBase64 != null || note != null || barCode != null) {
             description = Description.builder().build();
 
-            if (picture != null) {
-                byte[] imageBytes = picture.getBytes();
+            if (picture != null || pictureBase64 != null) {
+                byte[] imageBytes;
+                if (picture != null) {
+                    imageBytes = picture.getBytes();
+                } else {
+                    imageBytes = Base64.getDecoder().decode(pictureBase64);
+                }
                 PictureOfItem pictureOfItem = PictureOfItem.builder().build();
                 pictureOfItem.setPicture(imageBytes);
                 description.setPictures(List.of(pictureOfItem));

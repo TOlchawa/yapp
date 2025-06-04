@@ -89,7 +89,7 @@ class ItemControllerTest {
         when(itemRepository.save(any(ItemDao.class))).thenReturn(ItemDao.builder().id(generatedId).build());
 
         // When
-        UUID result = itemController.createItem(name, note, barcode, picture);
+        UUID result = itemController.createItem(name, note, barcode, picture, null);
 
         // Then
         assertNotNull(result);
@@ -108,7 +108,7 @@ class ItemControllerTest {
         when(itemRepository.save(any(ItemDao.class))).thenReturn(ItemDao.builder().id(generatedId).build());
 
         // When
-        UUID result = itemController.createItem(name, null, null, null);
+        UUID result = itemController.createItem(name, null, null, null, null);
 
         // Then
         assertNotNull(result);

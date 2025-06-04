@@ -68,4 +68,33 @@ public class AddItemIT {
         UUID uuidResult = finalResponseReturn.as(UUID.class);
         assertThat(uuidResult).isNotNull();
     }
+
+    @EnabledIf(expression = "#{systemEnvironment['PROD'] == null}", reason = "Disabled in PROD environment")
+    @Test
+    void testAddItemWithBase64() throws Exception {
+
+        RestAssured.baseURI = "http://127.0.0.1:9090";
+
+        File file = new File("src/test/resources/picture.jpg");
+        assertThat(file.exists()).isTrue();
+
+        byte[] bytes = java.nio.file.Files.readAllBytes(file.toPath());
+        String encoded = java.util.Base64.getEncoder().encodeToString(bytes);
+
+        Response response = given()
+                .auth().basic("admin", "admin")
+                .param("name", "base64 name")
+                .param("note", "base64 note")
+                .param("pictureBase64", encoded)
+                .when()
+                .post("/item")
+                .then()
+                .statusCode(200)
+                .contentType("application/json")
+                .extract()
+                .response();
+
+        UUID uuidResult = response.as(UUID.class);
+        assertThat(uuidResult).isNotNull();
+    }
 }

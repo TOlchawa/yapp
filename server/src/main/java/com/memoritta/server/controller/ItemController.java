@@ -43,9 +43,13 @@ public class ItemController {
 
             @RequestParam(required = false)
             @Parameter(description = "Optional picture file of the item (image/jpeg or image/png)")
-            MultipartFile picture
+            MultipartFile picture,
+
+            @RequestParam(required = false)
+            @Parameter(description = "Optional picture encoded in Base64")
+            String pictureBase64
     ) throws IOException {
-        return itemManager.saveItem(name, note, barCode, picture);
+        return itemManager.saveItem(name, note, barCode, picture, pictureBase64);
     }
 
     @PutMapping("/item")
