@@ -8,6 +8,7 @@ import com.memoritta.server.mapper.ItemMapper;
 import com.memoritta.server.model.Description;
 import com.memoritta.server.model.Item;
 import com.memoritta.server.model.PictureOfItem;
+import java.util.Base64;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -80,6 +81,53 @@ public class ItemManager {
         return itemRepository.findById(UUID.fromString(id))
                 .map(ItemMapper.INSTANCE::toItem)
                 .orElse(null);
+    }
+
+    public Item updateItem(String id,
+                           String name,
+                           String note,
+                           String barCode,
+                           MultipartFile picture,
+                           String pictureBase64) throws IOException {
+        Item item = fetchItem(id);
+        if (item == null) {
+            throw new IllegalArgumentException("Item not found with id: " + id);
+        }
+
+        if (name != null) {
+            item.setName(name);
+        }
+
+        boolean hasUpdate = note != null || barCode != null || picture != null || pictureBase64 != null;
+        Description description = item.getDescription();
+        if (description == null && hasUpdate) {
+            description = Description.builder().build();
+            item.setDescription(description);
+        }
+
+        if (description != null) {
+            if (note != null) {
+                description.setNote(note);
+            }
+            if (barCode != null) {
+                description.setBarcode(barCode);
+            }
+
+            if (picture != null || pictureBase64 != null) {
+                byte[] data = null;
+                if (picture != null) {
+                    data = picture.getBytes();
+                } else {
+                    data = Base64.getDecoder().decode(pictureBase64);
+                }
+                PictureOfItem newPic = PictureOfItem.builder().build();
+                newPic.setPicture(data);
+                description.setPictures(List.of(newPic));
+            }
+        }
+
+        save(item);
+        return item;
     }
 
     public List<Item> searchSimilarItems(String id) {

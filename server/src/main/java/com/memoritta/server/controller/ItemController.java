@@ -48,6 +48,39 @@ public class ItemController {
         return itemManager.saveItem(name, note, barCode, picture);
     }
 
+    @PutMapping("/item")
+    @Operation(
+            summary = "Update an item",
+            description = "Updates an item. A new picture can be sent as a file or Base64 string."
+    )
+    public Item updateItem(
+            @RequestParam
+            @Parameter(description = "UUID of the item to update")
+            String id,
+
+            @RequestParam(required = false)
+            @Parameter(description = "New name for the item")
+            String name,
+
+            @RequestParam(required = false)
+            @Parameter(description = "New note for the item")
+            String note,
+
+            @RequestParam(required = false)
+            @Parameter(description = "New barcode for the item")
+            String barCode,
+
+            @RequestParam(required = false)
+            @Parameter(description = "New picture file")
+            MultipartFile picture,
+
+            @RequestParam(required = false)
+            @Parameter(description = "New picture encoded in Base64")
+            String pictureBase64
+    ) throws IOException {
+        return itemManager.updateItem(id, name, note, barCode, picture, pictureBase64);
+    }
+
     /**
      * Fetches an item by its UUID.
      *
