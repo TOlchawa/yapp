@@ -1,7 +1,11 @@
 import React from 'react';
+import LoginForm from './LoginForm.jsx';
 
 export default function App() {
   return (
-    <h1>Hello, World!</h1>
+    <div>
+      <h1>Login</h1>
+      <LoginForm />
+    </div>
   );
 }
