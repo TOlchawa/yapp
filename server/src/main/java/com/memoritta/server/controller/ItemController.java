@@ -7,8 +7,10 @@ import com.memoritta.server.model.TagSearchRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 
 import java.io.IOException;
@@ -41,14 +43,16 @@ public class ItemController {
             @Parameter(description = "Optional barcode of the item", example = "1234567890123")
             String barCode,
 
-            @RequestParam(required = false)
-            @Parameter(description = "Optional picture file of the item (image/jpeg or image/png)")
-            MultipartFile picture,
+            HttpServletRequest request,
 
             @RequestParam(required = false)
             @Parameter(description = "Optional picture encoded in Base64")
             String pictureBase64
     ) throws IOException {
+        MultipartFile picture = null;
+        if (request instanceof MultipartHttpServletRequest multipart) {
+            picture = multipart.getFile("picture");
+        }
         return itemManager.saveItem(name, note, barCode, picture, pictureBase64);
     }
 
@@ -74,14 +78,16 @@ public class ItemController {
             @Parameter(description = "New barcode for the item")
             String barCode,
 
-            @RequestParam(required = false)
-            @Parameter(description = "New picture file")
-            MultipartFile picture,
+            HttpServletRequest request,
 
             @RequestParam(required = false)
             @Parameter(description = "New picture encoded in Base64")
             String pictureBase64
     ) throws IOException {
+        MultipartFile picture = null;
+        if (request instanceof MultipartHttpServletRequest multipart) {
+            picture = multipart.getFile("picture");
+        }
         return itemManager.updateItem(id, name, note, barCode, picture, pictureBase64);
     }
 
