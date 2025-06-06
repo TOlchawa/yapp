@@ -40,8 +40,7 @@ public class UpdateItemIT {
                 .extract()
                 .as(UUID.class);
 
-        byte[] bytes = Files.readAllBytes(file.toPath());
-        String encoded = java.util.Base64.getEncoder().encodeToString(bytes);
+        String encoded = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=";
 
         Item updated = given()
                 .auth().basic("admin", "admin")

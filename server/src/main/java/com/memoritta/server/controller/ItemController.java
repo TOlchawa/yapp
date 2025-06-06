@@ -78,11 +78,12 @@ public class ItemController {
             @Parameter(description = "New barcode for the item")
             String barCode,
 
-            HttpServletRequest request,
-
             @RequestParam(required = false)
             @Parameter(description = "New picture encoded in Base64")
-            String pictureBase64
+            String pictureBase64,
+
+            @Parameter(hidden = true)
+            HttpServletRequest request
     ) throws IOException {
         MultipartFile picture = null;
         if (request instanceof MultipartHttpServletRequest multipart) {
