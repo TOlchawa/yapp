@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 
+import { BACKEND_URL } from './config.js';
+
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [userInfo, setUserInfo] = useState(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setMessage('');
+    setUserInfo(null);
     try {
-      const response = await fetch('http://localhost:9090/user', {
+      const response = await fetch(`${BACKEND_URL}/user`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -18,7 +22,8 @@ export default function LoginForm() {
         throw new Error('login failed');
       }
       const data = await response.json();
-      setMessage(`Hello ${data.user.nickname}`);
+      setMessage(`Welcome ${data.user.nickname}`);
+      setUserInfo(data.user);
     } catch (err) {
       setMessage('Login error');
     }
@@ -46,6 +51,16 @@ export default function LoginForm() {
       </label>
       <button type="submit">Login</button>
       {message && <p>{message}</p>}
+      {userInfo && (
+        <div>
+          <h2>User Info</h2>
+          <ul>
+            <li>Nickname: {userInfo.nickname}</li>
+            <li>Email: {userInfo.email}</li>
+            <li>ID: {userInfo.id}</li>
+          </ul>
+        </div>
+      )}
     </form>
   );
 }
