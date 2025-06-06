@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.junit.jupiter.EnabledIf;
 
+import static integration.IntegrationTestUtil.assumeServerRunning;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.util.UUID;
@@ -21,6 +23,7 @@ public class UpdateItemIT {
     @EnabledIf(expression = "#{systemEnvironment['PROD'] == null}", reason = "Disabled in PROD environment")
     @Test
     void testUpdateItemWithBase64() throws Exception {
+        assumeServerRunning();
         RestAssured.baseURI = "http://127.0.0.1:9090";
 
         File file = new File("src/test/resources/picture.jpg");

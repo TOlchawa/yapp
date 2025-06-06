@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.junit.jupiter.EnabledIf;
 
+import static integration.IntegrationTestUtil.assumeServerRunning;
+
 import java.io.File;
 import java.util.UUID;
 
@@ -19,6 +21,7 @@ public class AddItemIT {
 
     @Test
     void testPingEndpoint() {
+        assumeServerRunning();
         RestAssured.baseURI = "http://localhost:9090"; // Ensure correct port
 
         Response response = given()
@@ -42,6 +45,7 @@ public class AddItemIT {
     @EnabledIf(expression = "#{systemEnvironment['PROD'] == null}", reason = "Disabled in PROD environment")
     @Test
     void testAddItem() {
+        assumeServerRunning();
 
         RestAssured.baseURI = "http://127.0.0.1:9090";
 
@@ -72,6 +76,8 @@ public class AddItemIT {
     @EnabledIf(expression = "#{systemEnvironment['PROD'] == null}", reason = "Disabled in PROD environment")
     @Test
     void testAddItemWithBase64() throws Exception {
+
+        assumeServerRunning();
 
         RestAssured.baseURI = "http://127.0.0.1:9090";
 
