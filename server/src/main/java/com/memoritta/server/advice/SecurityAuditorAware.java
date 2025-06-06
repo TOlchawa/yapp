@@ -22,7 +22,7 @@ public class SecurityAuditorAware implements AuditorAware<UUID> {
         try {
             return Optional.of(UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName()));
         } catch (IllegalArgumentException e) {
-            log.error("Invalid UUID format in SecurityContext: {}", SecurityContextHolder.getContext().getAuthentication().getName(), e);
+            log.error("Invalid UUID format in SecurityContext: {}", SecurityContextHolder.getContext().getAuthentication().getName());
             return Optional.of(UUID.randomUUID());
         }
     }
