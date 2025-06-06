@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mongo:
-        image: mongo:7
+        image: mongo:7.0.21
         ports:
           - 27017:27017
         env:
@@ -20,7 +20,7 @@ jobs:
         options: >-
           --health-cmd "mongosh --eval 'db.runCommand(\"ping\")'" --health-interval 10s --health-timeout 5s --health-retries 5
       redis:
-        image: redis:7
+        image: redis:7.2.9
         ports:
           - 6379:6379
         options: >-
