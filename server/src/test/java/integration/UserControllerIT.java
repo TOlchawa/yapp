@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.EnabledIf;
 
+import static integration.IntegrationTestUtil.assumeServerRunning;
+
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
@@ -20,6 +22,7 @@ public class UserControllerIT {
     @EnabledIf(expression = "#{systemEnvironment['PROD'] == null}", reason = "Disabled in PROD environment")
     @Test
     void testCreateUser() {
+        assumeServerRunning();
         RestAssured.baseURI = "http://localhost:9090";
 //        RestAssured.baseURI = "https://memoritta.com/api";
 
@@ -64,6 +67,7 @@ public class UserControllerIT {
     @Test
     void testFetchUser() {
 
+        assumeServerRunning();
         RestAssured.baseURI = "http://localhost:9090";
 
         String emailAddress = "test" + UUID.randomUUID() + "@example.com";

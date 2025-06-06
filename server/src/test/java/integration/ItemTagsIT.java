@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.junit.jupiter.EnabledIf;
 
+import static integration.IntegrationTestUtil.assumeServerRunning;
+
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,6 +18,7 @@ public class ItemTagsIT {
     @EnabledIf(expression = "#{systemEnvironment['PROD'] == null}", reason = "Disabled in PROD environment")
     @Test
     void testSearchItemsByTags() {
+        assumeServerRunning();
         RestAssured.baseURI = "http://localhost:9090";
 
         var response = given()

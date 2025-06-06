@@ -1,8 +1,6 @@
 package com.memoritta.server.advice;
 
 import lombok.extern.slf4j.Slf4j;
-import org.bson.internal.UuidHelper;
-import org.hibernate.validator.internal.constraintvalidators.hv.UUIDValidator;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.context.SecurityContextHolder;
 

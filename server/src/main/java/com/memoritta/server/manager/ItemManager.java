@@ -8,6 +8,7 @@ import com.memoritta.server.mapper.ItemMapper;
 import com.memoritta.server.model.Description;
 import com.memoritta.server.model.Item;
 import com.memoritta.server.model.PictureOfItem;
+import java.util.Base64;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -29,7 +30,11 @@ public class ItemManager {
     private final RedisTemplate<String, String> redisTemplate;
     private final BinaryDataManager binaryDataManager;
 
-    public UUID saveItem(String name, String note, String barCode, MultipartFile picture) throws IOException {
+    public UUID saveItem(String name,
+                        String note,
+                        String barCode,
+                        MultipartFile picture,
+                        String pictureBase64) throws IOException {
         Item item = Item.builder()
                 .name(name)
                 .id(UUID.randomUUID())
@@ -38,11 +43,16 @@ public class ItemManager {
         Description description = null;
 
         // Create description if any optional field was provided
-        if (picture != null || note != null || barCode != null) {
+        if (picture != null || pictureBase64 != null || note != null || barCode != null) {
             description = Description.builder().build();
 
-            if (picture != null) {
-                byte[] imageBytes = picture.getBytes();
+            if (picture != null || pictureBase64 != null) {
+                byte[] imageBytes;
+                if (picture != null) {
+                    imageBytes = picture.getBytes();
+                } else {
+                    imageBytes = Base64.getDecoder().decode(pictureBase64);
+                }
                 PictureOfItem pictureOfItem = PictureOfItem.builder().build();
                 pictureOfItem.setPicture(imageBytes);
                 description.setPictures(List.of(pictureOfItem));
@@ -80,6 +90,53 @@ public class ItemManager {
         return itemRepository.findById(UUID.fromString(id))
                 .map(ItemMapper.INSTANCE::toItem)
                 .orElse(null);
+    }
+
+    public Item updateItem(String id,
+                           String name,
+                           String note,
+                           String barCode,
+                           MultipartFile picture,
+                           String pictureBase64) throws IOException {
+        Item item = fetchItem(id);
+        if (item == null) {
+            throw new IllegalArgumentException("Item not found with id: " + id);
+        }
+
+        if (name != null) {
+            item.setName(name);
+        }
+
+        boolean hasUpdate = note != null || barCode != null || picture != null || pictureBase64 != null;
+        Description description = item.getDescription();
+        if (description == null && hasUpdate) {
+            description = Description.builder().build();
+            item.setDescription(description);
+        }
+
+        if (description != null) {
+            if (note != null) {
+                description.setNote(note);
+            }
+            if (barCode != null) {
+                description.setBarcode(barCode);
+            }
+
+            if (picture != null || pictureBase64 != null) {
+                byte[] data = null;
+                if (picture != null) {
+                    data = picture.getBytes();
+                } else {
+                    data = Base64.getDecoder().decode(pictureBase64);
+                }
+                PictureOfItem newPic = PictureOfItem.builder().build();
+                newPic.setPicture(data);
+                description.setPictures(List.of(newPic));
+            }
+        }
+
+        save(item);
+        return item;
     }
 
     public List<Item> searchSimilarItems(String id) {

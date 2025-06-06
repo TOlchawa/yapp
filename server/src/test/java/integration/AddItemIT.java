@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.junit.jupiter.EnabledIf;
 
+import static integration.IntegrationTestUtil.assumeServerRunning;
+
 import java.io.File;
 import java.util.UUID;
 
@@ -19,6 +21,7 @@ public class AddItemIT {
 
     @Test
     void testPingEndpoint() {
+        assumeServerRunning();
         RestAssured.baseURI = "http://localhost:9090"; // Ensure correct port
 
         Response response = given()
@@ -42,6 +45,7 @@ public class AddItemIT {
     @EnabledIf(expression = "#{systemEnvironment['PROD'] == null}", reason = "Disabled in PROD environment")
     @Test
     void testAddItem() {
+        assumeServerRunning();
 
         RestAssured.baseURI = "http://127.0.0.1:9090";
 
@@ -66,6 +70,37 @@ public class AddItemIT {
         Response finalResponseReturn = response.andReturn();
 
         UUID uuidResult = finalResponseReturn.as(UUID.class);
+        assertThat(uuidResult).isNotNull();
+    }
+
+    @EnabledIf(expression = "#{systemEnvironment['PROD'] == null}", reason = "Disabled in PROD environment")
+    @Test
+    void testAddItemWithBase64() throws Exception {
+
+        assumeServerRunning();
+
+        RestAssured.baseURI = "http://127.0.0.1:9090";
+
+        File file = new File("src/test/resources/picture.jpg");
+        assertThat(file.exists()).isTrue();
+
+        byte[] bytes = java.nio.file.Files.readAllBytes(file.toPath());
+        String encoded = java.util.Base64.getEncoder().encodeToString(bytes);
+
+        Response response = given()
+                .auth().basic("admin", "admin")
+                .param("name", "base64 name")
+                .param("note", "base64 note")
+                .param("pictureBase64", encoded)
+                .when()
+                .post("/item")
+                .then()
+                .statusCode(200)
+                .contentType("application/json")
+                .extract()
+                .response();
+
+        UUID uuidResult = response.as(UUID.class);
         assertThat(uuidResult).isNotNull();
     }
 }
