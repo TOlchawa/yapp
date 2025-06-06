@@ -14,3 +14,6 @@ This module contains a simple React application built with Vite. It displays a *
    ```
 
 Visit `http://localhost:5173` in your browser to see the running application.
+
+### Configuration
+Change the backend API address in `src/config.js` if your server runs on a different host or port.
