@@ -22,6 +22,7 @@ describe('AddView', () => {
     await waitFor(() => {
       expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith({ video: true });
       expect(screen.getByRole('button', { name: /take photo/i })).toBeInTheDocument();
+      expect(screen.getByTestId('camera-preview')).toBeInTheDocument();
     });
   });
 });

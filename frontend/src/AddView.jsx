@@ -43,12 +43,21 @@ export default function AddView() {
     <div>
       <h1>Add</h1>
       {!stream && <button onClick={handleEnableCamera}>Enable Camera</button>}
-      {stream && (
-        <div>
-          <video ref={videoRef} autoPlay playsInline />
+      <div className="camera-window">
+        {stream ? (
+          <video
+            data-testid="camera-preview"
+            ref={videoRef}
+            autoPlay
+            playsInline
+          />
+        ) : (
+          <div className="camera-placeholder">Camera disabled</div>
+        )}
+        {stream && (
           <button onClick={handleTakePhoto}>Take Photo</button>
-        </div>
-      )}
+        )}
+      </div>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
       {photo && <img src={photo} alt="Captured" />}
     </div>
