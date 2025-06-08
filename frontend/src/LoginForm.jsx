@@ -59,6 +59,15 @@ export default function LoginForm() {
             <li>Email: {userInfo.email}</li>
             <li>ID: {userInfo.id}</li>
           </ul>
+          <div>
+            <button>Add</button>
+          </div>
+          <div>
+            <button>Check</button>
+          </div>
+          <div>
+            <button>Inspiration</button>
+          </div>
         </div>
       )}
     </form>
