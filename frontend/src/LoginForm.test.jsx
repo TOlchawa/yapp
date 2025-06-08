@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import LoginForm from './LoginForm.jsx';
@@ -37,6 +37,24 @@ describe('LoginForm', () => {
 
     await screen.findByRole('button', { name: 'Add' });
 
+    expect(global.fetch).toHaveBeenCalledWith(
+      `${BACKEND_URL}/user`,
+      expect.objectContaining({
+        method: 'POST',
+      })
+    );
+    expect(screen.queryByTestId('email-input')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('password-input')).not.toBeInTheDocument();
+    expect(screen.getByText(/Nickname: nickname1/)).toBeInTheDocument();
+    expect(screen.getByText(/Email: user@example.com/)).toBeInTheDocument();
+    expect(screen.getByText(/ID: 1/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Add' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Compare' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Ask' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Questions' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Friends' })).toBeInTheDocument();
+  });
+
 
   it('stores credentials in cookies when remember is checked', async () => {
     const mockResponse = {
@@ -74,28 +92,6 @@ describe('LoginForm', () => {
     expect(screen.getByTestId('password-input')).toHaveValue('bar');
   });
 
-  it('shows proper view when a button is clicked', async () => {
-    const mockResponse = {
-      user: { nickname: 'Nick', email: 'user@example.com', id: '1' },
-      jwtToken: 'token',
-    };
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve(mockResponse),
-      })
-    );
-    expect(screen.queryByTestId('email-input')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('password-input')).not.toBeInTheDocument();
-    expect(screen.getByText(/Nickname: nickname1/)).toBeInTheDocument();
-    expect(screen.getByText(/Email: user@example.com/)).toBeInTheDocument();
-    expect(screen.getByText(/ID: 1/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Add' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Compare' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Ask' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Questions' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Friends' })).toBeInTheDocument();
-  });
 
   it(
     'shows proper view when a button is clicked',
