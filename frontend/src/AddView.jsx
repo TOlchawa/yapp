@@ -40,11 +40,13 @@ export default function AddView({ onBack = () => {} }) {
   }
 
   return (
-    <div style={{ position: 'relative' }}>
-      <button className="back-button" onClick={onBack}>
-        Back
-      </button>
-      <h1>Add</h1>
+    <div>
+      <div className="view-header">
+        <h1>Add</h1>
+        <button className="back-button" onClick={onBack}>
+          Back
+        </button>
+      </div>
       {!stream && <button onClick={handleEnableCamera}>Enable Camera</button>}
       <div className="camera-window">
         {stream ? (

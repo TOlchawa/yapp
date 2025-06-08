@@ -13,14 +13,14 @@ function truncate(str, max) {
   return `${str.slice(0, max - 3)}...`;
 }
 
-export default function Questions() {
+export default function Questions({ onBack = () => {} }) {
   const maxChars = Math.floor(window.innerWidth / 10);
   return (
-    <div style={{ position: 'relative' }}>
-      <button className="back-button" onClick={onBack}>
-        Back
-      </button>
-      <h1>Questions</h1>
+    <div>
+      <div className="view-header">
+        <h1>Questions</h1>
+        <button className="back-button" onClick={onBack}>Back</button>
+      </div>
       <ul>
         {sampleQuestions.map((q, i) => (
           <li key={i} className="question-item">
