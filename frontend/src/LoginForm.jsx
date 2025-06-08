@@ -8,7 +8,7 @@ import Friends from './Friends.jsx';
 
 import { BACKEND_URL } from './config.js';
 
-export default function LoginForm() {
+export default function LoginForm({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
@@ -29,8 +29,10 @@ export default function LoginForm() {
         throw new Error('login failed');
       }
       const data = await response.json();
-      setMessage(`Welcome ${data.user.nickname}`);
       setUserInfo(data.user);
+      if (onLogin) {
+        onLogin(data.user);
+      }
     } catch (err) {
       setMessage('Login error');
     }
@@ -38,26 +40,30 @@ export default function LoginForm() {
 
   return (
     <form className="login-form" onSubmit={handleSubmit}>
-      <label>
-        Email
-        <input
-          data-testid="email-input"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </label>
-      <label>
-        Password
-        <input
-          data-testid="password-input"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </label>
-      <button type="submit">Login</button>
-      {message && <p>{message}</p>}
+      {!userInfo && (
+        <>
+          <label>
+            Email
+            <input
+              data-testid="email-input"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </label>
+          <label>
+            Password
+            <input
+              data-testid="password-input"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
+          <button type="submit">Login</button>
+          {message && !userInfo && <p>{message}</p>}
+        </>
+      )}
       {userInfo && (
         <div>
           <h2>User Info</h2>
