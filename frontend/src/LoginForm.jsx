@@ -62,6 +62,7 @@ export default function LoginForm({ onLogin }) {
     <form className="login-form" onSubmit={handleSubmit}>
       {!userInfo && (
         <>
+          <h1>Login</h1>
           <label>
             Email
             <input
@@ -97,6 +98,8 @@ export default function LoginForm({ onLogin }) {
         <div>
           {currentView === null && (
             <>
+              <h1>Welcome</h1>
+              <p data-testid="user-nickname">{userInfo.nickname}</p>
               <h2>User Info</h2>
               <ul>
                 <li>Nickname: {userInfo.nickname}</li>

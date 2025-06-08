@@ -7,11 +7,11 @@ export default function Ask({ onBack = () => {} }) {
     // Add API call or other logic here later
   }
   return (
-    <div style={{ position: 'relative' }}>
-      <button className="back-button" onClick={onBack}>
-        Back
-      </button>
-      <h1>Ask</h1>
+    <div>
+      <div className="view-header">
+        <h1>Ask</h1>
+        <button className="back-button" onClick={onBack}>Back</button>
+      </div>
       <textarea
         data-testid="ask-textarea"
         rows={5}
