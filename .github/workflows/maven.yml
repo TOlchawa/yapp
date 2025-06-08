@@ -11,8 +11,16 @@ name: Java CI with Maven
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'server/**'
+      - 'pom.xml'
+      - '.github/workflows/maven.yml'
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'server/**'
+      - 'pom.xml'
+      - '.github/workflows/maven.yml'
 
 jobs:
   build:
