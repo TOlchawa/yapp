@@ -5,7 +5,9 @@ export default function Friends({ onBack = () => {} }) {
     <div>
       <div className="view-header">
         <h1>Friends</h1>
-        <button className="back-button" onClick={onBack}>Back</button>
+        <button type="button" className="back-button" onClick={onBack}>
+          Back
+        </button>
       </div>
     </div>
   );

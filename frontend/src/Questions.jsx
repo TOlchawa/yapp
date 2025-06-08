@@ -19,7 +19,9 @@ export default function Questions({ onBack = () => {} }) {
     <div>
       <div className="view-header">
         <h1>Questions</h1>
-        <button className="back-button" onClick={onBack}>Back</button>
+        <button type="button" className="back-button" onClick={onBack}>
+          Back
+        </button>
       </div>
       <ul>
         {sampleQuestions.map((q, i) => (

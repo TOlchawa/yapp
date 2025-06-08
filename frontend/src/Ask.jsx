@@ -10,7 +10,9 @@ export default function Ask({ onBack = () => {} }) {
     <div>
       <div className="view-header">
         <h1>Ask</h1>
-        <button className="back-button" onClick={onBack}>Back</button>
+        <button type="button" className="back-button" onClick={onBack}>
+          Back
+        </button>
       </div>
       <textarea
         data-testid="ask-textarea"
@@ -18,7 +20,7 @@ export default function Ask({ onBack = () => {} }) {
         value={question}
         onChange={(e) => setQuestion(e.target.value)}
       />
-      <button onClick={handleAsk}>Ask</button>
+      <button type="button" onClick={handleAsk}>Ask</button>
     </div>
   );
 }
