@@ -26,6 +26,11 @@ h1 {
   }
 }
 
+.question-item {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
 .camera-window {
   margin-top: 1rem;
   display: flex;
