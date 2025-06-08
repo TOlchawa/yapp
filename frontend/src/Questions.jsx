@@ -16,7 +16,10 @@ function truncate(str, max) {
 export default function Questions() {
   const maxChars = Math.floor(window.innerWidth / 10);
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
+      <button className="back-button" onClick={onBack}>
+        Back
+      </button>
       <h1>Questions</h1>
       <ul>
         {sampleQuestions.map((q, i) => (

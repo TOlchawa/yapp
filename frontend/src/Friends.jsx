@@ -1,8 +1,11 @@
 import React from 'react';
 
-export default function Friends() {
+export default function Friends({ onBack = () => {} }) {
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
+      <button className="back-button" onClick={onBack}>
+        Back
+      </button>
       <h1>Friends</h1>
     </div>
   );

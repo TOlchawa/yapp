@@ -6,5 +6,6 @@ describe('Friends component', () => {
   it('shows title', () => {
     render(<Friends />);
     expect(screen.getByRole('heading', { level: 1, name: 'Friends' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
   });
 });
