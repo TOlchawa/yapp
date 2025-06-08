@@ -4,8 +4,13 @@ export default function AddView({ onBack = () => {} }) {
   const [stream, setStream] = useState(null);
   const [photo, setPhoto] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [debugMessages, setDebugMessages] = useState([]);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+
+  function addDebug(msg) {
+    setDebugMessages((prev) => [...prev, msg]);
+  }
 
   useEffect(() => {
     if (videoRef.current && stream) {
@@ -16,25 +21,32 @@ export default function AddView({ onBack = () => {} }) {
       video.muted = true;
       video
         .play()
-        .catch((err) => console.error('Failed to play video', err));
+        .then(() => addDebug('Video playing'))
+        .catch((err) => addDebug(`Failed to play video: ${err.message}`));
     }
   }, [stream]);
 
   async function handleEnableCamera() {
     setErrorMessage('');
+    addDebug('Enable camera clicked');
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       setErrorMessage('Camera not supported');
+      addDebug('navigator.mediaDevices not available');
       return;
     }
     if (!window.isSecureContext) {
       setErrorMessage('Camera requires HTTPS or localhost');
+      addDebug('Page not secure');
       return;
     }
     try {
+      addDebug('Requesting camera stream');
       const userStream = await navigator.mediaDevices.getUserMedia({ video: true });
       setStream(userStream);
+      addDebug('Stream received');
     } catch (err) {
       setErrorMessage('Failed to access camera');
+      addDebug(`getUserMedia error: ${err.message}`);
     }
   }
 
@@ -44,6 +56,7 @@ export default function AddView({ onBack = () => {} }) {
     if (!video || !canvas) {
       return;
     }
+    addDebug('Taking photo');
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     const ctx = canvas.getContext('2d');
@@ -83,6 +96,14 @@ export default function AddView({ onBack = () => {} }) {
       </div>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
       {photo && <img src={photo} alt="Captured" />}
+      <div className="debug-box">
+        <textarea
+          readOnly
+          value={debugMessages.join('\n')}
+          style={{ width: '100%', height: '100px' }}
+          data-testid="debug-output"
+        />
+      </div>
     </div>
   );
 }
