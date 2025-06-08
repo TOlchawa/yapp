@@ -7,4 +7,12 @@ describe('Questions view', () => {
     render(<Questions />);
     expect(screen.getByRole('heading', { name: 'Questions' })).toBeInTheDocument();
   });
+
+  it('renders truncated questions list', () => {
+    window.innerWidth = 80;
+    render(<Questions />);
+    const items = screen.getAllByRole('listitem');
+    expect(items).toHaveLength(3);
+    expect(items.some((li) => li.textContent.endsWith('...'))).toBe(true);
+  });
 });
