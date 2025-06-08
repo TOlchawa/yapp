@@ -6,6 +6,7 @@ describe('Questions view', () => {
   it('shows Questions title', () => {
     render(<Questions />);
     expect(screen.getByRole('heading', { name: 'Questions' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
   });
 
   it('renders truncated questions list', () => {
