@@ -28,7 +28,8 @@ describe('App login flow', () => {
     fireEvent.click(screen.getByRole('button', { name: /login/i }));
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Welcome nickname1' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Welcome' })).toBeInTheDocument();
+      expect(screen.getByTestId('user-nickname')).toHaveTextContent('nickname1');
       expect(screen.queryByTestId('email-input')).not.toBeInTheDocument();
     });
   });

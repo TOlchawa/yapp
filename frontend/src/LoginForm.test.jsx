@@ -121,23 +121,24 @@ describe('LoginForm', () => {
 
       fireEvent.click(screen.getByRole('button', { name: 'Add' }));
       await screen.findByRole('heading', { name: 'Add' });
-      console.log('.');
-
+      expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
+      fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+      await screen.findByRole('button', { name: 'Compare' });
       fireEvent.click(screen.getByRole('button', { name: 'Compare' }));
       await screen.findByRole('heading', { name: 'Compare' });
-      console.log('.');
-
+      fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+      await screen.findByRole('button', { name: 'Ask' });
       fireEvent.click(screen.getByRole('button', { name: 'Ask' }));
       await screen.findByRole('heading', { name: 'Ask' });
-      console.log('.');
-
+      fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+      await screen.findByRole('button', { name: 'Questions' });
       fireEvent.click(screen.getByRole('button', { name: 'Questions' }));
       await screen.findByRole('heading', { name: 'Questions' });
-      console.log('.');
-
+      fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+      await screen.findByRole('button', { name: 'Friends' });
       fireEvent.click(screen.getByRole('button', { name: 'Friends' }));
       await screen.findByRole('heading', { name: 'Friends' });
-      console.log('.');
+      fireEvent.click(screen.getByRole('button', { name: 'Back' }));
     }
   );
 });
