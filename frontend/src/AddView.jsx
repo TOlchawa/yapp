@@ -50,8 +50,10 @@ export default function AddView({ onBack = () => {} }) {
           Back
         </button>
       </div>
+
       {!stream && <button onClick={handleEnableCamera}>Enable Camera</button>}
       {errorMessage && <p className="error">{errorMessage}</p>}
+
       <div className="camera-window">
         {stream ? (
           <video
@@ -65,6 +67,9 @@ export default function AddView({ onBack = () => {} }) {
         )}
         {stream && (
           <button onClick={handleTakePhoto}>Take Photo</button>
+        )}
+        {!stream && (
+          <button onClick={handleEnableCamera}>Enable Camera</button>
         )}
       </div>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
