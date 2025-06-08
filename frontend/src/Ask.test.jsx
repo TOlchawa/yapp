@@ -7,4 +7,10 @@ describe('Ask view', () => {
     render(<Ask />);
     expect(screen.getByRole('heading', { name: 'Ask' })).toBeInTheDocument();
   });
+
+  it('shows a textarea and Ask button', () => {
+    render(<Ask />);
+    expect(screen.getByTestId('ask-textarea')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Ask' })).toBeInTheDocument();
+  });
 });
