@@ -6,9 +6,11 @@ export default function Ask() {
   function handleAsk() {
     // Add API call or other logic here later
   }
-
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
+      <button className="back-button" onClick={onBack}>
+        Back
+      </button>
       <h1>Ask</h1>
       <textarea
         data-testid="ask-textarea"
