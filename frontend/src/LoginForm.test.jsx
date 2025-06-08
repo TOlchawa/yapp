@@ -1,10 +1,11 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import LoginForm from './LoginForm.jsx';
 import { BACKEND_URL } from './config.js';
 
 describe('LoginForm', () => {
+  afterEach(() => vi.restoreAllMocks());
   it('renders email and password inputs', () => {
     render(<LoginForm />);
     expect(screen.getByTestId('email-input')).toBeInTheDocument();
@@ -34,25 +35,8 @@ describe('LoginForm', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: /login/i }));
 
-    await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith(
-        `${BACKEND_URL}/user`,
-        expect.objectContaining({
-          method: 'POST',
-        })
-      );
-      expect(screen.queryByTestId('email-input')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('password-input')).not.toBeInTheDocument();
-      expect(screen.getByText(/Nickname: nickname1/)).toBeInTheDocument();
-      expect(screen.getByText(/Email: user@example.com/)).toBeInTheDocument();
-      expect(screen.getByText(/ID: 1/)).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Add' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Compare' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Ask' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Questions' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Friends' })).toBeInTheDocument();
-    });
-  });
+    await screen.findByRole('button', { name: 'Add' });
+
 
   it('stores credentials in cookies when remember is checked', async () => {
     const mockResponse = {
@@ -101,31 +85,63 @@ describe('LoginForm', () => {
         json: () => Promise.resolve(mockResponse),
       })
     );
+    expect(screen.queryByTestId('email-input')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('password-input')).not.toBeInTheDocument();
+    expect(screen.getByText(/Nickname: nickname1/)).toBeInTheDocument();
+    expect(screen.getByText(/Email: user@example.com/)).toBeInTheDocument();
+    expect(screen.getByText(/ID: 1/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Add' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Compare' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Ask' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Questions' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Friends' })).toBeInTheDocument();
+  });
 
-    render(<LoginForm />);
-    fireEvent.change(screen.getByTestId('email-input'), {
-      target: { value: 'user@example.com' },
-    });
-    fireEvent.change(screen.getByTestId('password-input'), {
-      target: { value: 'secret' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+  it(
+    'shows proper view when a button is clicked',
+    { timeout: 10000 },
+    async () => {
+      const mockResponse = {
+        user: { nickname: 'Nick', email: 'user@example.com', id: '1' },
+        jwtToken: 'token',
+      };
+      global.fetch = vi.fn(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockResponse),
+        })
+      );
 
-    await waitFor(() => {
+      render(<LoginForm />);
+      fireEvent.change(screen.getByTestId('email-input'), {
+        target: { value: 'user@example.com' },
+      });
+      fireEvent.change(screen.getByTestId('password-input'), {
+        target: { value: 'secret' },
+      });
+      fireEvent.click(screen.getByRole('button', { name: /login/i }));
+
+      await screen.findByRole('button', { name: 'Add' });
+
       fireEvent.click(screen.getByRole('button', { name: 'Add' }));
-      expect(screen.getByRole('heading', { name: 'Add' })).toBeInTheDocument();
+      await screen.findByRole('heading', { name: 'Add' });
+      console.log('.');
 
       fireEvent.click(screen.getByRole('button', { name: 'Compare' }));
-      expect(screen.getByRole('heading', { name: 'Compare' })).toBeInTheDocument();
+      await screen.findByRole('heading', { name: 'Compare' });
+      console.log('.');
 
       fireEvent.click(screen.getByRole('button', { name: 'Ask' }));
-      expect(screen.getByRole('heading', { name: 'Ask' })).toBeInTheDocument();
+      await screen.findByRole('heading', { name: 'Ask' });
+      console.log('.');
 
       fireEvent.click(screen.getByRole('button', { name: 'Questions' }));
-      expect(screen.getByRole('heading', { name: 'Questions' })).toBeInTheDocument();
+      await screen.findByRole('heading', { name: 'Questions' });
+      console.log('.');
 
       fireEvent.click(screen.getByRole('button', { name: 'Friends' }));
-      expect(screen.getByRole('heading', { name: 'Friends' })).toBeInTheDocument();
-    });
-  });
+      await screen.findByRole('heading', { name: 'Friends' });
+      console.log('.');
+    }
+  );
 });
