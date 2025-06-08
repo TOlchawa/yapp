@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 
-export default function AddView() {
+export default function AddView({ onBack = () => {} }) {
   const [stream, setStream] = useState(null);
   const [photo, setPhoto] = useState(null);
   const videoRef = useRef(null);
@@ -40,7 +40,10 @@ export default function AddView() {
   }
 
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
+      <button className="back-button" onClick={onBack}>
+        Back
+      </button>
       <h1>Add</h1>
       {!stream && <button onClick={handleEnableCamera}>Enable Camera</button>}
       {stream && (

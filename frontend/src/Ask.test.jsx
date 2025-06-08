@@ -6,5 +6,6 @@ describe('Ask view', () => {
   it('shows the Ask title', () => {
     render(<Ask />);
     expect(screen.getByRole('heading', { name: 'Ask' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
   });
 });
