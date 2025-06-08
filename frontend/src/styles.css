@@ -40,6 +40,12 @@ h1 {
   gap: 0.5rem;
 }
 
+.camera-window video {
+  width: 320px;
+  height: 240px;
+  background: #000;
+}
+
 .camera-placeholder {
   width: 320px;
   height: 240px;

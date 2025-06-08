@@ -4,6 +4,14 @@ import { vi } from 'vitest';
 import AddView from './AddView.jsx';
 
 describe('AddView', () => {
+  beforeEach(() => {
+    Object.defineProperty(global, 'isSecureContext', {
+      value: true,
+      configurable: true,
+    });
+    vi.spyOn(HTMLMediaElement.prototype, 'play').mockImplementation(() => Promise.resolve());
+  });
+
   afterEach(() => {
     vi.restoreAllMocks();
     delete global.navigator.mediaDevices;

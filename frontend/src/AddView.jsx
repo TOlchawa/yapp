@@ -11,7 +11,12 @@ export default function AddView({ onBack = () => {} }) {
     if (videoRef.current && stream) {
       // Attach the stream to the video element
       // JSDOM will just store this property
-      videoRef.current.srcObject = stream;
+      const video = videoRef.current;
+      video.srcObject = stream;
+      video.muted = true;
+      video
+        .play()
+        .catch((err) => console.error('Failed to play video', err));
     }
   }, [stream]);
 
@@ -19,6 +24,10 @@ export default function AddView({ onBack = () => {} }) {
     setErrorMessage('');
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       setErrorMessage('Camera not supported');
+      return;
+    }
+    if (!window.isSecureContext) {
+      setErrorMessage('Camera requires HTTPS or localhost');
       return;
     }
     try {
@@ -51,7 +60,6 @@ export default function AddView({ onBack = () => {} }) {
         </button>
       </div>
 
-      {!stream && <button onClick={handleEnableCamera}>Enable Camera</button>}
       {errorMessage && <p className="error">{errorMessage}</p>}
 
       <div className="camera-window">
@@ -59,6 +67,7 @@ export default function AddView({ onBack = () => {} }) {
           <video
             data-testid="camera-preview"
             ref={videoRef}
+            muted
             autoPlay
             playsInline
           />

@@ -15,6 +15,12 @@ This module contains a simple React application built with Vite. It displays a *
 
 Visit `http://localhost:5173` in your browser to see the running application.
 
+### Camera Access
+The camera works only in a secure context (HTTPS or `localhost`).
+Make sure the browser has permission to use the camera.
+If the video preview does not start, check the console for errors and
+verify that no other application is using the device.
+
 ### Configuration
 Change the backend API address in `src/config.js` if your server runs on a different host or port.
 
