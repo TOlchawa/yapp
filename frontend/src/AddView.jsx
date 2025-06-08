@@ -3,6 +3,7 @@ import React, { useRef, useState, useEffect } from 'react';
 export default function AddView({ onBack = () => {} }) {
   const [stream, setStream] = useState(null);
   const [photo, setPhoto] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
@@ -15,14 +16,16 @@ export default function AddView({ onBack = () => {} }) {
   }, [stream]);
 
   async function handleEnableCamera() {
+    setErrorMessage('');
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setErrorMessage('Camera not supported');
       return;
     }
     try {
       const userStream = await navigator.mediaDevices.getUserMedia({ video: true });
       setStream(userStream);
     } catch (err) {
-      // Ignore errors for now
+      setErrorMessage('Failed to access camera');
     }
   }
 
@@ -48,6 +51,7 @@ export default function AddView({ onBack = () => {} }) {
         </button>
       </div>
       {!stream && <button onClick={handleEnableCamera}>Enable Camera</button>}
+      {errorMessage && <p className="error">{errorMessage}</p>}
       <div className="camera-window">
         {stream ? (
           <video
