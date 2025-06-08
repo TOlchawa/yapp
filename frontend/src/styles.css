@@ -26,8 +26,9 @@ h1 {
   }
 }
 
-.back-button {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
+
+.question-item {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

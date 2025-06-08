@@ -8,4 +8,12 @@ describe('Questions view', () => {
     expect(screen.getByRole('heading', { name: 'Questions' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
   });
+
+  it('renders truncated questions list', () => {
+    window.innerWidth = 80;
+    render(<Questions />);
+    const items = screen.getAllByRole('listitem');
+    expect(items).toHaveLength(3);
+    expect(items.some((li) => li.textContent.endsWith('...'))).toBe(true);
+  });
 });
