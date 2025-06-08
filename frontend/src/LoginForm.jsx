@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
 
+import AddView from './AddView.jsx';
+import Compare from './Compare.jsx';
+import Ask from './Ask.jsx';
+import Questions from './Questions.jsx';
+import Friends from './Friends.jsx';
+
 import { BACKEND_URL } from './config.js';
 
 export default function LoginForm() {
@@ -7,6 +13,7 @@ export default function LoginForm() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [userInfo, setUserInfo] = useState(null);
+  const [currentView, setCurrentView] = useState(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -60,14 +67,25 @@ export default function LoginForm() {
             <li>ID: {userInfo.id}</li>
           </ul>
           <div>
-            <button>Add</button>
+            <button onClick={() => setCurrentView('add')}>Add</button>
           </div>
           <div>
-            <button>Check</button>
+            <button onClick={() => setCurrentView('compare')}>Compare</button>
           </div>
           <div>
-            <button>Inspiration</button>
+            <button onClick={() => setCurrentView('ask')}>Ask</button>
           </div>
+          <div>
+            <button onClick={() => setCurrentView('questions')}>Questions</button>
+          </div>
+          <div>
+            <button onClick={() => setCurrentView('friends')}>Friends</button>
+          </div>
+          {currentView === 'add' && <AddView />}
+          {currentView === 'compare' && <Compare />}
+          {currentView === 'ask' && <Ask />}
+          {currentView === 'questions' && <Questions />}
+          {currentView === 'friends' && <Friends />}
         </div>
       )}
     </form>
