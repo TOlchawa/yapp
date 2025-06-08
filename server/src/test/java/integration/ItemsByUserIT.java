@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.junit.jupiter.EnabledIf;
 
+import static integration.IntegrationTestUtil.assumeServerRunning;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -20,6 +22,7 @@ public class ItemsByUserIT {
     @EnabledIf(expression = "#{systemEnvironment['PROD'] == null}", reason = "Disabled in PROD environment")
     @Test
     void testItemsForUnknownUser_shouldReturnServerError() {
+        assumeServerRunning();
         RestAssured.baseURI = "http://localhost:9090";
 
         given()
@@ -34,6 +37,7 @@ public class ItemsByUserIT {
     @EnabledIf(expression = "#{systemEnvironment['PROD'] == null}", reason = "Disabled in PROD environment")
     @Test
     void testItemsForNewUser_shouldBeEmpty() {
+        assumeServerRunning();
         RestAssured.baseURI = "http://localhost:9090";
 
         String email = "e2e" + UUID.randomUUID() + "@example.com";

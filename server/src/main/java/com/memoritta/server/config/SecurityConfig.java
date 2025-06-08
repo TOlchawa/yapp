@@ -2,6 +2,8 @@ package com.memoritta.server.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -10,8 +12,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -29,17 +29,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-//                .oauth2ResourceServer(oauth2 -> oauth2
-//                        .jwt(jwt -> jwt
-//                                .jwtAuthenticationConverter(jwtAuthenticationConverter())
-//                        )
-//                )
+                // enable CORS support (will pick up your WebConfig.addCorsMappings)
+                .cors(Customizer.withDefaults())
+                // disable CSRF (since we're using JWT/Basic auth and CORS)
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/login", "/user").permitAll()
+                        // allow preflight OPTIONS for all endpoints
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // public endpoints
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/login", "/user")
+                        .permitAll()
+                        // everything else needs authentication
                         .anyRequest().authenticated()
                 )
-                .httpBasic(withDefaults());
+                // use HTTP Basic
+                .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
@@ -50,5 +54,4 @@ public class SecurityConfig {
         converter.setPrincipalClaimName("sub");
         return converter;
     }
-
 }

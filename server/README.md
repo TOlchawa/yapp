@@ -4,7 +4,8 @@ This project contains the code for the server-side (backend) of the application.
 
 ## Running Integration Tests
 
-Integration tests with the suffix `IT` require the application to be running locally. Ensure that the application is started before executing these tests.
+Integration tests with the suffix `IT` require the application to be running locally. Ensure that the application is
+started before executing these tests.
 
 To start the application locally, run:
 
@@ -21,27 +22,58 @@ spring:
   redis:
     host: localhost
     port: 6379
-    password: 
+    password:
     database: 0
 ```
 
-Ensure that Redis is running locally on port `6379` before starting the application. You can start Redis using Docker with:
+Ensure that Redis is running locally on port `6379` before starting the application. You can start Redis using Docker
+with:
 
 ```bash
 docker run --name redis -d -p 6379:6379 redis
 ```
 
-* Mongo
-```bash
-  mongosh --password **** --username admin
-```
-* Redis
-```bash
-  redis-cli  --user default  --pass ****
-```
-## Certificates generate
+### MongoDB and Redis CLI
 
-````aiignore
+* Mongo
+
+```bash
+mongosh --password **** --username admin
+```
+
+* Redis
+
+```bash
+redis-cli --user default --pass ****
+```
+
+## Certificates Generate
+
+```aiignore
 openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:2048
 openssl rsa -pubout -in private.pem -out public.pem
-````
+```
+
+## Enabling CORS for Cross-Origin Requests
+
+If you want to connect to the backend from a different host or port (for example, when running the frontend on
+`http://localhost:5174`), you need to enable CORS in the application.
+
+In this project, we use a dedicated Spring profile `DEV` to activate CORS settings. To enable CORS, start the
+application with the `DEV` profile:
+
+```bash
+java -Dspring.profiles.active=DEV -jar memoritta.jar
+```
+
+Or, if you use Maven:
+
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=DEV
+```
+
+When the `DEV` profile is active, the application will register CORS configuration that allows requests from your
+frontend origin (`http://localhost:5174`). Make sure your `WebConfig` and `CorsFilterConfig` classes are annotated with
+`@Profile("DEV")` so that CORS is only enabled in development.
+
+Now, your frontend running on a different host or port can access the backend endpoints without CORS errors.
