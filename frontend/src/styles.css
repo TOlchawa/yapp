@@ -25,3 +25,9 @@ h1 {
     box-sizing: border-box;
   }
 }
+
+.question-item {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
