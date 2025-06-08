@@ -43,6 +43,9 @@ describe('LoginForm', () => {
       expect(screen.getByText(/Nickname: Nick/)).toBeInTheDocument();
       expect(screen.getByText(/Email: user@example.com/)).toBeInTheDocument();
       expect(screen.getByText(/ID: 1/)).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Add' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Check' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Inspiration' })).toBeInTheDocument();
     });
   });
 });
