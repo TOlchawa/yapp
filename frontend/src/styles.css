@@ -67,3 +67,25 @@ h1 {
 .view-header h1 {
   margin: 0;
 }
+
+/* Back button styling */
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  background-color: #eee;
+  border: none;
+  border-radius: 4px;
+  color: #333;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  background-color: #ddd;
+}
+
+.back-button::before {
+  content: '\2190'; /* left arrow */
+  font-size: 1rem;
+}
