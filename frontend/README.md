@@ -21,6 +21,11 @@ Make sure the browser has permission to use the camera.
 If the video preview does not start, check the console for errors and
 verify that no other application is using the device.
 
+### Debug Output
+The *Add* view now includes a debug text box. Messages about camera access and
+errors appear here. This helps debugging on mobile devices without developer
+tools.
+
 ### Configuration
 Change the backend API address in `src/config.js` if your server runs on a different host or port.
 
