@@ -5,7 +5,9 @@ export default function Compare({ onBack = () => {} }) {
     <div>
       <div className="view-header">
         <h1>Compare</h1>
-        <button className="back-button" onClick={onBack}>Back</button>
+        <button type="button" className="back-button" onClick={onBack}>
+          Back
+        </button>
       </div>
     </div>
   );

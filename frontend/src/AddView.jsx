@@ -94,7 +94,7 @@ export default function AddView({ onBack = () => {} }) {
     <div>
       <div className="view-header">
         <h1>Add</h1>
-        <button className="back-button" onClick={onBack}>
+        <button type="button" className="back-button" onClick={onBack}>
           Back
         </button>
       </div>
@@ -114,10 +114,12 @@ export default function AddView({ onBack = () => {} }) {
           <div className="camera-placeholder">Camera disabled</div>
         )}
         {stream && (
-          <button onClick={handleTakePhoto}>Take Photo</button>
+          <button type="button" onClick={handleTakePhoto}>Take Photo</button>
         )}
         {!stream && (
-          <button onClick={handleEnableCamera}>Enable Camera</button>
+          <button type="button" onClick={handleEnableCamera}>
+            Enable Camera
+          </button>
         )}
       </div>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
