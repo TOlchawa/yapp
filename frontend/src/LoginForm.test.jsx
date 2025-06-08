@@ -13,7 +13,7 @@ describe('LoginForm', () => {
 
   it('calls fetch with credentials and shows user info', async () => {
     const mockResponse = {
-      user: { nickname: 'Nick', email: 'user@example.com', id: '1' },
+      user: { nickname: 'nickname1', email: 'user@example.com', id: '1' },
       jwtToken: 'token',
     };
     global.fetch = vi.fn(() =>
@@ -40,7 +40,9 @@ describe('LoginForm', () => {
           method: 'POST',
         })
       );
-      expect(screen.getByText(/Nickname: Nick/)).toBeInTheDocument();
+      expect(screen.queryByTestId('email-input')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('password-input')).not.toBeInTheDocument();
+      expect(screen.getByText(/Nickname: nickname1/)).toBeInTheDocument();
       expect(screen.getByText(/Email: user@example.com/)).toBeInTheDocument();
       expect(screen.getByText(/ID: 1/)).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Add' })).toBeInTheDocument();
