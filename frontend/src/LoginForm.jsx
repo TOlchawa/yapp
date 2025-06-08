@@ -95,32 +95,46 @@ export default function LoginForm({ onLogin }) {
       )}
       {userInfo && (
         <div>
-          <h2>User Info</h2>
-          <ul>
-            <li>Nickname: {userInfo.nickname}</li>
-            <li>Email: {userInfo.email}</li>
-            <li>ID: {userInfo.id}</li>
-          </ul>
-          <div>
-            <button onClick={() => setCurrentView('add')}>Add</button>
-          </div>
-          <div>
-            <button onClick={() => setCurrentView('compare')}>Compare</button>
-          </div>
-          <div>
-            <button onClick={() => setCurrentView('ask')}>Ask</button>
-          </div>
-          <div>
-            <button onClick={() => setCurrentView('questions')}>Questions</button>
-          </div>
-          <div>
-            <button onClick={() => setCurrentView('friends')}>Friends</button>
-          </div>
-          {currentView === 'add' && <AddView />}
-          {currentView === 'compare' && <Compare />}
-          {currentView === 'ask' && <Ask />}
-          {currentView === 'questions' && <Questions />}
-          {currentView === 'friends' && <Friends />}
+          {currentView === null && (
+            <>
+              <h2>User Info</h2>
+              <ul>
+                <li>Nickname: {userInfo.nickname}</li>
+                <li>Email: {userInfo.email}</li>
+                <li>ID: {userInfo.id}</li>
+              </ul>
+              <div>
+                <button onClick={() => setCurrentView('add')}>Add</button>
+              </div>
+              <div>
+                <button onClick={() => setCurrentView('compare')}>Compare</button>
+              </div>
+              <div>
+                <button onClick={() => setCurrentView('ask')}>Ask</button>
+              </div>
+              <div>
+                <button onClick={() => setCurrentView('questions')}>Questions</button>
+              </div>
+              <div>
+                <button onClick={() => setCurrentView('friends')}>Friends</button>
+              </div>
+            </>
+          )}
+          {currentView === 'add' && (
+            <AddView onBack={() => setCurrentView(null)} />
+          )}
+          {currentView === 'compare' && (
+            <Compare onBack={() => setCurrentView(null)} />
+          )}
+          {currentView === 'ask' && (
+            <Ask onBack={() => setCurrentView(null)} />
+          )}
+          {currentView === 'questions' && (
+            <Questions onBack={() => setCurrentView(null)} />
+          )}
+          {currentView === 'friends' && (
+            <Friends onBack={() => setCurrentView(null)} />
+          )}
         </div>
       )}
     </form>

@@ -6,7 +6,14 @@ export default function App() {
 
   return (
     <div>
-      <h1>{userInfo ? `Welcome ${userInfo.nickname}` : 'Login'}</h1>
+      {userInfo ? (
+        <>
+          <h1>Welcome</h1>
+          <p data-testid="user-nickname">{userInfo.nickname}</p>
+        </>
+      ) : (
+        <h1>Login</h1>
+      )}
       <LoginForm onLogin={setUserInfo} />
     </div>
   );

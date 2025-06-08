@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 
-export default function AddView() {
+export default function AddView({ onBack = () => {} }) {
   const [stream, setStream] = useState(null);
   const [photo, setPhoto] = useState(null);
   const videoRef = useRef(null);
@@ -40,15 +40,27 @@ export default function AddView() {
   }
 
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
+      <button className="back-button" onClick={onBack}>
+        Back
+      </button>
       <h1>Add</h1>
       {!stream && <button onClick={handleEnableCamera}>Enable Camera</button>}
-      {stream && (
-        <div>
-          <video ref={videoRef} autoPlay playsInline />
+      <div className="camera-window">
+        {stream ? (
+          <video
+            data-testid="camera-preview"
+            ref={videoRef}
+            autoPlay
+            playsInline
+          />
+        ) : (
+          <div className="camera-placeholder">Camera disabled</div>
+        )}
+        {stream && (
           <button onClick={handleTakePhoto}>Take Photo</button>
-        </div>
-      )}
+        )}
+      </div>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
       {photo && <img src={photo} alt="Captured" />}
     </div>

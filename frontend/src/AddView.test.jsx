@@ -7,6 +7,7 @@ describe('AddView', () => {
   it('shows Add title', () => {
     render(<AddView />);
     expect(screen.getByRole('heading', { name: 'Add' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
   });
 
   it('enables camera and shows take photo button', async () => {
@@ -22,6 +23,7 @@ describe('AddView', () => {
     await waitFor(() => {
       expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith({ video: true });
       expect(screen.getByRole('button', { name: /take photo/i })).toBeInTheDocument();
+      expect(screen.getByTestId('camera-preview')).toBeInTheDocument();
     });
   });
 });
