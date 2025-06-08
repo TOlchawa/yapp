@@ -4,13 +4,19 @@ export default function AddView({ onBack = () => {} }) {
   const [stream, setStream] = useState(null);
   const [photo, setPhoto] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
-  const [debugMessages, setDebugMessages] = useState([]);
+  // Start with a message so we know the debug box works
+  const [debugMessages, setDebugMessages] = useState(['Debug box ready']);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
   function addDebug(msg) {
     setDebugMessages((prev) => [...prev, msg]);
   }
+
+  // Confirm component is ready
+  useEffect(() => {
+    addDebug('AddView mounted');
+  }, []);
 
   useEffect(() => {
     if (videoRef.current && stream) {
