@@ -19,16 +19,32 @@ export default function AddView({ onBack = () => {} }) {
       const video = videoRef.current;
       video.srcObject = stream;
       video.muted = true;
+      const track = stream.getVideoTracks()[0];
+      if (track) {
+        addDebug(`Track readyState: ${track.readyState}`);
+        track.addEventListener('ended', () => addDebug('Track ended'));
+      }
       video
         .play()
         .then(() => addDebug('Video playing'))
         .catch((err) => addDebug(`Failed to play video: ${err.message}`));
+    }
+    if (stream) {
+      addDebug(`Stream active (effect): ${stream.active}`);
     }
   }, [stream]);
 
   async function handleEnableCamera() {
     setErrorMessage('');
     addDebug('Enable camera clicked');
+    if (navigator.permissions && navigator.permissions.query) {
+      try {
+        const result = await navigator.permissions.query({ name: 'camera' });
+        addDebug(`Permission state: ${result.state}`);
+      } catch (err) {
+        addDebug(`Permission query failed: ${err.message}`);
+      }
+    }
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       setErrorMessage('Camera not supported');
       addDebug('navigator.mediaDevices not available');
@@ -42,6 +58,10 @@ export default function AddView({ onBack = () => {} }) {
     try {
       addDebug('Requesting camera stream');
       const userStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      addDebug(`Stream active after getUserMedia: ${userStream.active}`);
+      if (userStream.addEventListener) {
+        userStream.addEventListener('inactive', () => addDebug('Stream inactive'));
+      }
       setStream(userStream);
       addDebug('Stream received');
     } catch (err) {
