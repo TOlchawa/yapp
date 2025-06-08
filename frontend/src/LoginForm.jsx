@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import AddView from './AddView.jsx';
 import Compare from './Compare.jsx';
@@ -11,9 +11,22 @@ import { BACKEND_URL } from './config.js';
 export default function LoginForm({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [remember, setRemember] = useState(false);
   const [message, setMessage] = useState('');
   const [userInfo, setUserInfo] = useState(null);
   const [currentView, setCurrentView] = useState(null);
+
+  useEffect(() => {
+    const matchEmail = document.cookie.match(/(?:^|;)\s*email=([^;]+)/);
+    const matchPassword = document.cookie.match(/(?:^|;)\s*password=([^;]+)/);
+    if (matchEmail) {
+      setEmail(decodeURIComponent(matchEmail[1]));
+      setRemember(true);
+    }
+    if (matchPassword) {
+      setPassword(decodeURIComponent(matchPassword[1]));
+    }
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -30,6 +43,13 @@ export default function LoginForm({ onLogin }) {
       }
       const data = await response.json();
       setUserInfo(data.user);
+      if (remember) {
+        document.cookie = `email=${encodeURIComponent(email)}; path=/`;
+        document.cookie = `password=${encodeURIComponent(password)}; path=/`;
+      } else {
+        document.cookie = 'email=; Max-Age=0; path=/';
+        document.cookie = 'password=; Max-Age=0; path=/';
+      }
       if (onLogin) {
         onLogin(data.user);
       }
@@ -59,6 +79,15 @@ export default function LoginForm({ onLogin }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+          </label>
+          <label>
+            <input
+              data-testid="remember-checkbox"
+              type="checkbox"
+              checked={remember}
+              onChange={(e) => setRemember(e.target.checked)}
+            />
+            Remember me
           </label>
           <button type="submit">Login</button>
           {message && !userInfo && <p>{message}</p>}
