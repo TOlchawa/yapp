@@ -4,6 +4,11 @@ import { vi } from 'vitest';
 import AddView from './AddView.jsx';
 
 describe('AddView', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    delete global.navigator.mediaDevices;
+  });
+
   it('shows Add title', () => {
     render(<AddView />);
     expect(screen.getByRole('heading', { name: 'Add' })).toBeInTheDocument();
@@ -25,5 +30,16 @@ describe('AddView', () => {
       expect(screen.getByRole('button', { name: /take photo/i })).toBeInTheDocument();
       expect(screen.getByTestId('camera-preview')).toBeInTheDocument();
     });
+  });
+
+  it('shows error when camera not supported', () => {
+    delete global.navigator.mediaDevices;
+
+    render(<AddView />);
+
+    const enableBtn = screen.getByRole('button', { name: /enable camera/i });
+    fireEvent.click(enableBtn);
+
+    expect(screen.getByText(/camera not supported/i)).toBeInTheDocument();
   });
 });
