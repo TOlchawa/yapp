@@ -26,8 +26,21 @@ h1 {
   }
 }
 
-.question-item {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.camera-window {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.camera-placeholder {
+  width: 320px;
+  height: 240px;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+
 }
