@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function Ask() {
+export default function Ask({ onBack = () => {} }) {
   const [question, setQuestion] = useState('');
 
   function handleAsk() {
