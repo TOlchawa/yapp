@@ -43,6 +43,10 @@ This project was born from the need for:
    git clone https://github.com/TOlchawa/yapp
    ```
 
+### Camera Preview
+The web camera works only over HTTPS or on `localhost`.
+Give the browser permission to use the camera.
+
 ## API Documentation
 You can explore the REST API using the online Swagger UI:
 [https://memoritta.com/swagger-ui/index.html](https://memoritta.com/swagger-ui/index.html)
