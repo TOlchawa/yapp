@@ -90,3 +90,9 @@ h1 {
   content: '\2190'; /* left arrow */
   font-size: 1rem;
 }
+
+.captured-photo {
+  width: 320px;
+  height: 240px;
+  object-fit: cover;
+}

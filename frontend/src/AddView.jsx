@@ -1,12 +1,20 @@
 import React, { useRef, useState, useEffect } from 'react';
+import useBarcodeScanner from './hooks/useBarcodeScanner.js';
 
 export default function AddView({ onBack = () => {} }) {
+  const {
+    videoRef,
+    barcode,
+    scanning,
+    start: startScanning,
+    stop: stopScanning,
+  } = useBarcodeScanner();
   const [stream, setStream] = useState(null);
   const [photo, setPhoto] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isFrontCamera, setIsFrontCamera] = useState(true);
   // Start with a message so we know the debug box works
   const [debugMessages, setDebugMessages] = useState(['Debug box ready']);
-  const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
   function addDebug(msg) {
@@ -40,17 +48,7 @@ export default function AddView({ onBack = () => {} }) {
     }
   }, [stream]);
 
-  async function handleEnableCamera() {
-    setErrorMessage('');
-    addDebug('Enable camera clicked');
-    if (navigator.permissions && navigator.permissions.query) {
-      try {
-        const result = await navigator.permissions.query({ name: 'camera' });
-        addDebug(`Permission state: ${result.state}`);
-      } catch (err) {
-        addDebug(`Permission query failed: ${err.message}`);
-      }
-    }
+  async function startCamera(mode) {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       setErrorMessage('Camera not supported');
       addDebug('navigator.mediaDevices not available');
@@ -63,7 +61,9 @@ export default function AddView({ onBack = () => {} }) {
     }
     try {
       addDebug('Requesting camera stream');
-      const userStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const userStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: mode },
+      });
       addDebug(`Stream active after getUserMedia: ${userStream.active}`);
       if (userStream.addEventListener) {
         userStream.addEventListener('inactive', () => addDebug('Stream inactive'));
@@ -74,6 +74,31 @@ export default function AddView({ onBack = () => {} }) {
       setErrorMessage('Failed to access camera');
       addDebug(`getUserMedia error: ${err.message}`);
     }
+  }
+
+  async function handleEnableCamera() {
+    setErrorMessage('');
+    addDebug('Enable camera clicked');
+    if (navigator.permissions && navigator.permissions.query) {
+      try {
+        const result = await navigator.permissions.query({ name: 'camera' });
+        addDebug(`Permission state: ${result.state}`);
+      } catch (err) {
+        addDebug(`Permission query failed: ${err.message}`);
+      }
+    }
+    await startCamera('user');
+    setIsFrontCamera(true);
+  }
+
+  async function handleSwitchCamera() {
+    const mode = isFrontCamera ? 'environment' : 'user';
+    stopScanning();
+    if (stream && stream.getTracks) {
+      stream.getTracks().forEach((t) => t.stop());
+    }
+    await startCamera(mode);
+    setIsFrontCamera(!isFrontCamera);
   }
 
   function handleTakePhoto() {
@@ -88,6 +113,14 @@ export default function AddView({ onBack = () => {} }) {
     const ctx = canvas.getContext('2d');
     ctx.drawImage(video, 0, 0);
     setPhoto(canvas.toDataURL('image/png'));
+  }
+
+  function handleScanBarcode() {
+    if (scanning) {
+      stopScanning();
+    } else {
+      startScanning();
+    }
   }
 
   return (
@@ -114,7 +147,15 @@ export default function AddView({ onBack = () => {} }) {
           <div className="camera-placeholder">Camera disabled</div>
         )}
         {stream && (
-          <button type="button" onClick={handleTakePhoto}>Take Photo</button>
+          <>
+            <button type="button" onClick={handleTakePhoto}>Take Photo</button>
+            <button type="button" onClick={handleSwitchCamera}>
+              {isFrontCamera ? 'Switch to back' : 'Switch to front'}
+            </button>
+            <button type="button" onClick={handleScanBarcode}>
+              {scanning ? 'Stop scanning' : 'Scan barcode'}
+            </button>
+          </>
         )}
         {!stream && (
           <button type="button" onClick={handleEnableCamera}>
@@ -123,7 +164,21 @@ export default function AddView({ onBack = () => {} }) {
         )}
       </div>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
-      {photo && <img src={photo} alt="Captured" />}
+      {photo && (
+        <img
+          src={photo}
+          alt="Captured"
+          className="captured-photo"
+        />
+      )}
+      {scanning && (
+        <input
+          type="text"
+          value={barcode || ''}
+          readOnly
+          data-testid="barcode-input"
+        />
+      )}
       <div className="debug-box">
         <textarea
           readOnly
