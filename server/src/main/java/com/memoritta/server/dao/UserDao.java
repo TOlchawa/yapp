@@ -2,6 +2,7 @@ package com.memoritta.server.dao;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @Getter
 @Builder
 @Document(collection = "users")
+@NoArgsConstructor
 public class UserDao {
     @Id
     private UUID id;

@@ -3,6 +3,7 @@ package com.memoritta.server.dao;
 import com.memoritta.server.model.FriendshipType;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @Setter
 @Builder
 @Document(collection = "friends")
+@NoArgsConstructor
 public class FriendRelationDao {
     @Id
     private UUID id;

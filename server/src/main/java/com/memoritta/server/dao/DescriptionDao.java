@@ -2,6 +2,7 @@ package com.memoritta.server.dao;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Setter
 @Builder
 @Document(collection = "descriptions")
+@NoArgsConstructor
 public class DescriptionDao {
     @Id
     private UUID id;
