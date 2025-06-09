@@ -5,11 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import io.jsonwebtoken.JwtException;
-            filterChain.doFilter(request, response);
-            return;
-        // If Authorization header is missing or not a Bearer token,
-        // let other security filters (e.g. Basic auth) handle it
-        filterChain.doFilter(request, response);
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
