@@ -16,6 +16,7 @@ vi.mock('./hooks/useBarcodeScanner.js', () => ({
 }));
 
 import AddView from './AddView.jsx';
+import { BACKEND_URL } from './config.js';
 
 describe('AddView', () => {
   beforeEach(() => {
@@ -135,5 +136,43 @@ describe('AddView', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /scan barcode/i }));
     expect(startMock).toHaveBeenCalled();
+  });
+
+  it('sends PUT request when taking a photo', async () => {
+    const mockStream = {
+      active: true,
+      addEventListener: vi.fn(),
+      getVideoTracks: vi.fn(() => [{ readyState: 'live', addEventListener: vi.fn() }]),
+    };
+    global.navigator.mediaDevices = {
+      getUserMedia: vi.fn(() => Promise.resolve(mockStream)),
+    };
+    global.fetch = vi.fn(() => Promise.resolve({ ok: true }));
+
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({ drawImage: vi.fn() });
+    vi.spyOn(HTMLCanvasElement.prototype, 'toDataURL').mockReturnValue('data:image/png;base64,testimg');
+
+    render(<AddView />);
+
+    fireEvent.click(screen.getByRole('button', { name: /enable camera/i }));
+    await screen.findByRole('button', { name: /take photo/i });
+
+    // Set dimensions so drawImage works
+    const video = screen.getByTestId('camera-preview');
+    Object.defineProperty(video, 'videoWidth', { value: 10 });
+    Object.defineProperty(video, 'videoHeight', { value: 10 });
+
+    fireEvent.click(screen.getByRole('button', { name: /take photo/i }));
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${BACKEND_URL}/item`,
+        expect.objectContaining({ method: 'PUT' })
+      );
+    });
+
+    const formData = global.fetch.mock.calls[0][1].body;
+    expect(formData.get('name')).toBe('item123');
+    expect(formData.get('pictureBase64')).toBe('testimg');
   });
 });

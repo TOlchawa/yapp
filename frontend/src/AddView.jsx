@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import useBarcodeScanner from './hooks/useBarcodeScanner.js';
+import { BACKEND_URL } from './config.js';
 
 export default function AddView({ onBack = () => {} }) {
   const {
@@ -101,7 +102,7 @@ export default function AddView({ onBack = () => {} }) {
     setIsFrontCamera(!isFrontCamera);
   }
 
-  function handleTakePhoto() {
+  async function handleTakePhoto() {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     if (!video || !canvas) {
@@ -112,7 +113,25 @@ export default function AddView({ onBack = () => {} }) {
     canvas.height = video.videoHeight;
     const ctx = canvas.getContext('2d');
     ctx.drawImage(video, 0, 0);
-    setPhoto(canvas.toDataURL('image/png'));
+    const dataUrl = canvas.toDataURL('image/png');
+    setPhoto(dataUrl);
+
+    const formData = new FormData();
+    formData.append('name', 'item123');
+    if (barcode) {
+      formData.append('barCode', barcode);
+    }
+    formData.append('pictureBase64', dataUrl.split(',')[1]);
+
+    try {
+      await fetch(`${BACKEND_URL}/item`, {
+        method: 'PUT',
+        body: formData,
+      });
+      addDebug('Item sent to server');
+    } catch (err) {
+      addDebug(`Failed to send item: ${err.message}`);
+    }
   }
 
   function handleScanBarcode() {
