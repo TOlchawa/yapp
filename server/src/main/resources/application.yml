@@ -11,10 +11,6 @@ jwt:
 
 spring:
   security:
-    oauth2:
-      resourceserver:
-        jwt:
-          public-key-location: classpath:public.pem
     user:
       name: admin
       password: admin
