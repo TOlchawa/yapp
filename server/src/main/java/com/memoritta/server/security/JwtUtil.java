@@ -2,6 +2,7 @@ package com.memoritta.server.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,11 +22,6 @@ public class JwtUtil {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    // for unit tests
-    public JwtUtil(String secret) {
-        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
-    }
-
     // Generate JWT token with 15 minute expiration
     public String generateToken(String userId) {
         Instant now = Instant.now();
@@ -33,7 +29,7 @@ public class JwtUtil {
                 .subject(userId)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plusSeconds(60 * 15)))
-                .signWith(secretKey, Jwts.SIG.HS512)
+                .signWith(secretKey)
                 .compact();
     }
 
