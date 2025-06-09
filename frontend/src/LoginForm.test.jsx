@@ -3,11 +3,18 @@ import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import LoginForm from './LoginForm.jsx';
 import { BACKEND_URL } from './config.js';
+import { Provider } from 'react-redux';
+import { createAppStore } from './store.js';
+
+function renderWithProvider(ui) {
+  const testStore = createAppStore();
+  return render(<Provider store={testStore}>{ui}</Provider>);
+}
 
 describe('LoginForm', () => {
   afterEach(() => vi.restoreAllMocks());
   it('renders email and password inputs', () => {
-    render(<LoginForm />);
+    renderWithProvider(<LoginForm />);
     expect(screen.getByTestId('email-input')).toBeInTheDocument();
     expect(screen.getByTestId('password-input')).toBeInTheDocument();
     expect(screen.getByTestId('remember-checkbox')).toBeInTheDocument();
@@ -25,7 +32,7 @@ describe('LoginForm', () => {
       })
     );
 
-    render(<LoginForm />);
+    renderWithProvider(<LoginForm />);
 
     fireEvent.change(screen.getByTestId('email-input'), {
       target: { value: 'user@example.com' },
@@ -68,7 +75,7 @@ describe('LoginForm', () => {
       })
     );
 
-    render(<LoginForm />);
+    renderWithProvider(<LoginForm />);
     fireEvent.change(screen.getByTestId('email-input'), {
       target: { value: 'user@example.com' },
     });
@@ -87,7 +94,7 @@ describe('LoginForm', () => {
   it('prefills inputs from cookies on load', () => {
     document.cookie = 'email=foo%40example.com';
     document.cookie = 'password=bar';
-    render(<LoginForm />);
+    renderWithProvider(<LoginForm />);
     expect(screen.getByTestId('email-input')).toHaveValue('foo@example.com');
     expect(screen.getByTestId('password-input')).toHaveValue('bar');
   });
@@ -108,7 +115,7 @@ describe('LoginForm', () => {
         })
       );
 
-      render(<LoginForm />);
+      renderWithProvider(<LoginForm />);
       fireEvent.change(screen.getByTestId('email-input'), {
         target: { value: 'user@example.com' },
       });

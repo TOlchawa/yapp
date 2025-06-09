@@ -5,7 +5,7 @@ import com.memoritta.server.model.Question;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@org.mapstruct.Mapper
+@org.mapstruct.Mapper(unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE)
 public interface QuestionMapper {
     QuestionMapper INSTANCE = Mappers.getMapper(QuestionMapper.class);
 

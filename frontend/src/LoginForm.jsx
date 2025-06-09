@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUserInfo, setCurrentView } from './store.js';
 
 import AddView from './AddView.jsx';
 import Compare from './Compare.jsx';
@@ -13,8 +15,9 @@ export default function LoginForm({ onLogin }) {
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
   const [message, setMessage] = useState('');
-  const [userInfo, setUserInfo] = useState(null);
-  const [currentView, setCurrentView] = useState(null);
+  const userInfo = useSelector((state) => state.user.userInfo);
+  const currentView = useSelector((state) => state.user.currentView);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const matchEmail = document.cookie.match(/(?:^|;)\s*email=([^;]+)/);
@@ -31,7 +34,7 @@ export default function LoginForm({ onLogin }) {
   async function handleSubmit(e) {
     e.preventDefault();
     setMessage('');
-    setUserInfo(null);
+    dispatch(setUserInfo(null));
     try {
       const response = await fetch(`${BACKEND_URL}/user`, {
         method: 'POST',
@@ -42,7 +45,7 @@ export default function LoginForm({ onLogin }) {
         throw new Error('login failed');
       }
       const data = await response.json();
-      setUserInfo(data.user);
+      dispatch(setUserInfo(data.user));
       if (remember) {
         document.cookie = `email=${encodeURIComponent(email)}; path=/`;
         document.cookie = `password=${encodeURIComponent(password)}; path=/`;
@@ -107,36 +110,36 @@ export default function LoginForm({ onLogin }) {
                 <li>ID: {userInfo.id}</li>
               </ul>
               <div>
-                <button onClick={() => setCurrentView('add')}>Add</button>
+                <button onClick={() => dispatch(setCurrentView('add'))}>Add</button>
               </div>
               <div>
-                <button onClick={() => setCurrentView('compare')}>Compare</button>
+                <button onClick={() => dispatch(setCurrentView('compare'))}>Compare</button>
               </div>
               <div>
-                <button onClick={() => setCurrentView('ask')}>Ask</button>
+                <button onClick={() => dispatch(setCurrentView('ask'))}>Ask</button>
               </div>
               <div>
-                <button onClick={() => setCurrentView('questions')}>Questions</button>
+                <button onClick={() => dispatch(setCurrentView('questions'))}>Questions</button>
               </div>
               <div>
-                <button onClick={() => setCurrentView('friends')}>Friends</button>
+                <button onClick={() => dispatch(setCurrentView('friends'))}>Friends</button>
               </div>
             </>
           )}
           {currentView === 'add' && (
-            <AddView onBack={() => setCurrentView(null)} />
+            <AddView onBack={() => dispatch(setCurrentView(null))} />
           )}
           {currentView === 'compare' && (
-            <Compare onBack={() => setCurrentView(null)} />
+            <Compare onBack={() => dispatch(setCurrentView(null))} />
           )}
           {currentView === 'ask' && (
-            <Ask onBack={() => setCurrentView(null)} />
+            <Ask onBack={() => dispatch(setCurrentView(null))} />
           )}
           {currentView === 'questions' && (
-            <Questions onBack={() => setCurrentView(null)} />
+            <Questions onBack={() => dispatch(setCurrentView(null))} />
           )}
           {currentView === 'friends' && (
-            <Friends onBack={() => setCurrentView(null)} />
+            <Friends onBack={() => dispatch(setCurrentView(null))} />
           )}
         </div>
       )}
