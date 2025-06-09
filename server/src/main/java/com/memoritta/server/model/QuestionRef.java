@@ -14,5 +14,6 @@ public class QuestionRef {
     private UUID id;
     private Instant createdAt;
     private String description;
+    private long answerCount;
     private int answerCount;
 }

@@ -10,4 +10,5 @@ import java.util.UUID;
 @Repository
 public interface AnswerRepository extends MongoRepository<AnswerDao, UUID> {
     List<AnswerDao> findByQuestionId(UUID questionId);
+    long countByQuestionId(UUID questionId);
 }

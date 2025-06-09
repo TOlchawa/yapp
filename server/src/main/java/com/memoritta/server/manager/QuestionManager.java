@@ -1,6 +1,10 @@
 package com.memoritta.server.manager;
 
 import com.memoritta.server.client.AnswerRepository;
+    private final AnswerRepository answerRepository;
+        long answers = answerRepository.countByQuestionId(dao.getId());
+                .answerCount(answers)
+import com.memoritta.server.client.AnswerRepository;
 import com.memoritta.server.client.QuestionRepository;
 import com.memoritta.server.mapper.AnswerMapper;
 import com.memoritta.server.mapper.QuestionMapper;

@@ -1,6 +1,22 @@
 package com.memoritta.server.manager;
 
 import com.memoritta.server.client.AnswerRepository;
+        @Bean
+        AnswerRepository answerRepository() {
+            return mock(AnswerRepository.class);
+        }
+    @Autowired
+    private AnswerRepository answerRepository;
+        reset(questionRepository, answerRepository);
+        when(answerRepository.countByQuestionId(q2.getId())).thenReturn(1L);
+        when(answerRepository.countByQuestionId(q3.getId())).thenReturn(3L);
+        QuestionRef refForQ2 = result.stream()
+                .filter(r -> r.getId().equals(q2.getId()))
+                .findFirst()
+                .orElseThrow();
+        assertThat(refForQ2.getAnswerCount()).isEqualTo(1);
+
+        assertThat(refForQ3.getAnswerCount()).isEqualTo(3);
 import com.memoritta.server.client.QuestionRepository;
 import com.memoritta.server.dao.QuestionDao;
 import com.memoritta.server.model.Question;
