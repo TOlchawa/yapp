@@ -7,7 +7,7 @@ logging:
     root: info
 
 jwt:
-  secret: "change_me_please_change_me_change_me_change"
+  secret: "change_me_please_change_me_change_me_change_me_change_me_1234567"
 
 spring:
   security:

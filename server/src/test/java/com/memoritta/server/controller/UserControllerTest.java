@@ -93,7 +93,7 @@ class UserControllerTest {
 
         @Bean
         public com.memoritta.server.security.JwtUtil jwtUtil() {
-            return new com.memoritta.server.security.JwtUtil("test_secret_key_for_jwt_testing_only_123456");
+            return new com.memoritta.server.security.JwtUtil("test_secret_key_for_jwt_testing_only_12345678901234567890abcdefg");
         }
     }
 }
