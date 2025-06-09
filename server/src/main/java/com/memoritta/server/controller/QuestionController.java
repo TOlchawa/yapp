@@ -1,6 +1,7 @@
 package com.memoritta.server.controller;
 
 import com.memoritta.server.manager.QuestionManager;
+import com.memoritta.server.model.Question;
 import com.memoritta.server.model.QuestionRef;
 import com.memoritta.server.model.QuestionAudience;
 import io.swagger.v3.oas.annotations.Operation;

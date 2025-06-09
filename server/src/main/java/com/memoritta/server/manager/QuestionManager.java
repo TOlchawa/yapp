@@ -57,4 +57,9 @@ public class QuestionManager {
                 .build(); 
     }
 
+    public Question fetchQuestion(UUID uuid) {
+        Question result = QuestionMapper.INSTANCE.toQuestion(questionRepository.findById(uuid)
+                .orElseThrow(() -> new IllegalArgumentException("Question not found: " + uuid)));
+        return result;
+    }
 }

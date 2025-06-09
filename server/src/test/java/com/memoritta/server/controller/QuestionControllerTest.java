@@ -4,6 +4,7 @@ import com.memoritta.server.client.AnswerRepository;
 import com.memoritta.server.client.QuestionRepository;
 import com.memoritta.server.dao.QuestionDao;
 import com.memoritta.server.manager.QuestionManager;
+import com.memoritta.server.model.Question;
 import com.memoritta.server.model.QuestionRef;
 import com.memoritta.server.model.QuestionAudience;
 import org.junit.jupiter.api.BeforeEach;
