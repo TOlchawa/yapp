@@ -2,6 +2,7 @@ package com.memoritta.server.controller;
 
 import com.memoritta.server.manager.QuestionManager;
 import com.memoritta.server.model.Question;
+import com.memoritta.server.model.QuestionRef;
 import com.memoritta.server.model.QuestionAudience;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,7 +34,7 @@ public class QuestionController {
 
     @GetMapping
     @Operation(summary = "List questions", description = "Lists questions for the given user")
-    public List<Question> listQuestions(
+    public List<QuestionRef> listQuestions(
             @RequestParam @Parameter(description = "ID of user to get questions for") String userId
     ) {
         return questionManager.listQuestionsForUser(UUID.fromString(userId));

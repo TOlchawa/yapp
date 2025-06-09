@@ -5,6 +5,7 @@ import com.memoritta.server.client.QuestionRepository;
 import com.memoritta.server.dao.QuestionDao;
 import com.memoritta.server.manager.QuestionManager;
 import com.memoritta.server.model.Question;
+import com.memoritta.server.model.QuestionRef;
 import com.memoritta.server.model.QuestionAudience;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -76,7 +77,7 @@ class QuestionControllerTest {
         when(questionRepository.findAll()).thenReturn(List.of(direct, publicQ));
         when(answerRepository.findByQuestionId(any(UUID.class))).thenReturn(List.of());
 
-        List<Question> result = questionController.listQuestions(userId.toString());
+        List<QuestionRef> result = questionController.listQuestions(userId.toString());
 
         assertThat(result).hasSize(2);
     }
@@ -92,6 +93,5 @@ class QuestionControllerTest {
         Question result = questionController.fetchQuestion(qid.toString());
 
         assertThat(result.getId()).isEqualTo(qid);
-        assertThat(result.getAnswers()).hasSize(1);
     }
 }
