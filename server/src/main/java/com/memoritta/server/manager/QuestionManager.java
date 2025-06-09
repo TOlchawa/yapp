@@ -1,7 +1,10 @@
 package com.memoritta.server.manager;
 
+import com.memoritta.server.client.AnswerRepository;
 import com.memoritta.server.client.QuestionRepository;
+import com.memoritta.server.mapper.AnswerMapper;
 import com.memoritta.server.mapper.QuestionMapper;
+import com.memoritta.server.model.Answer;
 import com.memoritta.server.model.Question;
 import com.memoritta.server.model.QuestionAudience;
 import lombok.AllArgsConstructor;
@@ -15,6 +18,7 @@ import java.util.UUID;
 public class QuestionManager {
 
     private final QuestionRepository questionRepository;
+    private final AnswerRepository answerRepository;
 
     public UUID askQuestion(UUID fromUserId, UUID toUserId, String questionText, QuestionAudience audience) {
         Question question = Question.builder()
@@ -31,7 +35,27 @@ public class QuestionManager {
     public List<Question> listQuestionsForUser(UUID userId) {
         return questionRepository.findAll().stream()
                 .filter(dao -> dao.getAudience() != QuestionAudience.DIRECT || userId.equals(dao.getToUserId()))
-                .map(QuestionMapper.INSTANCE::toQuestion)
+                .map(dao -> {
+                    Question q = QuestionMapper.INSTANCE.toQuestion(dao);
+                    List<Answer> answers = answerRepository.findByQuestionId(q.getId()).stream()
+                            .map(AnswerMapper.INSTANCE::toAnswer)
+                            .toList();
+                    q.setAnswers(answers);
+                    return q;
+                })
                 .toList();
+    }
+
+    public Question fetchQuestion(UUID id) {
+        return questionRepository.findById(id)
+                .map(dao -> {
+                    Question q = QuestionMapper.INSTANCE.toQuestion(dao);
+                    List<Answer> answers = answerRepository.findByQuestionId(id).stream()
+                            .map(AnswerMapper.INSTANCE::toAnswer)
+                            .toList();
+                    q.setAnswers(answers);
+                    return q;
+                })
+                .orElse(null);
     }
 }

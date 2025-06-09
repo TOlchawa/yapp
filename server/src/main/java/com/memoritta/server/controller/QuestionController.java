@@ -38,4 +38,12 @@ public class QuestionController {
     ) {
         return questionManager.listQuestionsForUser(UUID.fromString(userId));
     }
+
+    @GetMapping("/detail")
+    @Operation(summary = "Get question", description = "Fetch single question with answers")
+    public Question fetchQuestion(
+            @RequestParam @Parameter(description = "Question ID") String id
+    ) {
+        return questionManager.fetchQuestion(UUID.fromString(id));
+    }
 }
