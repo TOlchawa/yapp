@@ -16,7 +16,7 @@ class JwtUtilTest {
 
     @BeforeEach
     void setUp() {
-        jwtUtil = new JwtUtil();
+        jwtUtil = new JwtUtil("test_secret_key_for_jwt_testing_only_12345678901234567890abcdefg");
     }
 
     @Test
@@ -65,8 +65,8 @@ class JwtUtilTest {
                 .issuedAt(new Date(System.currentTimeMillis() - 2000))
                 .expiration(new Date(System.currentTimeMillis() - 1000)) // already expired
                 .signWith(
-                        Keys.hmacShaKeyFor("Q+FQIAMDM+KevA+A3qnUiHO0eo27QB3tm2ahv3WqDlw=".getBytes()),
-                        Jwts.SIG.HS256
+                        Keys.hmacShaKeyFor("test_secret_key_for_jwt_testing_only_12345678901234567890abcdefg".getBytes()),
+                        Jwts.SIG.HS512
                 )
                 .compact();
 
