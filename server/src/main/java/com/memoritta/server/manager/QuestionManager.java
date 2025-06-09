@@ -13,18 +13,23 @@ import org.springframework.beans.factory.annotation.Value;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
 public class QuestionManager {
+
+    @Value("${question.ref.description-max-length:200}")
+    private int descriptionMaxLength;
 
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
 
-    @Value("${question.ref.description-max-length:200}")
-    private int descriptionMaxLength;
+    public QuestionManager(QuestionRepository questionRepository, AnswerRepository answerRepository) {
+        this.questionRepository = questionRepository;
+        this.answerRepository = answerRepository;
+    }
 
     public UUID askQuestion(UUID fromUserId, UUID toUserId, String questionText, QuestionAudience audience) {
         Question question = Question.builder()
@@ -50,10 +55,12 @@ public class QuestionManager {
         if (desc != null && desc.length() > descriptionMaxLength) {
             desc = desc.substring(0, descriptionMaxLength);
         }
+        int answerCount = answerRepository.findByQuestionId(dao.getId()).size();
         return QuestionRef.builder()
                 .id(dao.getId())
                 .createdAt(dao.getCreatedAt())
                 .description(desc)
+                .answerCount(answerCount)
                 .build(); 
     }
 

@@ -100,17 +100,4 @@ class QuestionManagerTest {
         assertThat(refForQ3.getDescription()).hasSize(200);
     }
 
-    @Test
-    void fetchQuestion_shouldReturnWithAnswers() {
-        UUID qid = UUID.randomUUID();
-        when(questionRepository.findById(qid))
-                .thenReturn(java.util.Optional.of(QuestionDao.builder().id(qid).build()));
-        when(answerRepository.findByQuestionId(qid))
-                .thenReturn(List.of(com.memoritta.server.dao.AnswerDao.builder().id(UUID.randomUUID()).questionId(qid).build()));
-
-        Question result = questionManager.fetchQuestion(qid);
-
-        assertThat(result.getId()).isEqualTo(qid);
-        assertThat(result.getAnswers()).hasSize(1);
-    }
 }

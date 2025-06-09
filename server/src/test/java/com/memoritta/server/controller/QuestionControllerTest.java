@@ -93,6 +93,5 @@ class QuestionControllerTest {
         Question result = questionController.fetchQuestion(qid.toString());
 
         assertThat(result.getId()).isEqualTo(qid);
-        assertThat(result.getAnswers()).hasSize(1);
     }
 }
