@@ -2,7 +2,7 @@ package com.memoritta.server.manager;
 
 import com.memoritta.server.client.QuestionRepository;
 import com.memoritta.server.dao.QuestionDao;
-import com.memoritta.server.model.Question;
+import com.memoritta.server.model.QuestionRef;
 import com.memoritta.server.model.QuestionAudience;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.util.List;
+import java.time.Instant;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -57,6 +58,7 @@ class QuestionManagerTest {
     @Test
     void listQuestionsForUser_shouldFilterDirectAudience() {
         UUID userId = UUID.randomUUID();
+        String longText = "x".repeat(250);
         QuestionDao q1 = QuestionDao.builder()
                 .id(UUID.randomUUID())
                 .toUserId(UUID.randomUUID())
@@ -66,16 +68,26 @@ class QuestionManagerTest {
                 .id(UUID.randomUUID())
                 .toUserId(userId)
                 .audience(QuestionAudience.DIRECT)
+                .question("short q2?")
+                .createdAt(Instant.now())
                 .build();
         QuestionDao q3 = QuestionDao.builder()
                 .id(UUID.randomUUID())
                 .audience(QuestionAudience.EVERYONE)
+                .question(longText)
+                .createdAt(Instant.now())
                 .build();
         when(questionRepository.findAll()).thenReturn(List.of(q1, q2, q3));
 
-        List<Question> result = questionManager.listQuestionsForUser(userId);
+        List<QuestionRef> result = questionManager.listQuestionsForUser(userId);
 
-        assertThat(result).extracting(Question::getId)
+        assertThat(result).extracting(QuestionRef::getId)
                 .containsExactlyInAnyOrder(q2.getId(), q3.getId());
+
+        QuestionRef refForQ3 = result.stream()
+                .filter(r -> r.getId().equals(q3.getId()))
+                .findFirst()
+                .orElseThrow();
+        assertThat(refForQ3.getDescription()).hasSize(200);
     }
 }

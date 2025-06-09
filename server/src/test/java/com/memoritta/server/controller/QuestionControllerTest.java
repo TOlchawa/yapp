@@ -3,7 +3,7 @@ package com.memoritta.server.controller;
 import com.memoritta.server.client.QuestionRepository;
 import com.memoritta.server.dao.QuestionDao;
 import com.memoritta.server.manager.QuestionManager;
-import com.memoritta.server.model.Question;
+import com.memoritta.server.model.QuestionRef;
 import com.memoritta.server.model.QuestionAudience;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,7 +68,7 @@ class QuestionControllerTest {
                 .build();
         when(questionRepository.findAll()).thenReturn(List.of(direct, publicQ));
 
-        List<Question> result = questionController.listQuestions(userId.toString());
+        List<QuestionRef> result = questionController.listQuestions(userId.toString());
 
         assertThat(result).hasSize(2);
     }

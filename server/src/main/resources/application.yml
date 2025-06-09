@@ -29,6 +29,10 @@ spring:
 serverConfig:
   version: "1.0.0"
 
+question:
+  ref:
+    description-max-length: 200
+
 management:
   endpoints:
     web:
