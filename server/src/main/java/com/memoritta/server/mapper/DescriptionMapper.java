@@ -6,7 +6,7 @@ import com.memoritta.server.model.Description;
 import com.memoritta.server.model.Item;
 import org.mapstruct.factory.Mappers;
 
-@org.mapstruct.Mapper
+@org.mapstruct.Mapper( componentModel = "spring", unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE)
 public interface DescriptionMapper {
     DescriptionMapper INSTANCE = Mappers.getMapper(DescriptionMapper.class);
 

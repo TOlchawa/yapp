@@ -5,7 +5,7 @@ import com.memoritta.server.model.User;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@org.mapstruct.Mapper(componentModel = "spring")
+@org.mapstruct.Mapper(componentModel = "spring", unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE)
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 

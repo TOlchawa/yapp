@@ -15,7 +15,6 @@ public class Question {
     private UUID fromUserId;
     private UUID toUserId;
     private String question;
-    private String answer;
     private List<Answer> answers;
     private QuestionAudience audience;
 }

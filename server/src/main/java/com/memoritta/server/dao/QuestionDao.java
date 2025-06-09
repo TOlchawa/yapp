@@ -24,7 +24,6 @@ public class QuestionDao {
     private UUID fromUserId;
     private UUID toUserId;
     private String question;
-    private String answer;
     private QuestionAudience audience;
 
     @CreatedDate
