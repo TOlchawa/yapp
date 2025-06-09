@@ -1,5 +1,6 @@
 package com.memoritta.server.manager;
 
+import com.memoritta.server.client.AnswerRepository;
 import com.memoritta.server.client.QuestionRepository;
 import com.memoritta.server.dao.QuestionDao;
 import com.memoritta.server.model.QuestionRef;
@@ -30,17 +31,23 @@ class QuestionManagerTest {
         QuestionRepository questionRepository() {
             return mock(QuestionRepository.class);
         }
+        @Bean
+        AnswerRepository answerRepository() {
+            return mock(AnswerRepository.class);
+        }
     }
 
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private AnswerRepository answerRepository;
 
     @Autowired
     private QuestionManager questionManager;
 
     @BeforeEach
     void resetRepo() {
-        reset(questionRepository);
+        reset(questionRepository, answerRepository);
     }
 
     @Test
@@ -78,6 +85,7 @@ class QuestionManagerTest {
                 .createdAt(Instant.now())
                 .build();
         when(questionRepository.findAll()).thenReturn(List.of(q1, q2, q3));
+        when(answerRepository.findByQuestionId(any(UUID.class))).thenReturn(List.of());
 
         List<QuestionRef> result = questionManager.listQuestionsForUser(userId);
 
@@ -89,5 +97,19 @@ class QuestionManagerTest {
                 .findFirst()
                 .orElseThrow();
         assertThat(refForQ3.getDescription()).hasSize(200);
+    }
+
+    @Test
+    void fetchQuestion_shouldReturnWithAnswers() {
+        UUID qid = UUID.randomUUID();
+        when(questionRepository.findById(qid))
+                .thenReturn(java.util.Optional.of(QuestionDao.builder().id(qid).build()));
+        when(answerRepository.findByQuestionId(qid))
+                .thenReturn(List.of(com.memoritta.server.dao.AnswerDao.builder().id(UUID.randomUUID()).questionId(qid).build()));
+
+        Question result = questionManager.fetchQuestion(qid);
+
+        assertThat(result.getId()).isEqualTo(qid);
+        assertThat(result.getAnswers()).hasSize(1);
     }
 }

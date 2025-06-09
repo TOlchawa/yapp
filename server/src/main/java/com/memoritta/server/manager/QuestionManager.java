@@ -1,7 +1,10 @@
 package com.memoritta.server.manager;
 
+import com.memoritta.server.client.AnswerRepository;
 import com.memoritta.server.client.QuestionRepository;
+import com.memoritta.server.mapper.AnswerMapper;
 import com.memoritta.server.mapper.QuestionMapper;
+import com.memoritta.server.model.Answer;
 import com.memoritta.server.model.Question;
 import com.memoritta.server.model.QuestionRef;
 import com.memoritta.server.model.QuestionAudience;
@@ -18,6 +21,7 @@ import java.util.UUID;
 public class QuestionManager {
 
     private final QuestionRepository questionRepository;
+    private final AnswerRepository answerRepository;
 
     @Value("${question.ref.description-max-length:200}")
     private int descriptionMaxLength;
@@ -50,6 +54,7 @@ public class QuestionManager {
                 .id(dao.getId())
                 .createdAt(dao.getCreatedAt())
                 .description(desc)
-                .build();
+                .build(); 
     }
+
 }

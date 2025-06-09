@@ -1,5 +1,6 @@
 package com.memoritta.server.controller;
 
+import com.memoritta.server.client.AnswerRepository;
 import com.memoritta.server.client.QuestionRepository;
 import com.memoritta.server.dao.QuestionDao;
 import com.memoritta.server.manager.QuestionManager;
@@ -30,17 +31,23 @@ class QuestionControllerTest {
         QuestionRepository questionRepository() {
             return mock(QuestionRepository.class);
         }
+        @Bean
+        AnswerRepository answerRepository() {
+            return mock(AnswerRepository.class);
+        }
     }
 
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private AnswerRepository answerRepository;
 
     @Autowired
     private QuestionController questionController;
 
     @BeforeEach
     void resetRepo() {
-        reset(questionRepository);
+        reset(questionRepository, answerRepository);
     }
 
     @Test
@@ -67,9 +74,24 @@ class QuestionControllerTest {
                 .audience(QuestionAudience.EVERYONE)
                 .build();
         when(questionRepository.findAll()).thenReturn(List.of(direct, publicQ));
+        when(answerRepository.findByQuestionId(any(UUID.class))).thenReturn(List.of());
 
         List<QuestionRef> result = questionController.listQuestions(userId.toString());
 
         assertThat(result).hasSize(2);
+    }
+
+    @Test
+    void fetchQuestion_shouldReturnWithAnswers() {
+        UUID qid = UUID.randomUUID();
+        when(questionRepository.findById(qid))
+                .thenReturn(java.util.Optional.of(QuestionDao.builder().id(qid).build()));
+        when(answerRepository.findByQuestionId(qid))
+                .thenReturn(List.of(com.memoritta.server.dao.AnswerDao.builder().id(UUID.randomUUID()).questionId(qid).build()));
+
+        Question result = questionController.fetchQuestion(qid.toString());
+
+        assertThat(result.getId()).isEqualTo(qid);
+        assertThat(result.getAnswers()).hasSize(1);
     }
 }

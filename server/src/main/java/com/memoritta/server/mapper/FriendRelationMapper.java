@@ -4,7 +4,7 @@ import com.memoritta.server.dao.FriendRelationDao;
 import com.memoritta.server.model.FriendRelation;
 import org.mapstruct.factory.Mappers;
 
-@org.mapstruct.Mapper
+@org.mapstruct.Mapper(componentModel = "spring", unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE)
 public interface FriendRelationMapper {
     FriendRelationMapper INSTANCE = Mappers.getMapper(FriendRelationMapper.class);
 

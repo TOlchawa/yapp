@@ -10,7 +10,7 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.UUID;
 
-@org.mapstruct.Mapper
+@org.mapstruct.Mapper(componentModel = "spring", unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE)
 public interface PictureOfItemMapper {
     PictureOfItemMapper INSTANCE = Mappers.getMapper(PictureOfItemMapper.class);
 }
