@@ -16,7 +16,7 @@ class JwtUtilTest {
 
     @BeforeEach
     void setUp() {
-        jwtUtil = new JwtUtil();
+        jwtUtil = new JwtUtil("test_secret_key_for_jwt_testing_only_123456");
     }
 
     @Test

@@ -6,6 +6,9 @@ logging:
     com.memoritta: debug
     root: info
 
+jwt:
+  secret: "change_me_please_change_me_change_me_change"
+
 spring:
   security:
     oauth2:

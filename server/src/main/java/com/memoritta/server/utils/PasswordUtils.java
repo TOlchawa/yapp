@@ -1,7 +1,5 @@
 package com.memoritta.server.utils;
 
-import com.memoritta.server.model.User;
-import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +18,4 @@ public class PasswordUtils {
         }
     }
 
-    public String generateJwtToken(User user) {
-        return "jwt-token-for-" + user.getId() + "-" + user.getEmail();
-    }
 }
