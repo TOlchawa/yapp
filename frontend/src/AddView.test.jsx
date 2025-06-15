@@ -5,10 +5,13 @@ import { vi } from 'vitest';
 const startMock = vi.fn();
 const stopMock = vi.fn();
 
+let mockBarcode = '';
 vi.mock('./hooks/useBarcodeScanner.js', () => ({
   default: () => ({
     videoRef: { current: null },
-    barcode: '',
+    get barcode() {
+      return mockBarcode;
+    },
     scanning: false,
     start: startMock,
     stop: stopMock,
@@ -20,6 +23,7 @@ import { BACKEND_URL, AUTH_EMAIL, AUTH_PASSWORD } from './config.js';
 
 describe('AddView', () => {
   beforeEach(() => {
+    mockBarcode = '';
     Object.defineProperty(global, 'isSecureContext', {
       value: true,
       configurable: true,
@@ -205,5 +209,45 @@ describe('AddView', () => {
     const formData = global.fetch.mock.calls[0][1].body;
     expect(formData.get('name')).toBe('item123');
     expect(formData.get('pictureBase64')).toBe('testimg');
+  });
+
+  it('sends POST request with barcode when adding item', async () => {
+    mockBarcode = '123456';
+    global.fetch = vi.fn(() => Promise.resolve({ ok: true }));
+
+    const mockStream = {
+      active: true,
+      addEventListener: vi.fn(),
+      getVideoTracks: vi.fn(() => [
+        { readyState: 'live', addEventListener: vi.fn() },
+      ]),
+    };
+    global.navigator.mediaDevices = {
+      getUserMedia: vi.fn(() => Promise.resolve(mockStream)),
+    };
+
+    render(<AddView />);
+
+    fireEvent.click(screen.getByRole('button', { name: /enable camera/i }));
+    await screen.findByRole('button', { name: /add item/i });
+
+    const addBtn = screen.getByRole('button', { name: /add item/i });
+    fireEvent.click(addBtn);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${BACKEND_URL}/item`,
+        expect.objectContaining({
+          method: 'POST',
+          headers: expect.objectContaining({
+            Authorization: `Basic ${btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`)}`,
+          }),
+        })
+      );
+    });
+
+    const formData = global.fetch.mock.calls[0][1].body;
+    expect(formData.get('name')).toBe('item123');
+    expect(formData.get('barCode')).toBe('123456');
   });
 });
