@@ -100,6 +100,34 @@ describe('LoginForm', () => {
     expect(screen.getByTestId('password-input')).toHaveValue('bar');
   });
 
+  it('shows signup option when login fails and creates account', async () => {
+    global.fetch = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: false })
+      .mockResolvedValueOnce({ ok: true });
+
+    renderWithProvider(<LoginForm />);
+    fireEvent.change(screen.getByTestId('email-input'), {
+      target: { value: 'new@example.com' },
+    });
+    fireEvent.change(screen.getByTestId('password-input'), {
+      target: { value: 'secret' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+
+    await screen.findByText(/login failed/i);
+    const signupButton = screen.getByRole('button', { name: /create account/i });
+    expect(signupButton).toBeInTheDocument();
+
+    fireEvent.click(signupButton);
+    await screen.findByText(/account created/i);
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      `${BACKEND_URL}/user`,
+      expect.objectContaining({ method: 'PUT' })
+    );
+  });
+
   it(
     'shows proper view when a button is clicked',
     { timeout: 10000 },
