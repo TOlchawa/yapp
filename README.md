@@ -41,6 +41,8 @@ This project was born from the need for:
    git clone https://github.com/TOlchawa/yapp
    ```
 
+Run `scripts/setup-maven.sh` to install Maven if needed.
+
 ### Camera Preview
 The web camera works only over HTTPS or on `localhost`.
 Give the browser permission to use the camera.
