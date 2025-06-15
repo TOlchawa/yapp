@@ -138,6 +138,25 @@ export default function AddView({ onBack = () => {} }) {
     }
   }
 
+  async function handleAddItem() {
+    const formData = new FormData();
+    formData.append('name', 'item123');
+    if (barcode) {
+      formData.append('barCode', barcode);
+    }
+    try {
+      const token = btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`);
+      await fetch(`${BACKEND_URL}/item`, {
+        method: 'POST',
+        headers: { Authorization: `Basic ${token}` },
+        body: formData,
+      });
+      addDebug('Item created on server');
+    } catch (err) {
+      addDebug(`Failed to create item: ${err.message}`);
+    }
+  }
+
   function handleScanBarcode() {
     if (scanning) {
       stopScanning();
@@ -174,6 +193,7 @@ export default function AddView({ onBack = () => {} }) {
             <button type="button" onClick={handleTakePhoto}>
               Take Photo
             </button>
+            <button type="button" onClick={handleAddItem}>Add Item</button>
             <button type="button" onClick={handleSwitchCamera}>
               {isFrontCamera ? 'Switch to back' : 'Switch to front'}
             </button>
