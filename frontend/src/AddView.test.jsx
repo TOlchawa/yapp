@@ -24,7 +24,9 @@ describe('AddView', () => {
       value: true,
       configurable: true,
     });
-    vi.spyOn(HTMLMediaElement.prototype, 'play').mockImplementation(() => Promise.resolve());
+    vi.spyOn(HTMLMediaElement.prototype, 'play').mockImplementation(() =>
+      Promise.resolve()
+    );
     global.navigator.permissions = {
       query: vi.fn(() => Promise.resolve({ state: 'granted' })),
     };
@@ -48,7 +50,9 @@ describe('AddView', () => {
         Promise.resolve({
           active: true,
           addEventListener: vi.fn(),
-          getVideoTracks: vi.fn(() => [{ readyState: 'live', addEventListener: vi.fn() }]),
+          getVideoTracks: vi.fn(() => [
+            { readyState: 'live', addEventListener: vi.fn() },
+          ]),
         })
       ),
     };
@@ -59,11 +63,19 @@ describe('AddView', () => {
     fireEvent.click(enableBtn);
 
     await waitFor(() => {
-      expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith({ video: { facingMode: 'user' } });
-      expect(screen.getByRole('button', { name: /take photo/i })).toBeInTheDocument();
+      expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith({
+        video: { facingMode: 'user' },
+      });
+      expect(
+        screen.getByRole('button', { name: /take photo/i })
+      ).toBeInTheDocument();
       expect(screen.getByTestId('camera-preview')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /switch to back/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /scan barcode/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /switch to back/i })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /scan barcode/i })
+      ).toBeInTheDocument();
     });
 
     const debugOutput = screen.getByTestId('debug-output');
@@ -100,7 +112,9 @@ describe('AddView', () => {
     fireEvent.click(screen.getByRole('button', { name: /enable camera/i }));
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /switch to back/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /switch to back/i })
+      ).toBeInTheDocument();
     });
 
     navigator.mediaDevices.getUserMedia.mockResolvedValueOnce(mockStream);
@@ -111,7 +125,9 @@ describe('AddView', () => {
       expect(navigator.mediaDevices.getUserMedia).toHaveBeenLastCalledWith({
         video: { facingMode: 'environment' },
       });
-      expect(screen.getByRole('button', { name: /switch to front/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /switch to front/i })
+      ).toBeInTheDocument();
     });
   });
 
@@ -121,7 +137,9 @@ describe('AddView', () => {
         Promise.resolve({
           active: true,
           addEventListener: vi.fn(),
-          getVideoTracks: vi.fn(() => [{ readyState: 'live', addEventListener: vi.fn() }]),
+          getVideoTracks: vi.fn(() => [
+            { readyState: 'live', addEventListener: vi.fn() },
+          ]),
         })
       ),
     };
@@ -131,7 +149,9 @@ describe('AddView', () => {
     fireEvent.click(screen.getByRole('button', { name: /enable camera/i }));
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /scan barcode/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /scan barcode/i })
+      ).toBeInTheDocument();
     });
 
     fireEvent.click(screen.getByRole('button', { name: /scan barcode/i }));
@@ -142,15 +162,21 @@ describe('AddView', () => {
     const mockStream = {
       active: true,
       addEventListener: vi.fn(),
-      getVideoTracks: vi.fn(() => [{ readyState: 'live', addEventListener: vi.fn() }]),
+      getVideoTracks: vi.fn(() => [
+        { readyState: 'live', addEventListener: vi.fn() },
+      ]),
     };
     global.navigator.mediaDevices = {
       getUserMedia: vi.fn(() => Promise.resolve(mockStream)),
     };
     global.fetch = vi.fn(() => Promise.resolve({ ok: true }));
 
-    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({ drawImage: vi.fn() });
-    vi.spyOn(HTMLCanvasElement.prototype, 'toDataURL').mockReturnValue('data:image/png;base64,testimg');
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
+      drawImage: vi.fn(),
+    });
+    vi.spyOn(HTMLCanvasElement.prototype, 'toDataURL').mockReturnValue(
+      'data:image/png;base64,testimg'
+    );
 
     render(<AddView />);
 

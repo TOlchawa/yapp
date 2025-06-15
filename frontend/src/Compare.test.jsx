@@ -5,7 +5,9 @@ import Compare from './Compare.jsx';
 describe('Compare', () => {
   it('shows Compare title', () => {
     render(<Compare />);
-    expect(screen.getByRole('heading', { name: 'Compare' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Compare' })
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
   });
 });

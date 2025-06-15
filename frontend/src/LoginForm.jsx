@@ -110,19 +110,29 @@ export default function LoginForm({ onLogin }) {
                 <li>ID: {userInfo.id}</li>
               </ul>
               <div>
-                <button onClick={() => dispatch(setCurrentView('add'))}>Add</button>
+                <button onClick={() => dispatch(setCurrentView('add'))}>
+                  Add
+                </button>
               </div>
               <div>
-                <button onClick={() => dispatch(setCurrentView('compare'))}>Compare</button>
+                <button onClick={() => dispatch(setCurrentView('compare'))}>
+                  Compare
+                </button>
               </div>
               <div>
-                <button onClick={() => dispatch(setCurrentView('ask'))}>Ask</button>
+                <button onClick={() => dispatch(setCurrentView('ask'))}>
+                  Ask
+                </button>
               </div>
               <div>
-                <button onClick={() => dispatch(setCurrentView('questions'))}>Questions</button>
+                <button onClick={() => dispatch(setCurrentView('questions'))}>
+                  Questions
+                </button>
               </div>
               <div>
-                <button onClick={() => dispatch(setCurrentView('friends'))}>Friends</button>
+                <button onClick={() => dispatch(setCurrentView('friends'))}>
+                  Friends
+                </button>
               </div>
             </>
           )}
