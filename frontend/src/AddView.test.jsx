@@ -16,7 +16,7 @@ vi.mock('./hooks/useBarcodeScanner.js', () => ({
 }));
 
 import AddView from './AddView.jsx';
-import { BACKEND_URL } from './config.js';
+import { BACKEND_URL, AUTH_EMAIL, AUTH_PASSWORD } from './config.js';
 
 describe('AddView', () => {
   beforeEach(() => {
@@ -193,7 +193,12 @@ describe('AddView', () => {
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
         `${BACKEND_URL}/item`,
-        expect.objectContaining({ method: 'PUT' })
+        expect.objectContaining({
+          method: 'PUT',
+          headers: expect.objectContaining({
+            Authorization: `Basic ${btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`)}`,
+          }),
+        })
       );
     });
 
