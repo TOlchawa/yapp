@@ -1,4 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import {
+  MdAdd,
+  MdCompareArrows,
+  MdHelpOutline,
+  MdQuestionAnswer,
+  MdGroup,
+} from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserInfo, setCurrentView } from './store.js';
 
@@ -111,27 +118,27 @@ export default function LoginForm({ onLogin }) {
               </ul>
               <div>
                 <button onClick={() => dispatch(setCurrentView('add'))}>
-                  Add
+                  <MdAdd /> Add
                 </button>
               </div>
               <div>
                 <button onClick={() => dispatch(setCurrentView('compare'))}>
-                  Compare
+                  <MdCompareArrows /> Compare
                 </button>
               </div>
               <div>
                 <button onClick={() => dispatch(setCurrentView('ask'))}>
-                  Ask
+                  <MdHelpOutline /> Ask
                 </button>
               </div>
               <div>
                 <button onClick={() => dispatch(setCurrentView('questions'))}>
-                  Questions
+                  <MdQuestionAnswer /> Questions
                 </button>
               </div>
               <div>
                 <button onClick={() => dispatch(setCurrentView('friends'))}>
-                  Friends
+                  <MdGroup /> Friends
                 </button>
               </div>
             </>
