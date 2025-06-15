@@ -96,3 +96,8 @@ h1 {
   height: 240px;
   object-fit: cover;
 }
+
+body.mobile .login-form { max-width: 90%; }
+body.mobile h1 { font-size: 1.5rem; }
+body.desktop .login-form { max-width: 400px; }
+
