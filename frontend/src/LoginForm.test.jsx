@@ -58,10 +58,11 @@ describe('LoginForm', () => {
     expect(screen.getByRole('button', { name: 'Add' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Compare' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Ask' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Questions' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Questions' })
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Friends' })).toBeInTheDocument();
   });
-
 
   it('stores credentials in cookies when remember is checked', async () => {
     const mockResponse = {
@@ -98,7 +99,6 @@ describe('LoginForm', () => {
     expect(screen.getByTestId('email-input')).toHaveValue('foo@example.com');
     expect(screen.getByTestId('password-input')).toHaveValue('bar');
   });
-
 
   it(
     'shows proper view when a button is clicked',

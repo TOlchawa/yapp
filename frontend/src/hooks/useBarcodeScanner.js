@@ -13,11 +13,15 @@ export default function useBarcodeScanner() {
     const reader = new BrowserMultiFormatReader();
     readerRef.current = reader;
     try {
-      await reader.decodeFromVideoDevice(null, videoRef.current, (result, err) => {
-        if (result) {
-          setBarcode(result.getText());
+      await reader.decodeFromVideoDevice(
+        null,
+        videoRef.current,
+        (result, err) => {
+          if (result) {
+            setBarcode(result.getText());
+          }
         }
-      });
+      );
     } catch (e) {
       console.error(e);
     }

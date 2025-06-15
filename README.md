@@ -21,9 +21,7 @@ This project was born from the need for:
 - Solving real-world problems while showcasing development skills.
 - Creating something enjoyable and meaningful without commercial pressure.
 
----
-
--## Tech Stack
+## Tech Stack
 - **Programming Language:** Java and JavaScript
 - **Frameworks:** Spring Boot on the backend and React with Vite on the frontend
 - **AI Tools:** ChatGPT, GitHub Copilot
@@ -46,6 +44,13 @@ This project was born from the need for:
 ### Camera Preview
 The web camera works only over HTTPS or on `localhost`.
 Give the browser permission to use the camera.
+
+### Code Formatting
+Run the following command in `frontend` to format React files:
+
+```bash
+npm run format
+```
 
 ## API Documentation
 You can explore the REST API using the online Swagger UI:

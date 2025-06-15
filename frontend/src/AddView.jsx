@@ -67,7 +67,9 @@ export default function AddView({ onBack = () => {} }) {
       });
       addDebug(`Stream active after getUserMedia: ${userStream.active}`);
       if (userStream.addEventListener) {
-        userStream.addEventListener('inactive', () => addDebug('Stream inactive'));
+        userStream.addEventListener('inactive', () =>
+          addDebug('Stream inactive')
+        );
       }
       setStream(userStream);
       addDebug('Stream received');
@@ -167,7 +169,9 @@ export default function AddView({ onBack = () => {} }) {
         )}
         {stream && (
           <>
-            <button type="button" onClick={handleTakePhoto}>Take Photo</button>
+            <button type="button" onClick={handleTakePhoto}>
+              Take Photo
+            </button>
             <button type="button" onClick={handleSwitchCamera}>
               {isFrontCamera ? 'Switch to back' : 'Switch to front'}
             </button>
@@ -183,13 +187,7 @@ export default function AddView({ onBack = () => {} }) {
         )}
       </div>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
-      {photo && (
-        <img
-          src={photo}
-          alt="Captured"
-          className="captured-photo"
-        />
-      )}
+      {photo && <img src={photo} alt="Captured" className="captured-photo" />}
       {scanning && (
         <input
           type="text"

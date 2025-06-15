@@ -20,7 +20,9 @@ export default function Ask({ onBack = () => {} }) {
         value={question}
         onChange={(e) => setQuestion(e.target.value)}
       />
-      <button type="button" onClick={handleAsk}>Ask</button>
+      <button type="button" onClick={handleAsk}>
+        Ask
+      </button>
     </div>
   );
 }
