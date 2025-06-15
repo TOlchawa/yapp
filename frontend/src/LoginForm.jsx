@@ -15,13 +15,14 @@ import Ask from './Ask.jsx';
 import Questions from './Questions.jsx';
 import Friends from './Friends.jsx';
 
-import { BACKEND_URL } from './config.js';
+import { BACKEND_URL, AUTH_EMAIL, AUTH_PASSWORD } from './config.js';
 
 export default function LoginForm({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
   const [message, setMessage] = useState('');
+  const [showSignup, setShowSignup] = useState(false);
   const userInfo = useSelector((state) => state.user.userInfo);
   const currentView = useSelector((state) => state.user.currentView);
   const dispatch = useDispatch();
@@ -64,7 +65,32 @@ export default function LoginForm({ onLogin }) {
         onLogin(data.user);
       }
     } catch (err) {
-      setMessage('Login error');
+      setMessage('Login failed. You can create an account.');
+      setShowSignup(true);
+    }
+  }
+
+  async function handleCreateAccount() {
+    setMessage('');
+    try {
+      const nickname = email.split('@')[0] || 'User';
+      const token = btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`);
+      const params = new URLSearchParams({ email, password, nickname });
+      const response = await fetch(`${BACKEND_URL}/user`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Basic ${token}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: params,
+      });
+      if (!response.ok) {
+        throw new Error('signup failed');
+      }
+      setMessage('Account created. Please log in.');
+      setShowSignup(false);
+    } catch (err) {
+      setMessage('Signup error');
     }
   }
 
@@ -102,6 +128,11 @@ export default function LoginForm({ onLogin }) {
           </label>
           <button type="submit">Login</button>
           {message && !userInfo && <p>{message}</p>}
+          {showSignup && !userInfo && (
+            <button type="button" onClick={handleCreateAccount}>
+              Create account
+            </button>
+          )}
         </>
       )}
       {userInfo && (
