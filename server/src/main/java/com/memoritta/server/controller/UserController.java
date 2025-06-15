@@ -5,6 +5,7 @@ import com.memoritta.server.model.AuthenticatedUser;
 import com.memoritta.server.model.Credentials;
 import com.memoritta.server.model.User;
 import com.memoritta.server.utils.PasswordUtils;
+import com.memoritta.server.security.JwtUtil;
 import com.memoritta.server.utils.UserUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,6 +20,7 @@ import java.util.UUID;
 public class UserController {
 
     private PasswordUtils passwordUtils;
+    private JwtUtil jwtUtil;
     private UserUtils userUtils;
     private UserAccessManager userAccessManager;
 
@@ -36,7 +38,7 @@ public class UserController {
         User user = userAccessManager.authenticateAndFetchUser(credentials.getEmail(), credentials.getPassword());
         AuthenticatedUser authenticatedUser = AuthenticatedUser.builder()
                 .user(user)
-                .jwtToken(passwordUtils.generateJwtToken(user))
+                .jwtToken(jwtUtil.generateToken(user.getId().toString()))
                 .build();
         return authenticatedUser;
     }

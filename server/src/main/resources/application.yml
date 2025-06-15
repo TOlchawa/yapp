@@ -6,12 +6,11 @@ logging:
     com.memoritta: debug
     root: info
 
+jwt:
+  secret: "change_me_please_change_me_change_me_change_me_change_me_1234567"
+
 spring:
   security:
-    oauth2:
-      resourceserver:
-        jwt:
-          public-key-location: classpath:public.pem
     user:
       name: admin
       password: admin
