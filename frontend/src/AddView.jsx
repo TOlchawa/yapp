@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import useBarcodeScanner from './hooks/useBarcodeScanner.js';
-import { BACKEND_URL } from './config.js';
+import { BACKEND_URL, AUTH_EMAIL, AUTH_PASSWORD } from './config.js';
 
 export default function AddView({ onBack = () => {} }) {
   const {
@@ -126,8 +126,10 @@ export default function AddView({ onBack = () => {} }) {
     formData.append('pictureBase64', dataUrl.split(',')[1]);
 
     try {
+      const token = btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`);
       await fetch(`${BACKEND_URL}/item`, {
         method: 'PUT',
+        headers: { Authorization: `Basic ${token}` },
         body: formData,
       });
       addDebug('Item sent to server');
