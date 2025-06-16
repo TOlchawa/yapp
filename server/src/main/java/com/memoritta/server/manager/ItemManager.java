@@ -147,11 +147,9 @@ public class ItemManager {
         return List.of(item);
     }
 
-    public List<UUID> listItems(String email) {
-        UserDao user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
-        UUID userId = user.getId();
-        List<ItemDao> items = itemRepository.findByCreatedBy(userId);
+
+    public List<UUID> listAllItemIds() {
+        List<ItemDao> items = itemRepository.findAll();
         return items.stream()
                 .map(ItemDao::getId)
                 .toList();

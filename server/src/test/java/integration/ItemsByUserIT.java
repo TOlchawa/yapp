@@ -21,17 +21,21 @@ public class ItemsByUserIT {
 
     @EnabledIf(expression = "#{systemEnvironment['PROD'] == null}", reason = "Disabled in PROD environment")
     @Test
-    void testItemsForUnknownUser_shouldReturnServerError() {
+    void testListAllItems_shouldReturnSuccess() {
         assumeServerRunning();
         RestAssured.baseURI = "http://localhost:9090";
 
-        given()
+        Response response = given()
                 .auth().basic("admin", "admin")
-                .param("email", "unknown-" + UUID.randomUUID() + "@example.com")
                 .when()
                 .post("/items/user")
                 .then()
-                .statusCode(500);
+                .statusCode(200)
+                .extract()
+                .response();
+
+        List<UUID> ids = response.jsonPath().getList(".", UUID.class);
+        assertThat(ids).isNotNull();
     }
 
     @EnabledIf(expression = "#{systemEnvironment['PROD'] == null}", reason = "Disabled in PROD environment")
@@ -55,7 +59,6 @@ public class ItemsByUserIT {
 
         Response response = given()
                 .auth().basic("admin", "admin")
-                .param("email", email)
                 .when()
                 .post("/items/user")
                 .then()
