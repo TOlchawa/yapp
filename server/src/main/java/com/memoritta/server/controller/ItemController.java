@@ -115,17 +115,11 @@ public class ItemController {
 
     @PostMapping("/items/user")
     @Operation(
-            summary = "Get list of item IDs by user email",
-            description = "Returns a list of item UUIDs that were created by the user with the provided email address. " +
-                    "Note: This version uses email as a parameter, but support for JWT authentication will be added later."
+            summary = "Get list of all item IDs",
+            description = "Returns a list of UUIDs for all items stored in the database."
     )
-    public List<UUID> listItems(
-            @RequestParam
-            @Parameter(description = "Email address of the user whose items should be returned", example = "user@example.com")
-            String email
-    ) {
-        List<UUID> listItems = itemManager.listItems(email); // TODO add support for JWT
-        return listItems;
+    public List<UUID> listItems() {
+        return itemManager.listAllItemIds();
     }
 
     @PostMapping("/items/search")
