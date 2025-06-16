@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   MdAdd,
   MdCompareArrows,
+  MdSearch,
   MdHelpOutline,
   MdQuestionAnswer,
   MdGroup,
@@ -11,6 +12,7 @@ import { setUserInfo, setCurrentView } from './store.js';
 
 import AddView from './AddView.jsx';
 import Compare from './Compare.jsx';
+import Search from './Search.jsx';
 import Ask from './Ask.jsx';
 import Questions from './Questions.jsx';
 import Friends from './Friends.jsx';
@@ -158,6 +160,11 @@ export default function LoginForm({ onLogin }) {
                 </button>
               </div>
               <div>
+                <button onClick={() => dispatch(setCurrentView('search'))}>
+                  <MdSearch /> Search
+                </button>
+              </div>
+              <div>
                 <button onClick={() => dispatch(setCurrentView('ask'))}>
                   <MdHelpOutline /> Ask
                 </button>
@@ -179,6 +186,9 @@ export default function LoginForm({ onLogin }) {
           )}
           {currentView === 'compare' && (
             <Compare onBack={() => dispatch(setCurrentView(null))} />
+          )}
+          {currentView === 'search' && (
+            <Search onBack={() => dispatch(setCurrentView(null))} />
           )}
           {currentView === 'ask' && (
             <Ask onBack={() => dispatch(setCurrentView(null))} />

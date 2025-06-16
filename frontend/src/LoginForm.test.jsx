@@ -57,6 +57,7 @@ describe('LoginForm', () => {
     expect(screen.getByText(/ID: 1/)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Add' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Compare' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Ask' })).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: 'Questions' })
@@ -161,6 +162,10 @@ describe('LoginForm', () => {
       await screen.findByRole('button', { name: 'Compare' });
       fireEvent.click(screen.getByRole('button', { name: 'Compare' }));
       await screen.findByRole('heading', { name: 'Compare' });
+      fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+      await screen.findByRole('button', { name: 'Search' });
+      fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+      await screen.findByRole('heading', { name: 'Search' });
       fireEvent.click(screen.getByRole('button', { name: 'Back' }));
       await screen.findByRole('button', { name: 'Ask' });
       fireEvent.click(screen.getByRole('button', { name: 'Ask' }));
