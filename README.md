@@ -57,3 +57,5 @@ npm run format
 ## API Documentation
 You can explore the REST API using the online Swagger UI:
 [https://memoritta.com/swagger-ui/index.html](https://memoritta.com/swagger-ui/index.html)
+
+To open the Swagger UI directly, visit https://memoritta.com/swagger-ui/index.html.
