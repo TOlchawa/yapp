@@ -101,3 +101,15 @@ body.mobile .login-form { max-width: 90%; }
 body.mobile h1 { font-size: 1.5rem; }
 body.desktop .login-form { max-width: 400px; }
 
+.password-container {
+  display: flex;
+  align-items: center;
+}
+
+.password-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 0.25rem;
+}
+

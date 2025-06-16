@@ -20,6 +20,19 @@ describe('LoginForm', () => {
     expect(screen.getByTestId('remember-checkbox')).toBeInTheDocument();
   });
 
+  it('toggles password visibility', () => {
+    renderWithProvider(<LoginForm />);
+    const input = screen.getByTestId('password-input');
+    const toggle = screen.getByRole('button', { name: /show password/i });
+    expect(input).toHaveAttribute('type', 'password');
+    fireEvent.click(toggle);
+    expect(input).toHaveAttribute('type', 'text');
+    expect(toggle).toHaveAccessibleName('Hide password');
+    fireEvent.click(toggle);
+    expect(input).toHaveAttribute('type', 'password');
+    expect(toggle).toHaveAccessibleName('Show password');
+  });
+
   it('calls fetch with credentials and shows user info', async () => {
     const mockResponse = {
       user: { nickname: 'nickname1', email: 'user@example.com', id: '1' },
