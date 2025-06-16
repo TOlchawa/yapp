@@ -5,6 +5,8 @@ import {
   MdHelpOutline,
   MdQuestionAnswer,
   MdGroup,
+  MdVisibility,
+  MdVisibilityOff,
 } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserInfo, setCurrentView } from './store.js';
@@ -23,6 +25,7 @@ export default function LoginForm({ onLogin }) {
   const [remember, setRemember] = useState(false);
   const [message, setMessage] = useState('');
   const [showSignup, setShowSignup] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const userInfo = useSelector((state) => state.user.userInfo);
   const currentView = useSelector((state) => state.user.currentView);
   const dispatch = useDispatch();
@@ -110,12 +113,22 @@ export default function LoginForm({ onLogin }) {
           </label>
           <label>
             Password
-            <input
-              data-testid="password-input"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <span className="password-container">
+              <input
+                data-testid="password-input"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? <MdVisibilityOff /> : <MdVisibility />}
+              </button>
+            </span>
           </label>
           <label>
             <input
