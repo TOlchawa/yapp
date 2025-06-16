@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import Search from './Search.jsx';
@@ -11,20 +11,16 @@ describe('Search view', () => {
     expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
   });
 
-  it('fetches items on search', async () => {
-    const items = [{ id: '1', name: 'Item1' }];
+  it('loads item IDs on mount', async () => {
+    const ids = ['1', '2'];
     global.fetch = vi.fn(() =>
-      Promise.resolve({ ok: true, json: () => Promise.resolve(items) })
+      Promise.resolve({ ok: true, json: () => Promise.resolve(ids) })
     );
     render(<Search />);
-    fireEvent.change(screen.getByTestId('search-input'), {
-      target: { value: 'tag1' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: 'Search' }));
-    await screen.findByText('Item1');
+    await screen.findByText('1');
     expect(global.fetch).toHaveBeenCalledWith(
-      `${BACKEND_URL}/items/tags`,
-      expect.any(Object)
+      `${BACKEND_URL}/items/user`,
+      expect.objectContaining({ method: 'POST' })
     );
   });
 });

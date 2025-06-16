@@ -150,12 +150,22 @@ describe('LoginForm', () => {
         user: { nickname: 'Nick', email: 'user@example.com', id: '1' },
         jwtToken: 'token',
       };
-      global.fetch = vi.fn(() =>
-        Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve(mockResponse),
-        })
-      );
+      const items = ['id1'];
+      global.fetch = vi.fn((url) => {
+        if (url.endsWith('/items/user')) {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(items),
+          });
+        }
+        if (url.endsWith('/user')) {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(mockResponse),
+          });
+        }
+        return Promise.resolve({ ok: false });
+      });
 
       renderWithProvider(<LoginForm />);
       fireEvent.change(screen.getByTestId('email-input'), {

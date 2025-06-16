@@ -1,29 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BACKEND_URL } from './config.js';
 
 export default function Search({ onBack = () => {} }) {
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState([]);
+  const [itemIds, setItemIds] = useState([]);
 
-  async function handleSearch() {
-    const tags = query
-      .split(',')
-      .map((t) => t.trim())
-      .filter((t) => t);
-    try {
-      const response = await fetch(`${BACKEND_URL}/items/tags`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tags, matchAll: false }),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setResults(data);
+  useEffect(() => {
+    async function fetchItems() {
+      try {
+        const response = await fetch(`${BACKEND_URL}/items/user`, {
+          method: 'POST',
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setItemIds(data);
+        }
+      } catch (err) {
+        // Ignore errors for now
       }
-    } catch (err) {
-      // Ignore errors for now
     }
-  }
+    fetchItems();
+  }, []);
 
   return (
     <div>
@@ -33,18 +29,9 @@ export default function Search({ onBack = () => {} }) {
           Back
         </button>
       </div>
-      <input
-        data-testid="search-input"
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
-      <button type="button" onClick={handleSearch}>
-        Search
-      </button>
       <ul>
-        {results.map((item) => (
-          <li key={item.id}>{item.name}</li>
+        {itemIds.map((id) => (
+          <li key={id}>{id}</li>
         ))}
       </ul>
     </div>
