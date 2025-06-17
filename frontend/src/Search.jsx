@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BACKEND_URL } from './config.js';
+import { BACKEND_URL, AUTH_EMAIL, AUTH_PASSWORD } from './config.js';
 
 export default function Search({ onBack = () => {} }) {
   const [itemIds, setItemIds] = useState([]);
@@ -7,8 +7,10 @@ export default function Search({ onBack = () => {} }) {
   useEffect(() => {
     async function fetchItems() {
       try {
+        const token = btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`);
         const response = await fetch(`${BACKEND_URL}/items/user`, {
           method: 'POST',
+          headers: { Authorization: `Basic ${token}` },
         });
         if (response.ok) {
           const data = await response.json();
