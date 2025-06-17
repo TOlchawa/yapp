@@ -213,11 +213,15 @@ export default function LoginForm({ onLogin }) {
                   <MdGroup /> Friends
                 </button>
               </div>
-              <div>
-                <button type="button" onClick={handleLogout}>
+              <footer className="view-footer">
+                <button
+                  type="button"
+                  className="back-button"
+                  onClick={handleLogout}
+                >
                   Logout
                 </button>
-              </div>
+              </footer>
             </>
           )}
           {currentView === 'add' && (
