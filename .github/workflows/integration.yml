@@ -74,3 +74,18 @@ jobs:
         if: always()
         run: |
           kill $(cat server.pid) || true
+
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Restart backend and frontend
+        if: success()
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SERVER_HOME: ${{ secrets.SERVER_HOME }}
+          FRONTEND_HOME: ${{ secrets.FRONTEND_HOME }}
+          SERVER_SCRIPT: ${{ secrets.SERVER_SCRIPT }}
+          FRONTEND_SCRIPT: ${{ secrets.FRONTEND_SCRIPT }}
+        run: ./scripts/restart-services.sh
