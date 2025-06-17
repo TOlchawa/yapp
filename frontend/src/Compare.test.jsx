@@ -8,6 +8,6 @@ describe('Compare', () => {
     expect(
       screen.getByRole('heading', { name: 'Compare' })
     ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Back' })).toHaveLength(2);
   });
 });

@@ -30,6 +30,11 @@ export default function Questions({ onBack = () => {} }) {
           </li>
         ))}
       </ul>
+      <footer className="view-footer">
+        <button type="button" className="back-button" onClick={onBack}>
+          Back
+        </button>
+      </footer>
     </div>
   );
 }

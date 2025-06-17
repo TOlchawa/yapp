@@ -226,6 +226,11 @@ export default function AddView({ onBack = () => {} }) {
           data-testid="debug-output"
         />
       </div>
+      <footer className="view-footer">
+        <button type="button" className="back-button" onClick={onBack}>
+          Back
+        </button>
+      </footer>
     </div>
   );
 }

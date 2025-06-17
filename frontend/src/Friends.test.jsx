@@ -8,6 +8,6 @@ describe('Friends component', () => {
     expect(
       screen.getByRole('heading', { level: 1, name: 'Friends' })
     ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Back' })).toHaveLength(2);
   });
 });

@@ -6,7 +6,7 @@ describe('Ask view', () => {
   it('shows the Ask title', () => {
     render(<Ask />);
     expect(screen.getByRole('heading', { name: 'Ask' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Back' })).toHaveLength(2);
   });
 
   it('shows a textarea and Ask button', () => {

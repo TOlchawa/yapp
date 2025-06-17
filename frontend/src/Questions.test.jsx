@@ -8,7 +8,7 @@ describe('Questions view', () => {
     expect(
       screen.getByRole('heading', { name: 'Questions' })
     ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Back' })).toHaveLength(2);
   });
 
   it('renders truncated questions list', () => {

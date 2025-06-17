@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { FaBarcode } from 'react-icons/fa';
 import { BACKEND_URL, AUTH_EMAIL, AUTH_PASSWORD } from './config.js';
+import ItemDetails from './ItemDetails.jsx';
 
 export default function Search({ onBack = () => {} }) {
   const [itemIds, setItemIds] = useState([]);
   const [details, setDetails] = useState({});
+  const [selectedId, setSelectedId] = useState(null);
 
   useEffect(() => {
     async function fetchItems() {
@@ -55,6 +57,19 @@ export default function Search({ onBack = () => {} }) {
     };
   }, [itemIds]);
 
+  if (selectedId) {
+    return (
+      <ItemDetails
+        id={selectedId}
+        info={details[selectedId]}
+        onBack={() => setSelectedId(null)}
+        onUpdate={(data) =>
+          setDetails((prev) => ({ ...prev, [selectedId]: data }))
+        }
+      />
+    );
+  }
+
   return (
     <div>
       <div className="view-header">
@@ -71,12 +86,23 @@ export default function Search({ onBack = () => {} }) {
             info && info.description && info.description.barcode;
           return (
             <li key={id}>
-              {name}
+              <button
+                type="button"
+                className="item-button"
+                onClick={() => setSelectedId(id)}
+              >
+                {name}
+              </button>
               {hasBarcode && <FaBarcode aria-label="barcode" />}
             </li>
           );
         })}
       </ul>
+      <footer className="view-footer">
+        <button type="button" className="back-button" onClick={onBack}>
+          Back
+        </button>
+      </footer>
     </div>
   );
 }
