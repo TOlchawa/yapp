@@ -8,14 +8,22 @@ describe('ItemDetails', () => {
   afterEach(() => vi.restoreAllMocks());
 
   it('shows provided info without fetching', () => {
-    const info = { name: 'Beer', description: { barcode: '123' } };
+    const info = {
+      name: 'Beer',
+      description: { barcode: '123', note: 'note', pictures: [{ picture: 'img' }] },
+    };
     render(<ItemDetails id="1" info={info} />);
     expect(screen.getByText('Beer')).toBeInTheDocument();
-    expect(screen.getByText('123')).toBeInTheDocument();
+    expect(screen.getByLabelText('barcode')).toBeInTheDocument();
+    expect(screen.getByText('note')).toBeInTheDocument();
+    expect(screen.getByAltText('Item')).toBeInTheDocument();
   });
 
   it('fetches info when not provided', async () => {
-    const item = { name: 'Wine', description: { barcode: '789' } };
+    const item = {
+      name: 'Wine',
+      description: { barcode: '789', pictures: [{ picture: 'img' }] },
+    };
     global.fetch = vi.fn(() =>
       Promise.resolve({ ok: true, json: () => Promise.resolve(item) })
     );

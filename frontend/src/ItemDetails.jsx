@@ -7,13 +7,14 @@ export default function ItemDetails({ id, info, onBack = () => {}, onUpdate = ()
 
   useEffect(() => {
     if (data) return;
+    let cancelled = false;
     async function load() {
       try {
         const token = btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`);
         const resp = await fetch(`${BACKEND_URL}/item?id=${id}`, {
           headers: { Authorization: `Basic ${token}` },
         });
-        if (resp.ok) {
+        if (!cancelled && resp.ok) {
           const result = await resp.json();
           setData(result);
           onUpdate(result);
@@ -23,10 +24,28 @@ export default function ItemDetails({ id, info, onBack = () => {}, onUpdate = ()
       }
     }
     load();
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
 
   const name = data && data.name ? data.name : id;
   const barcode = data && data.description && data.description.barcode;
+  const note = data && data.description && data.description.note;
+  const picture =
+    data &&
+    data.description &&
+    data.description.pictures &&
+    data.description.pictures[0];
+  let imgSrc = null;
+  if (picture && picture.picture) {
+    const picData = picture.picture;
+    if (picData.startsWith('data:')) {
+      imgSrc = picData;
+    } else {
+      imgSrc = `data:image/jpeg;base64,${picData}`;
+    }
+  }
 
   return (
     <div>
@@ -36,14 +55,14 @@ export default function ItemDetails({ id, info, onBack = () => {}, onUpdate = ()
           Back
         </button>
       </div>
-      <div>
-        <p>{name}</p>
-        {barcode && (
-          <p>
-            <FaBarcode aria-label="barcode" /> {barcode}
-          </p>
-        )}
-      </div>
+      <h2>{name}</h2>
+      {barcode && (
+        <p>
+          <FaBarcode aria-label="barcode" /> {barcode}
+        </p>
+      )}
+      {note && <p>{note}</p>}
+      {imgSrc && <img src={imgSrc} alt="Item" />}
       <footer className="view-footer">
         <button type="button" className="back-button" onClick={onBack}>
           Back
