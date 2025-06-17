@@ -42,4 +42,28 @@ describe('Ask view', () => {
       expect(screen.getByRole('button', { name: 'Update' })).toBeInTheDocument();
     });
   });
+
+  it('smooths text and applies result', async () => {
+    global.fetch = vi.fn(() =>
+      Promise.resolve({ ok: true, text: () => Promise.resolve('fixed') })
+    );
+    renderWithStore(<Ask />);
+    fireEvent.change(screen.getByTestId('ask-textarea'), {
+      target: { value: 'orig' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Smooth' }));
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${BACKEND_URL}/ai/smooth`,
+        expect.objectContaining({ method: 'POST' })
+      );
+      expect(screen.getByTestId('smooth-popup')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Apply' })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Apply' }));
+    expect(screen.queryByTestId('smooth-popup')).not.toBeInTheDocument();
+    expect(screen.getByTestId('ask-textarea').value).toBe('fixed');
+  });
 });

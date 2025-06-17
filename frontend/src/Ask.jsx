@@ -6,6 +6,9 @@ export default function Ask({ onBack = () => {} }) {
   const [question, setQuestion] = useState('');
   const [message, setMessage] = useState('');
   const [questionId, setQuestionId] = useState(null);
+  const [smoothResult, setSmoothResult] = useState('');
+  const [showSmooth, setShowSmooth] = useState(false);
+  const [smoothDisabled, setSmoothDisabled] = useState(false);
   const userInfo = useSelector((state) => state.user.userInfo);
 
   async function handleAsk() {
@@ -49,6 +52,29 @@ export default function Ask({ onBack = () => {} }) {
     }
   }
 
+  async function handleSmooth() {
+    if (smoothDisabled) {
+      return;
+    }
+    setSmoothDisabled(true);
+    setTimeout(() => setSmoothDisabled(false), 5000);
+    try {
+      const resp = await fetch(`${BACKEND_URL}/ai/smooth`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: question,
+      });
+      if (!resp.ok) {
+        throw new Error('failed');
+      }
+      const text = await resp.text();
+      setSmoothResult(text);
+      setShowSmooth(true);
+    } catch (err) {
+      // ignore errors
+    }
+  }
+
   return (
     <div className="ask-form" data-testid="ask-form">
       <div className="view-header">
@@ -67,12 +93,40 @@ export default function Ask({ onBack = () => {} }) {
       <button type="button" onClick={questionId ? handleEdit : handleAsk}>
         {questionId ? 'Update' : 'Ask'}
       </button>
+      <button
+        type="button"
+        onClick={handleSmooth}
+        disabled={smoothDisabled}
+      >
+        Smooth
+      </button>
       {message && <p>{message}</p>}
       <footer className="view-footer">
         <button type="button" className="back-button" onClick={onBack}>
           Back
         </button>
       </footer>
+      {showSmooth && (
+        <div className="popup-overlay" data-testid="smooth-popup">
+          <div className="popup-window">
+            <textarea readOnly rows={5} value={smoothResult} />
+            <div className="popup-buttons">
+              <button
+                type="button"
+                onClick={() => {
+                  setQuestion(smoothResult);
+                  setShowSmooth(false);
+                }}
+              >
+                Apply
+              </button>
+              <button type="button" onClick={() => setShowSmooth(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
