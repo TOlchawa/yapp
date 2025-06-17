@@ -21,4 +21,23 @@ jobs:
           FRONTEND_HOME: ${{ vars.FRONTEND_HOME }}
           SERVER_SCRIPT: ${{ vars.SERVER_SCRIPT }}
           FRONTEND_SCRIPT: ${{ vars.FRONTEND_SCRIPT }}
-        run: ./scripts/restart-services.sh
+        run: |
+          set -e
+          for attempt in 1 2 3; do
+            output=$(./scripts/restart-services.sh 2>&1)
+            status=$?
+            echo "$output"
+            if [ $status -ne 0 ]; then
+              exit $status
+            fi
+            if ! echo "$output" | grep -q "Another restart is in progress. Exiting."; then
+              exit 0
+            fi
+            if [ $attempt -eq 3 ]; then
+              echo "give up"
+              exit 0
+            fi
+            sleep_time=$((RANDOM % 16 + 15))
+            echo "Another restart in progress. Wait ${sleep_time}s before retry #$((attempt+1))"
+            sleep "$sleep_time"
+          done
