@@ -124,3 +124,21 @@ body.desktop .login-form { max-width: 400px; }
   font-size: 0.9rem;
 }
 
+/* Ask view layout */
+.ask-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.ask-textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+body.desktop .ask-form {
+  max-width: 600px;
+}
+
