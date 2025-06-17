@@ -13,13 +13,17 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  max-width: 400px;
   margin: 0 auto;
   padding: 1rem;
 }
 
+/* inputs fill available space */
+.login-form input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 @media (max-width: 600px) {
-  .login-form input,
   .login-form button {
     width: 100%;
     box-sizing: border-box;
@@ -97,9 +101,17 @@ h1 {
   object-fit: cover;
 }
 
-body.mobile .login-form { max-width: 90%; }
-body.mobile h1 { font-size: 1.5rem; }
-body.desktop .login-form { max-width: 400px; }
+body.mobile .login-form {
+  width: 90%;
+  max-width: none;
+}
+body.mobile h1 {
+  font-size: 1.5rem;
+}
+body.desktop .login-form {
+  width: 50%;
+  max-width: 600px;
+}
 
 .password-container {
   display: flex;
