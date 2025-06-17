@@ -124,7 +124,7 @@ body.desktop .login-form {
   flex: 1;
   width: 100%;
   box-sizing: border-box;
-  min-width: 0;
+  min-width: 12rem;
 }
 
 .password-toggle {
