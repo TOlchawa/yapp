@@ -12,7 +12,16 @@ function renderWithProvider(ui) {
 }
 
 describe('LoginForm', () => {
-  afterEach(() => vi.restoreAllMocks());
+  afterEach(() => {
+    vi.restoreAllMocks();
+    document.cookie
+      .split(';')
+      .forEach(
+        (c) =>
+          (document.cookie = c
+            .replace(/=.*/, '=;expires=' + new Date(0).toUTCString() + ';path=/'))
+      );
+  });
   it('renders email and password inputs', () => {
     renderWithProvider(<LoginForm />);
     expect(screen.getByTestId('email-input')).toBeInTheDocument();

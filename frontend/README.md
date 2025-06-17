@@ -32,6 +32,7 @@ Change the backend API address in `src/config.js` if your server runs on a diffe
 ### Login Cookies
 The login form has a **Remember me** option. When checked, the app stores your
 email and password in browser cookies so the inputs are pre-filled next time.
+When both cookies exist, the form submits automatically on load.
 
 ### Barcode Scanning
 This app ships with a custom React hook `useBarcodeScanner`. It uses the `@zxing/browser` library to read barcodes from the camera. The hook is not used yet but you can import it and render a `video` element with the provided `ref` when you want to scan codes.
