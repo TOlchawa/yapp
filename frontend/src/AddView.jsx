@@ -144,6 +144,9 @@ export default function AddView({ onBack = () => {} }) {
     if (barcode) {
       formData.append('barCode', barcode);
     }
+    if (photo) {
+      formData.append('pictureBase64', photo.split(',')[1]);
+    }
     try {
       const token = btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`);
       await fetch(`${BACKEND_URL}/item`, {
