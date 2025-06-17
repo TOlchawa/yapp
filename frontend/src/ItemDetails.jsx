@@ -37,15 +37,43 @@ export default function ItemDetails({ id, info, onBack = () => {}, onUpdate = ()
     data.description &&
     data.description.pictures &&
     data.description.pictures[0];
-  let imgSrc = null;
-  if (picture && picture.picture) {
-    const picData = picture.picture;
-    if (picData.startsWith('data:')) {
-      imgSrc = picData;
-    } else {
-      imgSrc = `data:image/jpeg;base64,${picData}`;
+  const [imgSrc, setImgSrc] = useState(null);
+
+  useEffect(() => {
+    if (!picture || imgSrc) return;
+    if (picture.picture) {
+      const picData = picture.picture;
+      if (picData.startsWith('data:')) {
+        setImgSrc(picData);
+      } else {
+        setImgSrc(`data:image/jpeg;base64,${picData}`);
+      }
+      return;
     }
-  }
+    if (!picture.id) return;
+    let cancelled = false;
+    async function loadPicture() {
+      try {
+        const token = btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`);
+        const resp = await fetch(`${BACKEND_URL}/data?id=${picture.id}`, {
+          headers: { Authorization: `Basic ${token}` },
+        });
+        if (!cancelled && resp.ok) {
+          const array = await resp.arrayBuffer();
+          const base64 = btoa(
+            String.fromCharCode(...new Uint8Array(array))
+          );
+          setImgSrc(`data:image/jpeg;base64,${base64}`);
+        }
+      } catch (err) {
+        // ignore errors
+      }
+    }
+    loadPicture();
+    return () => {
+      cancelled = true;
+    };
+  }, [picture, imgSrc]);
 
   return (
     <div>

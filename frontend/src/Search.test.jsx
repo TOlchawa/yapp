@@ -62,7 +62,7 @@ describe('Search view', () => {
     const ids = ['123'];
     const item = {
       name: 'Beer',
-      description: { barcode: '789', pictures: [{ picture: 'img' }] },
+      description: { barcode: '789', pictures: [{ id: 'pic1' }] },
     };
     global.fetch = vi
       .fn()
@@ -71,13 +71,27 @@ describe('Search view', () => {
       )
       .mockImplementationOnce(() =>
         Promise.resolve({ ok: true, json: () => Promise.resolve(item) })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({
+          ok: true,
+          arrayBuffer: () => Promise.resolve(new Uint8Array([3]).buffer),
+        })
       );
     render(<Search />);
     const itemEl = await screen.findByText('Beer');
     global.fetch.mockClear();
     fireEvent.click(itemEl);
-    await screen.findByRole('heading', { name: 'Item details' });
-    expect(global.fetch).not.toHaveBeenCalled();
+    await screen.findByAltText('Item');
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(global.fetch).toHaveBeenCalledWith(
+      `${BACKEND_URL}/data?id=pic1`,
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: `Basic ${btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`)}`,
+        }),
+      })
+    );
     expect(screen.getByText('789')).toBeInTheDocument();
   });
 });
