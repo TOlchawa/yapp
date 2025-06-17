@@ -69,4 +69,13 @@ public class QuestionManager {
                 .orElseThrow(() -> new IllegalArgumentException("Question not found: " + uuid)));
         return result;
     }
+
+    public void updateQuestion(UUID id, String questionText) {
+        QuestionDao dao = questionRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Question not found: " + id));
+        if (questionText != null) {
+            dao.setQuestion(questionText);
+        }
+        questionRepository.save(dao);
+    }
 }

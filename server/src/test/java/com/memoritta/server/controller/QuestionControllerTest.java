@@ -94,4 +94,15 @@ class QuestionControllerTest {
 
         assertThat(result.getId()).isEqualTo(qid);
     }
+
+    @Test
+    void editQuestion_shouldSave() {
+        UUID id = UUID.randomUUID();
+        QuestionDao dao = QuestionDao.builder().id(id).question("old").build();
+        when(questionRepository.findById(id)).thenReturn(java.util.Optional.of(dao));
+
+        questionController.editQuestion(id.toString(), "new");
+
+        verify(questionRepository).save(argThat(q -> "new".equals(q.getQuestion())));
+    }
 }
