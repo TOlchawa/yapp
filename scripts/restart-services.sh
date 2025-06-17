@@ -10,6 +10,12 @@ set -euo pipefail
 : "${SSH_PASSWORD?Environment variable SSH_PASSWORD is required}"
 : "${SSH_HOST?Environment variable SSH_HOST is required}"
 
+# Check if sshpass is available
+if ! command -v sshpass >/dev/null 2>&1; then
+  echo "sshpass command not found. Install sshpass and try again." >&2
+  exit 1
+fi
+
 sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" <<ENDSSH
 # Prevent running multiple restarts at the same time.
 # Wait up to 30 seconds for the lock. If the lock cannot be
