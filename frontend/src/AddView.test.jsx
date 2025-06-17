@@ -250,4 +250,61 @@ describe('AddView', () => {
     expect(formData.get('name')).toBe('item123');
     expect(formData.get('barCode')).toBe('123456');
   });
+
+  it('sends POST request with photo when adding item after taking photo', async () => {
+    global.fetch = vi.fn(() => Promise.resolve({ ok: true }));
+
+    const mockStream = {
+      active: true,
+      addEventListener: vi.fn(),
+      getVideoTracks: vi.fn(() => [
+        { readyState: 'live', addEventListener: vi.fn() },
+      ]),
+    };
+    global.navigator.mediaDevices = {
+      getUserMedia: vi.fn(() => Promise.resolve(mockStream)),
+    };
+
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
+      drawImage: vi.fn(),
+    });
+    vi.spyOn(HTMLCanvasElement.prototype, 'toDataURL').mockReturnValue(
+      'data:image/png;base64,testimg'
+    );
+
+    render(<AddView />);
+
+    fireEvent.click(screen.getByRole('button', { name: /enable camera/i }));
+    await screen.findByRole('button', { name: /take photo/i });
+
+    const video = screen.getByTestId('camera-preview');
+    Object.defineProperty(video, 'videoWidth', { value: 10 });
+    Object.defineProperty(video, 'videoHeight', { value: 10 });
+
+    fireEvent.click(screen.getByRole('button', { name: /take photo/i }));
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalled();
+    });
+    global.fetch.mockClear();
+
+    const addBtn = screen.getByRole('button', { name: /add item/i });
+    fireEvent.click(addBtn);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${BACKEND_URL}/item`,
+        expect.objectContaining({
+          method: 'POST',
+          headers: expect.objectContaining({
+            Authorization: `Basic ${btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`)}`,
+          }),
+        })
+      );
+    });
+
+    const formData = global.fetch.mock.calls[0][1].body;
+    expect(formData.get('name')).toBe('item123');
+    expect(formData.get('pictureBase64')).toBe('testimg');
+  });
 });
