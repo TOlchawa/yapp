@@ -162,7 +162,7 @@ describe('AddView', () => {
     expect(startMock).toHaveBeenCalled();
   });
 
-  it('sends PUT request when taking a photo', async () => {
+  it('captures photo without sending request', async () => {
     const mockStream = {
       active: true,
       addEventListener: vi.fn(),
@@ -195,25 +195,15 @@ describe('AddView', () => {
     fireEvent.click(screen.getByRole('button', { name: /take photo/i }));
 
     await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith(
-        `${BACKEND_URL}/item`,
-        expect.objectContaining({
-          method: 'PUT',
-          headers: expect.objectContaining({
-            Authorization: `Basic ${btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`)}`,
-          }),
-        })
-      );
+      expect(global.fetch).not.toHaveBeenCalled();
     });
-
-    const formData = global.fetch.mock.calls[0][1].body;
-    expect(formData.get('name')).toBe('item123');
-    expect(formData.get('pictureBase64')).toBe('testimg');
   });
 
   it('sends POST request with barcode when adding item', async () => {
     mockBarcode = '123456';
-    global.fetch = vi.fn(() => Promise.resolve({ ok: true }));
+    global.fetch = vi.fn(() =>
+      Promise.resolve({ ok: true, text: () => Promise.resolve('id123') })
+    );
 
     const mockStream = {
       active: true,
@@ -235,6 +225,7 @@ describe('AddView', () => {
     fireEvent.click(addBtn);
 
     await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledTimes(1);
       expect(global.fetch).toHaveBeenCalledWith(
         `${BACKEND_URL}/item`,
         expect.objectContaining({
@@ -249,10 +240,13 @@ describe('AddView', () => {
     const formData = global.fetch.mock.calls[0][1].body;
     expect(formData.get('name')).toBe('item123');
     expect(formData.get('barCode')).toBe('123456');
+    expect(formData.has('pictureBase64')).toBe(false);
   });
 
-  it('sends POST request with photo when adding item after taking photo', async () => {
-    global.fetch = vi.fn(() => Promise.resolve({ ok: true }));
+  it('sends POST and PUT when adding item after taking photo', async () => {
+    global.fetch = vi.fn(() =>
+      Promise.resolve({ ok: true, text: () => Promise.resolve('id123') })
+    );
 
     const mockStream = {
       active: true,
@@ -284,15 +278,16 @@ describe('AddView', () => {
     fireEvent.click(screen.getByRole('button', { name: /take photo/i }));
 
     await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalled();
+      expect(global.fetch).not.toHaveBeenCalled();
     });
-    global.fetch.mockClear();
 
     const addBtn = screen.getByRole('button', { name: /add item/i });
     fireEvent.click(addBtn);
 
     await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith(
+      expect(global.fetch).toHaveBeenCalledTimes(2);
+      expect(global.fetch).toHaveBeenNthCalledWith(
+        1,
         `${BACKEND_URL}/item`,
         expect.objectContaining({
           method: 'POST',
@@ -303,8 +298,12 @@ describe('AddView', () => {
       );
     });
 
-    const formData = global.fetch.mock.calls[0][1].body;
-    expect(formData.get('name')).toBe('item123');
-    expect(formData.get('pictureBase64')).toBe('testimg');
+    const postData = global.fetch.mock.calls[0][1].body;
+    expect(postData.get('name')).toBe('item123');
+    expect(postData.has('pictureBase64')).toBe(false);
+
+    const putData = global.fetch.mock.calls[1][1].body;
+    expect(putData.get('id')).toBe('id123');
+    expect(putData.get('pictureBase64')).toBe('testimg');
   });
 });
