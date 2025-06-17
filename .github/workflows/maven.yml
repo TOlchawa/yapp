@@ -35,7 +35,7 @@ jobs:
       run: |
         FILE=server/target/site/jacoco/jacoco.xml
         if [ -f "$FILE" ]; then
-          LINE=$(grep -o '<counter type="LINE"[^/]*/>' "$FILE" | head -n 1)
+          LINE=$(grep -m1 -o '<counter type="LINE"[^/]*/>' "$FILE")
           MISSED=$(echo "$LINE" | grep -o 'missed="[0-9]\+' | cut -d'"' -f2)
           COVERED=$(echo "$LINE" | grep -o 'covered="[0-9]\+' | cut -d'"' -f2)
           TOTAL=$((MISSED + COVERED))
