@@ -8,7 +8,7 @@ describe('Search view', () => {
   it('shows Search title', () => {
     render(<Search />);
     expect(screen.getByRole('heading', { name: 'Search' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Back' })).toHaveLength(2);
   });
 
   it('loads item IDs on mount', async () => {

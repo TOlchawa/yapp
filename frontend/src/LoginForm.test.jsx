@@ -180,28 +180,28 @@ describe('LoginForm', () => {
 
       fireEvent.click(screen.getByRole('button', { name: 'Add' }));
       await screen.findByRole('heading', { name: 'Add' });
-      expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
-      fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+      expect(screen.getAllByRole('button', { name: 'Back' })).toHaveLength(2);
+      fireEvent.click(screen.getAllByRole('button', { name: 'Back' })[0]);
       await screen.findByRole('button', { name: 'Compare' });
       fireEvent.click(screen.getByRole('button', { name: 'Compare' }));
       await screen.findByRole('heading', { name: 'Compare' });
-      fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+      fireEvent.click(screen.getAllByRole('button', { name: 'Back' })[0]);
       await screen.findByRole('button', { name: 'Search' });
       fireEvent.click(screen.getByRole('button', { name: 'Search' }));
       await screen.findByRole('heading', { name: 'Search' });
-      fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+      fireEvent.click(screen.getAllByRole('button', { name: 'Back' })[0]);
       await screen.findByRole('button', { name: 'Ask' });
       fireEvent.click(screen.getByRole('button', { name: 'Ask' }));
       await screen.findByRole('heading', { name: 'Ask' });
-      fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+      fireEvent.click(screen.getAllByRole('button', { name: 'Back' })[0]);
       await screen.findByRole('button', { name: 'Questions' });
       fireEvent.click(screen.getByRole('button', { name: 'Questions' }));
       await screen.findByRole('heading', { name: 'Questions' });
-      fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+      fireEvent.click(screen.getAllByRole('button', { name: 'Back' })[0]);
       await screen.findByRole('button', { name: 'Friends' });
       fireEvent.click(screen.getByRole('button', { name: 'Friends' }));
       await screen.findByRole('heading', { name: 'Friends' });
-      fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+      fireEvent.click(screen.getAllByRole('button', { name: 'Back' })[0]);
     }
   );
 });

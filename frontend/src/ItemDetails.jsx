@@ -1,22 +1,52 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { FaBarcode } from 'react-icons/fa';
+import { BACKEND_URL, AUTH_EMAIL, AUTH_PASSWORD } from './config.js';
 
-export default function ItemDetails({ item, onBack = () => {} }) {
-  if (!item) {
-    return null;
-  }
-  const { name, description } = item;
-  const barcode = description && description.barcode;
-  const note = description && description.note;
-  const picture = description && description.pictures && description.pictures[0];
+export default function ItemDetails({ id, info, onBack = () => {}, onUpdate = () => {} }) {
+  const [data, setData] = useState(info || null);
+
+  useEffect(() => {
+    if (data) return;
+    let cancelled = false;
+    async function load() {
+      try {
+        const token = btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`);
+        const resp = await fetch(`${BACKEND_URL}/item?id=${id}`, {
+          headers: { Authorization: `Basic ${token}` },
+        });
+        if (!cancelled && resp.ok) {
+          const result = await resp.json();
+          setData(result);
+          onUpdate(result);
+        }
+      } catch (err) {
+        // ignore errors
+      }
+    }
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
+  const name = data && data.name ? data.name : id;
+  const barcode = data && data.description && data.description.barcode;
+  const note = data && data.description && data.description.note;
+  const picture =
+    data &&
+    data.description &&
+    data.description.pictures &&
+    data.description.pictures[0];
   let imgSrc = null;
   if (picture && picture.picture) {
-    const data = picture.picture;
-    if (data.startsWith('data:')) {
-      imgSrc = data;
+    const picData = picture.picture;
+    if (picData.startsWith('data:')) {
+      imgSrc = picData;
     } else {
-      imgSrc = `data:image/jpeg;base64,${data}`;
+      imgSrc = `data:image/jpeg;base64,${picData}`;
     }
   }
+
   return (
     <div>
       <div className="view-header">
@@ -26,9 +56,18 @@ export default function ItemDetails({ item, onBack = () => {} }) {
         </button>
       </div>
       <h2>{name}</h2>
-      {barcode && <p>Barcode: {barcode}</p>}
+      {barcode && (
+        <p>
+          <FaBarcode aria-label="barcode" /> {barcode}
+        </p>
+      )}
       {note && <p>{note}</p>}
       {imgSrc && <img src={imgSrc} alt="Item" />}
+      <footer className="view-footer">
+        <button type="button" className="back-button" onClick={onBack}>
+          Back
+        </button>
+      </footer>
     </div>
   );
 }

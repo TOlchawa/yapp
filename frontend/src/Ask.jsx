@@ -24,6 +24,11 @@ export default function Ask({ onBack = () => {} }) {
       <button type="button" onClick={handleAsk}>
         Ask
       </button>
+      <footer className="view-footer">
+        <button type="button" className="back-button" onClick={onBack}>
+          Back
+        </button>
+      </footer>
     </div>
   );
 }

@@ -85,8 +85,12 @@ export default function Search({ onBack = () => {} }) {
   if (selectedId) {
     return (
       <ItemDetails
-        item={details[selectedId]}
+        id={selectedId}
+        info={details[selectedId]}
         onBack={() => setSelectedId(null)}
+        onUpdate={(data) =>
+          setDetails((prev) => ({ ...prev, [selectedId]: data }))
+        }
       />
     );
   }
@@ -106,13 +110,24 @@ export default function Search({ onBack = () => {} }) {
           const hasBarcode =
             info && info.description && info.description.barcode;
           return (
-            <li key={id} onClick={() => setSelectedId(id)}>
-              {name}
+            <li key={id}>
+              <button
+                type="button"
+                className="item-button"
+                onClick={() => setSelectedId(id)}
+              >
+                {name}
+              </button>
               {hasBarcode && <FaBarcode aria-label="barcode" />}
             </li>
           );
         })}
       </ul>
+      <footer className="view-footer">
+        <button type="button" className="back-button" onClick={onBack}>
+          Back
+        </button>
+      </footer>
     </div>
   );
 }
