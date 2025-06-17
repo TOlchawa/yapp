@@ -62,10 +62,12 @@ To open the Swagger UI directly, visit https://memoritta.com/swagger-ui/index.ht
 
 ## Deployment with GitHub Actions
 
-The project uses two workflows to deploy the backend and frontend:
+The project uses GitHub Actions to deploy the backend and frontend.
+
+Workflows:
 
 - `.github/workflows/deploy-prod.yml` runs after the *Integration Tests* workflow.
-- `.github/workflows/deploy-on-merge.yml` runs when a pull request is merged into `main`.
+- `.github/workflows/restart-services.yml` runs whenever code is pushed to `main`.
 
 Both workflows expect an environment called `PROD`. To configure it:
 
@@ -80,4 +82,4 @@ Both workflows expect an environment called `PROD`. To configure it:
    - `SERVER_SCRIPT`
    - `FRONTEND_SCRIPT`
 
-The workflows read the secrets and variables and pass them to `scripts/restart-services.sh` to restart the services on your server.
+`restart-services.yml` reads these values and passes them to `scripts/restart-services.sh` to restart the services on your server whenever `main` is updated.
