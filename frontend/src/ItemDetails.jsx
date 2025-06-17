@@ -2,7 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { FaBarcode } from 'react-icons/fa';
 import { BACKEND_URL, AUTH_EMAIL, AUTH_PASSWORD } from './config.js';
 
-export default function ItemDetails({ id, info, onBack = () => {}, onUpdate = () => {} }) {
+export default function ItemDetails({
+  id,
+  info,
+  onBack = () => {},
+  onUpdate = () => {},
+  onModify = () => {},
+  onDelete = () => {},
+}) {
   const [data, setData] = useState(info || null);
 
   useEffect(() => {
@@ -51,9 +58,14 @@ export default function ItemDetails({ id, info, onBack = () => {}, onUpdate = ()
     <div>
       <div className="view-header">
         <h1>Item details</h1>
-        <button type="button" className="back-button" onClick={onBack}>
-          Back
-        </button>
+        <div className="header-buttons">
+          <button type="button" onClick={onModify}>
+            Modify
+          </button>
+          <button type="button" className="back-button" onClick={onBack}>
+            Back
+          </button>
+        </div>
       </div>
       <h2>{name}</h2>
       {barcode && (
@@ -64,6 +76,9 @@ export default function ItemDetails({ id, info, onBack = () => {}, onUpdate = ()
       {note && <p>{note}</p>}
       {imgSrc && <img src={imgSrc} alt="Item" />}
       <footer className="view-footer">
+        <button type="button" onClick={onDelete}>
+          Delete
+        </button>
         <button type="button" className="back-button" onClick={onBack}>
           Back
         </button>
