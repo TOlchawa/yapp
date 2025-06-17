@@ -213,4 +213,34 @@ describe('LoginForm', () => {
       fireEvent.click(screen.getAllByRole('button', { name: 'Back' })[0]);
     }
   );
+
+  it('logs out and clears cookies', async () => {
+    const mockResponse = {
+      user: { nickname: 'Nick', email: 'user@example.com', id: '1' },
+      jwtToken: 'token',
+    };
+    global.fetch = vi.fn(() =>
+      Promise.resolve({ ok: true, json: () => Promise.resolve(mockResponse) })
+    );
+
+    document.cookie = 'email=foo%40example.com';
+    document.cookie = 'password=bar';
+
+    renderWithProvider(<LoginForm />);
+    fireEvent.change(screen.getByTestId('email-input'), {
+      target: { value: 'user@example.com' },
+    });
+    fireEvent.change(screen.getByTestId('password-input'), {
+      target: { value: 'secret' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+
+    await screen.findByRole('button', { name: 'Logout' });
+    fireEvent.click(screen.getByRole('button', { name: 'Logout' }));
+
+    await screen.findByRole('button', { name: /login/i });
+    expect(screen.getByTestId('email-input')).toHaveValue('');
+    expect(document.cookie).not.toMatch(/email=/);
+    expect(document.cookie).not.toMatch(/password=/);
+  });
 });

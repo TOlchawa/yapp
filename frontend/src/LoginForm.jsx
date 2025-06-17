@@ -110,6 +110,16 @@ export default function LoginForm({ onLogin }) {
     }
   }
 
+  function handleLogout() {
+    document.cookie = 'email=; Max-Age=0; path=/';
+    document.cookie = 'password=; Max-Age=0; path=/';
+    setEmail('');
+    setPassword('');
+    setRemember(false);
+    dispatch(setUserInfo(null));
+    dispatch(setCurrentView(null));
+  }
+
   return (
     <form className="login-form" onSubmit={handleSubmit}>
       {!userInfo && (
@@ -201,6 +211,11 @@ export default function LoginForm({ onLogin }) {
               <div>
                 <button onClick={() => dispatch(setCurrentView('friends'))}>
                   <MdGroup /> Friends
+                </button>
+              </div>
+              <div>
+                <button type="button" onClick={handleLogout}>
+                  Logout
                 </button>
               </div>
             </>

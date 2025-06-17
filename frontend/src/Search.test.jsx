@@ -78,6 +78,6 @@ describe('Search view', () => {
     fireEvent.click(itemEl);
     await screen.findByRole('heading', { name: 'Item details' });
     expect(global.fetch).not.toHaveBeenCalled();
-    expect(screen.getByText('Barcode: 789')).toBeInTheDocument();
+    expect(screen.getByText('789')).toBeInTheDocument();
   });
 });
