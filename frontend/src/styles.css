@@ -59,7 +59,6 @@ h1 {
   justify-content: center;
   align-items: center;
   color: #fff;
-
 }
 
 .view-header {
@@ -67,6 +66,11 @@ h1 {
   justify-content: space-between;
   align-items: center;
   padding: 0 1rem;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 0.5rem;
 }
 
 .view-header h1 {
@@ -179,4 +183,3 @@ body.desktop .ask-form {
     min-width: 200px;
   }
 }
-
