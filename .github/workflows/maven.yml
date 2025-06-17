@@ -29,6 +29,28 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+    - name: Run server unit tests with coverage
+      run: mvn -B -pl server -am test
+    - name: Summarize coverage
+      run: |
+        FILE=server/target/site/jacoco/jacoco.xml
+        if [ -f "$FILE" ]; then
+          LINE=$(grep -o '<counter type="LINE"[^/]*/>' "$FILE" | head -n 1)
+          MISSED=$(echo "$LINE" | grep -o 'missed="[0-9]\+' | cut -d'"' -f2)
+          COVERED=$(echo "$LINE" | grep -o 'covered="[0-9]\+' | cut -d'"' -f2)
+          TOTAL=$((MISSED + COVERED))
+          PCT=$((100 * COVERED / TOTAL))
+          echo "Line coverage: $PCT%" | tee coverage-summary.txt
+          echo '## Coverage' >> $GITHUB_STEP_SUMMARY
+          echo "Line coverage: $PCT%" >> $GITHUB_STEP_SUMMARY
+        else
+          echo 'Coverage file not found'
+        fi
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: server-coverage-report
+        path: server/target/site/jacoco
 
   e2e-tests:
     runs-on: ubuntu-latest
