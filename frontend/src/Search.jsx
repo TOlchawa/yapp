@@ -28,6 +28,31 @@ export default function Search({ onBack = () => {} }) {
   }, []);
 
   useEffect(() => {
+    if (!selectedId || details[selectedId]) {
+      return;
+    }
+    let cancelled = false;
+    async function fetchDetail() {
+      try {
+        const token = btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`);
+        const resp = await fetch(`${BACKEND_URL}/item?id=${selectedId}`, {
+          headers: { Authorization: `Basic ${token}` },
+        });
+        if (!cancelled && resp.ok) {
+          const data = await resp.json();
+          setDetails((prev) => ({ ...prev, [selectedId]: data }));
+        }
+      } catch (err) {
+        // Ignore errors
+      }
+    }
+    fetchDetail();
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedId]);
+
+  useEffect(() => {
     if (itemIds.length === 0) {
       return;
     }
