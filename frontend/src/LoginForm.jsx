@@ -28,6 +28,7 @@ export default function LoginForm({ onLogin }) {
   const [message, setMessage] = useState('');
   const [showSignup, setShowSignup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [autoLogin, setAutoLogin] = useState(false);
   const userInfo = useSelector((state) => state.user.userInfo);
   const currentView = useSelector((state) => state.user.currentView);
   const dispatch = useDispatch();
@@ -42,7 +43,17 @@ export default function LoginForm({ onLogin }) {
     if (matchPassword) {
       setPassword(decodeURIComponent(matchPassword[1]));
     }
+    if (matchEmail && matchPassword) {
+      setAutoLogin(true);
+    }
   }, []);
+
+  useEffect(() => {
+    if (autoLogin && email && password) {
+      handleSubmit({ preventDefault: () => {} });
+      setAutoLogin(false);
+    }
+  }, [autoLogin, email, password]);
 
   async function handleSubmit(e) {
     e.preventDefault();
