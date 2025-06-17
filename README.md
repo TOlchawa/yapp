@@ -83,3 +83,5 @@ Both workflows expect an environment called `PROD`. To configure it:
    - `FRONTEND_SCRIPT`
 
 `restart-services.yml` reads these values and passes them to `scripts/restart-services.sh` to restart the services on your server whenever `main` is updated.
+The script uses a lock file on the server so only one restart runs at a time.
+If another run holds the lock for more than 30 seconds, the new run exits without changes.
