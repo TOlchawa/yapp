@@ -11,8 +11,17 @@ set -euo pipefail
 : "${SSH_HOST?Environment variable SSH_HOST is required}"
 
 sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" <<ENDSSH
-cd "$SERVER_HOME"
-./"$SERVER_SCRIPT"
-cd "$FRONTEND_HOME"
-./"$FRONTEND_SCRIPT"
+# Prevent running multiple restarts at the same time.
+# Wait up to 30 seconds for the lock. If the lock cannot be
+# obtained, exit quietly so the workflow ends.
+(
+  flock -w 30 9 || {
+    echo "Another restart is in progress. Exiting." >&2
+    exit 0
+  }
+  cd "$SERVER_HOME"
+  ./"$SERVER_SCRIPT"
+  cd "$FRONTEND_HOME"
+  ./"$FRONTEND_SCRIPT"
+) 9>/tmp/restart-services.lock
 ENDSSH
