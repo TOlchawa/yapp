@@ -67,9 +67,10 @@ The project uses GitHub Actions to deploy the backend and frontend.
 Workflows:
 
 - `.github/workflows/deploy-prod.yml` runs after the *Integration Tests* workflow.
+- `.github/workflows/deploy-on-merge.yml` runs when a pull request is merged into `main`.
 - `.github/workflows/restart-services.yml` runs whenever code is pushed to `main`.
 
-Both workflows expect an environment called `PROD`. To configure it:
+All workflows expect an environment called `PROD`. To configure it:
 
 1. In your repository, open **Settings → Environments** and create `PROD`.
 2. In `PROD` add these *secrets*:
