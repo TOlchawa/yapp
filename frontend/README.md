@@ -13,6 +13,13 @@ This module contains the React frontend for Memoritta. It was built with Vite an
    npm run dev
    ```
 
+### Test Coverage
+Run unit tests with coverage:
+```bash
+npm run test:coverage
+```
+The HTML report appears in the `coverage` folder.
+
 Visit `http://localhost:5173` in your browser to see the running application.
 
 ### Camera Access
