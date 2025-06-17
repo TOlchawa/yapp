@@ -12,6 +12,7 @@ export default function AddView({ onBack = () => {} }) {
   } = useBarcodeScanner();
   const [stream, setStream] = useState(null);
   const [photo, setPhoto] = useState(null);
+  const [itemId, setItemId] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [isFrontCamera, setIsFrontCamera] = useState(true);
   // Start with a message so we know the debug box works
@@ -118,24 +119,7 @@ export default function AddView({ onBack = () => {} }) {
     const dataUrl = canvas.toDataURL('image/png');
     setPhoto(dataUrl);
 
-    const formData = new FormData();
-    formData.append('name', 'item123');
-    if (barcode) {
-      formData.append('barCode', barcode);
-    }
-    formData.append('pictureBase64', dataUrl.split(',')[1]);
-
-    try {
-      const token = btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`);
-      await fetch(`${BACKEND_URL}/item`, {
-        method: 'PUT',
-        headers: { Authorization: `Basic ${token}` },
-        body: formData,
-      });
-      addDebug('Item sent to server');
-    } catch (err) {
-      addDebug(`Failed to send item: ${err.message}`);
-    }
+    addDebug('Photo captured');
   }
 
   async function handleAddItem() {
@@ -144,17 +128,28 @@ export default function AddView({ onBack = () => {} }) {
     if (barcode) {
       formData.append('barCode', barcode);
     }
-    if (photo) {
-      formData.append('pictureBase64', photo.split(',')[1]);
-    }
     try {
       const token = btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`);
-      await fetch(`${BACKEND_URL}/item`, {
+      const res = await fetch(`${BACKEND_URL}/item`, {
         method: 'POST',
         headers: { Authorization: `Basic ${token}` },
         body: formData,
       });
+      const idText = await res.text();
+      setItemId(idText);
       addDebug('Item created on server');
+
+      if (photo) {
+        const updateData = new FormData();
+        updateData.append('id', idText);
+        updateData.append('pictureBase64', photo.split(',')[1]);
+        await fetch(`${BACKEND_URL}/item`, {
+          method: 'PUT',
+          headers: { Authorization: `Basic ${token}` },
+          body: updateData,
+        });
+        addDebug('Photo uploaded');
+      }
     } catch (err) {
       addDebug(`Failed to create item: ${err.message}`);
     }
@@ -196,7 +191,9 @@ export default function AddView({ onBack = () => {} }) {
             <button type="button" onClick={handleTakePhoto}>
               Take Photo
             </button>
-            <button type="button" onClick={handleAddItem}>Add Item</button>
+            <button type="button" onClick={handleAddItem}>
+              Add Item
+            </button>
             <button type="button" onClick={handleSwitchCamera}>
               {isFrontCamera ? 'Switch to back' : 'Switch to front'}
             </button>
