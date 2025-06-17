@@ -106,7 +106,7 @@ export default function Search({ onBack = () => {} }) {
       <ul>
         {itemIds.map((id) => {
           const info = details[id];
-          const name = info && info.name ? info.name : id;
+          const name = info && info.name ? info.name : 'noname';
           const hasBarcode =
             info && info.description && info.description.barcode;
           return (
@@ -117,8 +117,8 @@ export default function Search({ onBack = () => {} }) {
                 onClick={() => setSelectedId(id)}
               >
                 {name}
+                {hasBarcode && <FaBarcode aria-label="barcode" />}
               </button>
-              {hasBarcode && <FaBarcode aria-label="barcode" />}
             </li>
           );
         })}
