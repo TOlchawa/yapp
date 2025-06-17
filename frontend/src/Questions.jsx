@@ -1,12 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { BACKEND_URL, AUTH_EMAIL, AUTH_PASSWORD } from './config.js';
+import QuestionDetails from './QuestionDetails.jsx';
 
-const sampleQuestions = [
-  'How can we optimize the database queries for better performance?',
-  'What is the expected release date for version 2.0 of our product?',
-  'Which new frameworks should we evaluate for the frontend redesign?',
-];
-
-function truncate(str, max) {
+function truncate(str, max = 128) {
   if (str.length <= max) {
     return str;
   }
@@ -14,7 +11,42 @@ function truncate(str, max) {
 }
 
 export default function Questions({ onBack = () => {} }) {
-  const maxChars = Math.floor(window.innerWidth / 10);
+  const userInfo = useSelector((state) => state.user.userInfo);
+  const [questions, setQuestions] = useState([]);
+  const [selectedId, setSelectedId] = useState(null);
+
+  useEffect(() => {
+    if (!userInfo) {
+      return;
+    }
+    let cancelled = false;
+    async function load() {
+      try {
+        const token = btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`);
+        const resp = await fetch(
+          `${BACKEND_URL}/question?userId=${userInfo.id}`,
+          { headers: { Authorization: `Basic ${token}` } }
+        );
+        if (!cancelled && resp.ok) {
+          const data = await resp.json();
+          setQuestions(data);
+        }
+      } catch (err) {
+        // ignore errors
+      }
+    }
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [userInfo]);
+
+  if (selectedId) {
+    return (
+      <QuestionDetails id={selectedId} onBack={() => setSelectedId(null)} />
+    );
+  }
+
   return (
     <div>
       <div className="view-header">
@@ -24,9 +56,15 @@ export default function Questions({ onBack = () => {} }) {
         </button>
       </div>
       <ul>
-        {sampleQuestions.map((q, i) => (
-          <li key={i} className="question-item">
-            {truncate(q, maxChars)}
+        {questions.map((q) => (
+          <li key={q.id} className="question-item">
+            <button
+              type="button"
+              className="item-button"
+              onClick={() => setSelectedId(q.id)}
+            >
+              {truncate(q.description)}
+            </button>
           </li>
         ))}
       </ul>
