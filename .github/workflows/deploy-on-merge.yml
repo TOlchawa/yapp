@@ -9,6 +9,7 @@ on:
 jobs:
   deploy:
     if: ${{ github.event.pull_request.merged == true }}
+    environment: PROD
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,8 +20,8 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
-          SERVER_HOME: ${{ secrets.SERVER_HOME }}
-          FRONTEND_HOME: ${{ secrets.FRONTEND_HOME }}
-          SERVER_SCRIPT: ${{ secrets.SERVER_SCRIPT }}
-          FRONTEND_SCRIPT: ${{ secrets.FRONTEND_SCRIPT }}
+          SERVER_HOME: ${{ vars.SERVER_HOME }}
+          FRONTEND_HOME: ${{ vars.FRONTEND_HOME }}
+          SERVER_SCRIPT: ${{ vars.SERVER_SCRIPT }}
+          FRONTEND_SCRIPT: ${{ vars.FRONTEND_SCRIPT }}
         run: ./scripts/restart-services.sh

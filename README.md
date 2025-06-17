@@ -59,3 +59,25 @@ You can explore the REST API using the online Swagger UI:
 [https://memoritta.com/swagger-ui/index.html](https://memoritta.com/swagger-ui/index.html)
 
 To open the Swagger UI directly, visit https://memoritta.com/swagger-ui/index.html.
+
+## Deployment with GitHub Actions
+
+The project uses two workflows to deploy the backend and frontend:
+
+- `.github/workflows/deploy-prod.yml` runs after the *Integration Tests* workflow.
+- `.github/workflows/deploy-on-merge.yml` runs when a pull request is merged into `main`.
+
+Both workflows expect an environment called `PROD`. To configure it:
+
+1. In your repository, open **Settings → Environments** and create `PROD`.
+2. In `PROD` add these *secrets*:
+   - `SSH_USER`
+   - `SSH_PASSWORD`
+   - `SSH_HOST`
+3. Add these *variables*:
+   - `SERVER_HOME`
+   - `FRONTEND_HOME`
+   - `SERVER_SCRIPT`
+   - `FRONTEND_SCRIPT`
+
+The workflows read the secrets and variables and pass them to `scripts/restart-services.sh` to restart the services on your server.
