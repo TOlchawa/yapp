@@ -64,15 +64,10 @@ export default function Ask({ onBack = () => {} }) {
         value={question}
         onChange={(e) => setQuestion(e.target.value)}
       />
-      <button type="button" onClick={handleAsk}>
-        Ask
+      <button type="button" onClick={questionId ? handleEdit : handleAsk}>
+        {questionId ? 'Update' : 'Ask'}
       </button>
       {message && <p>{message}</p>}
-      {questionId && (
-        <button type="button" onClick={handleEdit}>
-          Edit
-        </button>
-      )}
       <footer className="view-footer">
         <button type="button" className="back-button" onClick={onBack}>
           Back

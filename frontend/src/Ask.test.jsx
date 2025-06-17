@@ -39,7 +39,7 @@ describe('Ask view', () => {
         expect.objectContaining({ method: 'POST' })
       );
       expect(screen.getByText(/question added/i)).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Edit' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Update' })).toBeInTheDocument();
     });
   });
 });
