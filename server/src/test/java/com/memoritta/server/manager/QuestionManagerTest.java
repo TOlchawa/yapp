@@ -100,4 +100,15 @@ class QuestionManagerTest {
         assertThat(refForQ3.getDescription()).hasSize(200);
     }
 
+    @Test
+    void updateQuestion_shouldSaveChangedText() {
+        UUID id = UUID.randomUUID();
+        QuestionDao dao = QuestionDao.builder().id(id).question("old").build();
+        when(questionRepository.findById(id)).thenReturn(java.util.Optional.of(dao));
+
+        questionManager.updateQuestion(id, "new text");
+
+        verify(questionRepository).save(argThat(q -> "new text".equals(q.getQuestion())));
+    }
+
 }

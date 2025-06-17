@@ -47,4 +47,13 @@ public class QuestionController {
     ) {
         return questionManager.fetchQuestion(UUID.fromString(id));
     }
+
+    @PutMapping
+    @Operation(summary = "Edit question", description = "Updates question text")
+    public void editQuestion(
+            @RequestParam @Parameter(description = "Question ID") String id,
+            @RequestParam @Parameter(description = "New question text") String question
+    ) {
+        questionManager.updateQuestion(UUID.fromString(id), question);
+    }
 }
