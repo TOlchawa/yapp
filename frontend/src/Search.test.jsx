@@ -22,7 +22,8 @@ describe('Search view', () => {
         Promise.resolve({ ok: true, json: () => Promise.resolve({}) })
       );
     render(<Search />);
-    await screen.findByText('1');
+    const names = await screen.findAllByText('noname');
+    expect(names).toHaveLength(2);
     expect(global.fetch).toHaveBeenCalledWith(
       `${BACKEND_URL}/items/user`,
       expect.objectContaining({
@@ -55,6 +56,22 @@ describe('Search view', () => {
         }),
       })
     );
+    expect(screen.getByLabelText('barcode')).toBeInTheDocument();
+  });
+
+  it('falls back to noname when item name missing', async () => {
+    const ids = ['321'];
+    const item = { description: { barcode: '456' } };
+    global.fetch = vi
+      .fn()
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve(ids) })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve(item) })
+      );
+    render(<Search />);
+    expect(await screen.findByText('noname')).toBeInTheDocument();
     expect(screen.getByLabelText('barcode')).toBeInTheDocument();
   });
 
