@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { FaBarcode } from 'react-icons/fa';
 import { BACKEND_URL, AUTH_EMAIL, AUTH_PASSWORD } from './config.js';
 
 export default function Search({ onBack = () => {} }) {
   const [itemIds, setItemIds] = useState([]);
+  const [details, setDetails] = useState({});
 
   useEffect(() => {
     async function fetchItems() {
@@ -23,6 +25,36 @@ export default function Search({ onBack = () => {} }) {
     fetchItems();
   }, []);
 
+  useEffect(() => {
+    if (itemIds.length === 0) {
+      return;
+    }
+    let cancelled = false;
+    async function fetchDetailsSequential() {
+      for (const id of itemIds) {
+        if (cancelled || details[id]) {
+          continue;
+        }
+        try {
+          const token = btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`);
+          const resp = await fetch(`${BACKEND_URL}/item?id=${id}`, {
+            headers: { Authorization: `Basic ${token}` },
+          });
+          if (!cancelled && resp.ok) {
+            const data = await resp.json();
+            setDetails((prev) => ({ ...prev, [id]: data }));
+          }
+        } catch (err) {
+          // Ignore errors
+        }
+      }
+    }
+    fetchDetailsSequential();
+    return () => {
+      cancelled = true;
+    };
+  }, [itemIds]);
+
   return (
     <div>
       <div className="view-header">
@@ -32,9 +64,18 @@ export default function Search({ onBack = () => {} }) {
         </button>
       </div>
       <ul>
-        {itemIds.map((id) => (
-          <li key={id}>{id}</li>
-        ))}
+        {itemIds.map((id) => {
+          const info = details[id];
+          const name = info && info.name ? info.name : id;
+          const hasBarcode =
+            info && info.description && info.description.barcode;
+          return (
+            <li key={id}>
+              {name}
+              {hasBarcode && <FaBarcode aria-label="barcode" />}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
