@@ -56,13 +56,13 @@ public class ItemController {
         return itemManager.saveItem(name, note, barCode, picture, pictureBase64);
     }
 
-    @PutMapping("/item")
+    @PutMapping("/item/{id}")
     @Operation(
             summary = "Update an item",
             description = "Updates an item. A new picture can be sent as a file or Base64 string."
     )
     public Item updateItem(
-            @RequestParam
+            @PathVariable
             @Parameter(description = "UUID of the item to update")
             String id,
 
@@ -98,14 +98,14 @@ public class ItemController {
      * @param id the UUID of the item to fetch
      * @return the full item object
      */
-    @GetMapping("/item")
+    @GetMapping("/item/{id}")
     @Operation(
             summary = "Fetch a single item by ID",
             description = "Returns the full item object for a given UUID. " +
                     "Useful for retrieving item details by ID after creation or from a list."
     )
     public Item fetchItem(
-            @RequestParam
+            @PathVariable
             @Parameter(description = "UUID of the item to retrieve", example = "123e4567-e89b-12d3-a456-426614174000")
             String id
     ) throws IOException {

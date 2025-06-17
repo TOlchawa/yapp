@@ -44,10 +44,9 @@ public class UpdateItemIT {
 
         Item updated = given()
                 .auth().basic("admin", "admin")
-                .param("id", createdId.toString())
                 .param("pictureBase64", encoded)
                 .when()
-                .put("/item")
+                .put("/item/" + createdId)
                 .then()
                 .statusCode(200)
                 .extract()
