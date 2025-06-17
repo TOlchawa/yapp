@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import Search from './Search.jsx';
@@ -56,5 +56,28 @@ describe('Search view', () => {
       })
     );
     expect(screen.getByLabelText('barcode')).toBeInTheDocument();
+  });
+
+  it('opens details view on item click without refetch', async () => {
+    const ids = ['123'];
+    const item = {
+      name: 'Beer',
+      description: { barcode: '789', pictures: [{ picture: 'img' }] },
+    };
+    global.fetch = vi
+      .fn()
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve(ids) })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve(item) })
+      );
+    render(<Search />);
+    const itemEl = await screen.findByText('Beer');
+    global.fetch.mockClear();
+    fireEvent.click(itemEl);
+    await screen.findByRole('heading', { name: 'Item details' });
+    expect(global.fetch).not.toHaveBeenCalled();
+    expect(screen.getByText('Barcode: 789')).toBeInTheDocument();
   });
 });
