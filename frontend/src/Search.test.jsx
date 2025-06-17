@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import Search from './Search.jsx';
-import { BACKEND_URL } from './config.js';
+import { BACKEND_URL, AUTH_EMAIL, AUTH_PASSWORD } from './config.js';
 
 describe('Search view', () => {
   it('shows Search title', () => {
@@ -20,7 +20,12 @@ describe('Search view', () => {
     await screen.findByText('1');
     expect(global.fetch).toHaveBeenCalledWith(
       `${BACKEND_URL}/items/user`,
-      expect.objectContaining({ method: 'POST' })
+      expect.objectContaining({
+        method: 'POST',
+        headers: expect.objectContaining({
+          Authorization: `Basic ${btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`)}`,
+        }),
+      })
     );
   });
 });
