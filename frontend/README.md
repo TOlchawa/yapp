@@ -1,6 +1,6 @@
-# React Hello World
+# Memoritta
 
-This module contains a simple React application built with Vite. It displays a **Hello, World!** message.
+This module contains the React frontend for Memoritta. It was built with Vite and displays a simple message.
 
 ## Getting Started
 
