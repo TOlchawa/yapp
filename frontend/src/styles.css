@@ -116,11 +116,15 @@ body.desktop .login-form {
 .password-container {
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
 /* make password field fill space and icon small at the end */
 .password-container input {
   flex: 1;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .password-toggle {
