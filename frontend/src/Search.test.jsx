@@ -13,9 +13,14 @@ describe('Search view', () => {
 
   it('loads item IDs on mount', async () => {
     const ids = ['1', '2'];
-    global.fetch = vi.fn(() =>
-      Promise.resolve({ ok: true, json: () => Promise.resolve(ids) })
-    );
+    global.fetch = vi
+      .fn()
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve(ids) })
+      )
+      .mockImplementation(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve({}) })
+      );
     render(<Search />);
     await screen.findByText('1');
     expect(global.fetch).toHaveBeenCalledWith(
@@ -27,5 +32,29 @@ describe('Search view', () => {
         }),
       })
     );
+  });
+
+  it('loads item details and shows barcode icon', async () => {
+    const ids = ['123'];
+    const item = { name: 'Beer', description: { barcode: '789' } };
+    global.fetch = vi
+      .fn()
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve(ids) })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve(item) })
+      );
+    render(<Search />);
+    await screen.findByText('Beer');
+    expect(global.fetch).toHaveBeenLastCalledWith(
+      `${BACKEND_URL}/item?id=123`,
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: `Basic ${btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`)}`,
+        }),
+      })
+    );
+    expect(screen.getByLabelText('barcode')).toBeInTheDocument();
   });
 });
