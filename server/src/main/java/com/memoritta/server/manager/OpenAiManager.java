@@ -43,7 +43,7 @@ public class OpenAiManager {
                 "content", List.of(
                         Map.of(
                                 "type", "text",
-                                "text", "Please smooth and check spelling of this text. Keep the original language.\n"
+                                "text", "Keep the original language. Please smooth and check spelling of this text. Keep the original language.\\n"
                         )
                 )
         );
