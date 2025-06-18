@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { FaMicrophone } from 'react-icons/fa';
 
 import { backendFetch } from './backend.js';
 
@@ -10,6 +11,7 @@ export default function Ask({ onBack = () => {} }) {
   const [smoothResult, setSmoothResult] = useState('');
   const [showSmooth, setShowSmooth] = useState(false);
   const [smoothDisabled, setSmoothDisabled] = useState(false);
+  const [showRecord, setShowRecord] = useState(false);
   const userInfo = useSelector((state) => state.user.userInfo);
 
   async function handleAsk() {
@@ -76,6 +78,10 @@ export default function Ask({ onBack = () => {} }) {
     }
   }
 
+  function handleRecord() {
+    setShowRecord(true);
+  }
+
   return (
     <div className="ask-form" data-testid="ask-form">
       <div className="view-header">
@@ -101,6 +107,14 @@ export default function Ask({ onBack = () => {} }) {
       >
         Smooth
       </button>
+      <button
+        type="button"
+        className="mic-button"
+        aria-label="Record"
+        onClick={handleRecord}
+      >
+        <FaMicrophone />
+      </button>
       {message && <p>{message}</p>}
       <footer className="view-footer">
         <button type="button" className="back-button" onClick={onBack}>
@@ -123,6 +137,18 @@ export default function Ask({ onBack = () => {} }) {
               </button>
               <button type="button" onClick={() => setShowSmooth(false)}>
                 Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showRecord && (
+        <div className="popup-overlay" data-testid="record-popup">
+          <div className="popup-window">
+            <p>Recording started...</p>
+            <div className="popup-buttons">
+              <button type="button" onClick={() => setShowRecord(false)}>
+                Close
               </button>
             </div>
           </div>
