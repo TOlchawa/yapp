@@ -6,7 +6,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -19,6 +22,11 @@ public class OpenAiManager {
     private final RestTemplate restTemplate = new RestTemplate();
     private final OpenAiConfig config;
 
+    @Retryable(
+            value = { HttpClientErrorException.TooManyRequests.class },
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 2000)
+    )
     public String smoothText(String text) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
