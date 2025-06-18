@@ -15,14 +15,20 @@ import org.springframework.web.client.HttpClientErrorException;
 public class OpenAiManager {
 
     private final OpenAIClient client;
+    private static final String DEFAULT_KEY = "changeme";
 
     public OpenAiManager(OpenAiConfig config) {
-        this.client = OpenAIOkHttpClient.builder()
-                .apiKey(config.getApiKey())
-                .baseUrl(config.getUrl())
-                .organization(config.getOrganization())
-                .project(config.getProject())
-                .build();
+        if (config.getApiKey() == null || config.getApiKey().isBlank() || DEFAULT_KEY.equals(config.getApiKey())) {
+            System.out.println("OpenAI disabled: API key not provided");
+            this.client = null;
+        } else {
+            this.client = OpenAIOkHttpClient.builder()
+                    .apiKey(config.getApiKey())
+                    .baseUrl(config.getUrl())
+                    .organization(config.getOrganization())
+                    .project(config.getProject())
+                    .build();
+        }
     }
 
     @Retryable(
@@ -30,7 +36,11 @@ public class OpenAiManager {
             maxAttempts = 3,
             backoff = @Backoff(delay = 2000)
     )
-    public String smoothText(String text) {
+     public String smoothText(String text) {
+        if (client == null) {
+            return text;
+        }
+
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                 .addUserMessage("Keep the original language. Please smooth and improve the following text while keeping it in the original language. Correct grammar, punctuation, and style, but do not translate or change the language:\\n\\n" + text)
                 .model(ChatModel.GPT_4O_MINI)
