@@ -77,3 +77,18 @@ frontend origin (`http://localhost:5174`). Make sure your `WebConfig` and `CorsF
 `@Profile("DEV")` so that CORS is only enabled in development.
 
 Now, your frontend running on a different host or port can access the backend endpoints without CORS errors.
+
+
+## OpenAI Configuration
+
+The application can call OpenAI for text smoothing. Set the following properties in `application.yml` or as environment variables:
+
+```yaml
+openai:
+  url: https://api.openai.com/v1/chat/completions
+  api-key: YOUR_API_KEY
+  organization: org-n9AnfI7a4lvpGr50hbypFLxB
+  project: proj_5ODKT8ABkqMtUdXihb10kbIX
+```
+
+The `organization` and `project` values are optional. If provided, they are sent as `OpenAI-Organization` and `OpenAI-Project` headers.
