@@ -50,4 +50,28 @@ jobs:
 
       - name: Build server
         run: mvn -B -pl server -am package
+
+      - name: Start server
+        run: |
+          java -jar server/target/server-1.0-SNAPSHOT.jar &
+          echo $! > server.pid
+
+      - name: Wait for server
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:9090/actuator/health >/dev/null; then
+              echo "Server is up"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Server failed to start" && cat server.pid && exit 1
+
+      - name: Run integration tests
+        run: mvn -B -pl server -Dtest=*IT test
+
+      - name: Stop server
+        if: always()
+        run: |
+          kill $(cat server.pid) || true
           
