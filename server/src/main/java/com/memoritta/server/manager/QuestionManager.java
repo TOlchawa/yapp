@@ -50,6 +50,13 @@ public class QuestionManager {
                 .toList();
     }
 
+    public List<UUID> listQuestionIdsForUser(UUID userId) {
+        return questionRepository.findAll().stream()
+                .filter(dao -> dao.getAudience() != QuestionAudience.DIRECT || userId.equals(dao.getToUserId()))
+                .map(QuestionDao::getId)
+                .toList();
+    }
+
     private QuestionRef toQuestionRef(QuestionDao dao) {
         String desc = dao.getQuestion();
         if (desc != null && desc.length() > descriptionMaxLength) {
