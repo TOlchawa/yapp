@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import { Provider } from 'react-redux';
 import { createAppStore } from './store.js';
-import { BACKEND_URL } from './config.js';
+import { BACKEND_URL, AUTH_EMAIL, AUTH_PASSWORD } from './config.js';
 import Ask from './Ask.jsx';
 
 function renderWithStore(ui) {
@@ -56,7 +56,12 @@ describe('Ask view', () => {
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
         `${BACKEND_URL}/ai/smooth`,
-        expect.objectContaining({ method: 'POST' })
+        expect.objectContaining({
+          method: 'POST',
+          headers: expect.objectContaining({
+            Authorization: `Basic ${btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`)}`,
+          }),
+        })
       );
       expect(screen.getByTestId('smooth-popup')).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Apply' })).toBeInTheDocument();

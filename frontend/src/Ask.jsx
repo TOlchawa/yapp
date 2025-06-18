@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { BACKEND_URL } from './config.js';
+
+import { backendFetch } from './backend.js';
 
 export default function Ask({ onBack = () => {} }) {
   const [question, setQuestion] = useState('');
@@ -18,7 +19,7 @@ export default function Ask({ onBack = () => {} }) {
         fromUserId: userInfo.id,
         question,
       });
-      const resp = await fetch(`${BACKEND_URL}/question`, {
+      const resp = await backendFetch('/question', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: params,
@@ -38,7 +39,7 @@ export default function Ask({ onBack = () => {} }) {
     setMessage('');
     try {
       const params = new URLSearchParams({ id: questionId, question });
-      const resp = await fetch(`${BACKEND_URL}/question`, {
+      const resp = await backendFetch('/question', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: params,
@@ -59,7 +60,7 @@ export default function Ask({ onBack = () => {} }) {
     setSmoothDisabled(true);
     setTimeout(() => setSmoothDisabled(false), 5000);
     try {
-      const resp = await fetch(`${BACKEND_URL}/ai/smooth`, {
+      const resp = await backendFetch('/ai/smooth', {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: question,
