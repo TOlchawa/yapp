@@ -116,8 +116,10 @@ export default function Search({ onBack = () => {} }) {
                 className="item-button"
                 onClick={() => setSelectedId(id)}
               >
-                {name}
-                {hasBarcode && <FaBarcode aria-label="barcode" />}
+                <span className="item-name">{name}</span>
+                {hasBarcode && (
+                  <FaBarcode className="barcode-icon" aria-label="barcode" />
+                )}
               </button>
             </li>
           );
