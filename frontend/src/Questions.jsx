@@ -66,14 +66,14 @@ export default function Questions({ onBack = () => {} }) {
   }
 
   return (
-    <div>
+    <div className="questions-view">
       <div className="view-header">
         <h1>Questions</h1>
         <button type="button" className="back-button" onClick={onBack}>
           Back
         </button>
       </div>
-      <ul>
+      <ul className="questions-list">
         {questions.map((q) => (
           <li key={q.id} className="question-item">
             <button
