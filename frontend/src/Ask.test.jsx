@@ -72,11 +72,29 @@ describe('Ask view', () => {
     expect(screen.getByTestId('ask-textarea').value).toBe('fixed');
   });
 
-  it('shows recording popup when microphone clicked', () => {
+  it('records audio and shows length', async () => {
+    const mockStream = { getTracks: vi.fn(() => [{ stop: vi.fn() }]) };
+    global.navigator.mediaDevices = {
+      getUserMedia: vi.fn(() => Promise.resolve(mockStream)),
+    };
+    global.MediaRecorder = vi.fn(function (stream) {
+      this.stream = stream;
+      this.start = vi.fn();
+      this.stop = vi.fn();
+    });
+
     renderWithStore(<Ask />);
     fireEvent.click(screen.getByRole('button', { name: /record/i }));
-    expect(screen.getByTestId('record-popup')).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('record-popup')).toBeInTheDocument();
+    });
+
     fireEvent.click(screen.getByRole('button', { name: /close/i }));
-    expect(screen.queryByTestId('record-popup')).not.toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('record-popup')).not.toBeInTheDocument();
+      expect(screen.getByTestId('length-popup')).toBeInTheDocument();
+    });
   });
 });

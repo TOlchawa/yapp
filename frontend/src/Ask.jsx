@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { FaMicrophone } from 'react-icons/fa';
 
@@ -12,6 +12,10 @@ export default function Ask({ onBack = () => {} }) {
   const [showSmooth, setShowSmooth] = useState(false);
   const [smoothDisabled, setSmoothDisabled] = useState(false);
   const [showRecord, setShowRecord] = useState(false);
+  const [recordLength, setRecordLength] = useState(null);
+  const [showLength, setShowLength] = useState(false);
+  const mediaRecorderRef = useRef(null);
+  const startTimeRef = useRef(null);
   const userInfo = useSelector((state) => state.user.userInfo);
 
   async function handleAsk() {
@@ -78,8 +82,37 @@ export default function Ask({ onBack = () => {} }) {
     }
   }
 
-  function handleRecord() {
+  async function handleRecord() {
     setShowRecord(true);
+    setRecordLength(null);
+    setShowLength(false);
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const rec = new MediaRecorder(stream);
+      mediaRecorderRef.current = rec;
+      startTimeRef.current = Date.now();
+      rec.start();
+    } catch (err) {
+      // ignore errors
+    }
+  }
+
+  function handleStopRecord() {
+    setShowRecord(false);
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+      if (mediaRecorderRef.current.stream) {
+        mediaRecorderRef.current.stream.getTracks().forEach((t) => t.stop());
+      }
+      const len = Math.round((Date.now() - startTimeRef.current) / 1000);
+      setRecordLength(len);
+      mediaRecorderRef.current = null;
+      startTimeRef.current = null;
+    }
+    setShowLength(true);
   }
 
   return (
@@ -147,7 +180,19 @@ export default function Ask({ onBack = () => {} }) {
           <div className="popup-window">
             <p>Recording started...</p>
             <div className="popup-buttons">
-              <button type="button" onClick={() => setShowRecord(false)}>
+              <button type="button" onClick={handleStopRecord}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showLength && (
+        <div className="popup-overlay" data-testid="length-popup">
+          <div className="popup-window">
+            <p>{`Recording length: ${recordLength}s`}</p>
+            <div className="popup-buttons">
+              <button type="button" onClick={() => setShowLength(false)}>
                 Close
               </button>
             </div>
