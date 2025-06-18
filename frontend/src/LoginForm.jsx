@@ -29,6 +29,7 @@ export default function LoginForm({ onLogin }) {
   const [showSignup, setShowSignup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [autoLogin, setAutoLogin] = useState(false);
+  const [serverVersion, setServerVersion] = useState('');
   const userInfo = useSelector((state) => state.user.userInfo);
   const currentView = useSelector((state) => state.user.currentView);
   const dispatch = useDispatch();
@@ -120,6 +121,23 @@ export default function LoginForm({ onLogin }) {
     dispatch(setCurrentView(null));
   }
 
+  useEffect(() => {
+    async function fetchVersion() {
+      try {
+        const resp = await fetch(`${BACKEND_URL}/version`);
+        if (resp.ok) {
+          const ver = await resp.text();
+          setServerVersion(ver);
+        }
+      } catch {
+        // ignore errors
+      }
+    }
+    if (userInfo) {
+      fetchVersion();
+    }
+  }, [userInfo]);
+
   return (
     <form className="login-form" onSubmit={handleSubmit}>
       {!userInfo && (
@@ -176,6 +194,11 @@ export default function LoginForm({ onLogin }) {
           {currentView === null && (
             <>
               <h1>Welcome</h1>
+              {serverVersion && (
+                <p className="server-version">
+                  Server version: {serverVersion}
+                </p>
+              )}
               <p data-testid="user-nickname">{userInfo.nickname}</p>
               <h2>User Info</h2>
               <ul>

@@ -16,13 +16,19 @@ if ! command -v sshpass >/dev/null 2>&1; then
   exit 1
 fi
 
+# Number of the current attempt, passed from the workflow.
+ATTEMPT="${ATTEMPT:-unknown}"
+# Base wait time is 30 seconds. Add a random 10-30 seconds.
+RANDOM_WAIT=$((RANDOM % 21 + 10))
+LOCK_TIMEOUT=$((30 + RANDOM_WAIT))
+
 sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" <<ENDSSH
 # Prevent running multiple restarts at the same time.
-# Wait up to 30 seconds for the lock. If the lock cannot be
+# Wait up to ${LOCK_TIMEOUT} seconds for the lock. If the lock cannot be
 # obtained, exit quietly so the workflow ends.
 (
-  flock -w 30 9 || {
-    echo "Another restart is in progress. Exiting." >&2
+  flock -w ${LOCK_TIMEOUT} 9 || {
+    echo "Another restart is in progress on attempt ${ATTEMPT}. Exiting." >&2
     exit 0
   }
   cd "$SERVER_HOME"

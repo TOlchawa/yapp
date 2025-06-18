@@ -14,6 +14,7 @@ describe('App login flow', () => {
       Promise.resolve({
         ok: true,
         json: () => Promise.resolve(mockResponse),
+        text: () => Promise.resolve('1.0.0'),
       })
     );
 
@@ -35,6 +36,7 @@ describe('App login flow', () => {
         'nickname1'
       );
       expect(screen.queryByTestId('email-input')).not.toBeInTheDocument();
+      expect(screen.getByText('Server version: 1.0.0')).toBeInTheDocument();
     });
   });
 });

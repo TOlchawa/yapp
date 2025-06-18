@@ -1,6 +1,7 @@
 package com.memoritta.server.manager;
 
 import com.memoritta.server.config.OpenAiConfig;
+
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
