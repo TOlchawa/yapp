@@ -31,3 +31,10 @@ replay_pid*
 node_modules/
 **/node_modules/
 **/dist/
+/server/.idea/.gitignore
+/server/.idea/compiler.xml
+/server/.idea/encodings.xml
+/server/.idea/jarRepositories.xml
+/.run/Memoritta DEV.run.xml
+/server/.idea/misc.xml
+/server/.idea/vcs.xml
