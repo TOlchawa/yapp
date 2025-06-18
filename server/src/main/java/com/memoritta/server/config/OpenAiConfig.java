@@ -14,4 +14,10 @@ public class OpenAiConfig {
 
     @Value("${openai.api-key:changeme}")
     private String apiKey;
+
+    @Value("${openai.organization:}")
+    private String organization;
+
+    @Value("${openai.project:}")
+    private String project;
 }

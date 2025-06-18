@@ -23,6 +23,12 @@ public class OpenAiManager {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(config.getApiKey());
+        if (config.getOrganization() != null && !config.getOrganization().isBlank()) {
+            headers.add("OpenAI-Organization", config.getOrganization());
+        }
+        if (config.getProject() != null && !config.getProject().isBlank()) {
+            headers.add("OpenAI-Project", config.getProject());
+        }
 
         Map<String, Object> message = Map.of(
                 "role", "user",
