@@ -38,13 +38,27 @@ public class OpenAiManager {
             headers.add("OpenAI-Project", config.getProject());
         }
 
-        Map<String, Object> message = Map.of(
+        Map<String, Object> messageDeveloper = Map.of(
+                "role", "developer",
+                "content", List.of(
+                        Map.of(
+                                "type", "text",
+                                "text", "Please smooth and check spelling of this text. Keep the original language.\n"
+                        )
+                )
+        );
+        Map<String, Object> messageUser = Map.of(
                 "role", "user",
-                "content", "Please smooth and check spelling of this text. Keep the original language. Text: " + text
+                "content", List.of(
+                        Map.of(
+                                "type", "text",
+                                "text", "\n" + text
+                        )
+                )
         );
         Map<String, Object> body = Map.of(
                 "model", "gpt-3.5-turbo",
-                "messages", List.of(message)
+                "messages", List.of(messageDeveloper, messageUser)
         );
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
