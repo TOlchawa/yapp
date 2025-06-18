@@ -106,7 +106,7 @@ export default function Search({ onBack = () => {} }) {
       <ul>
         {itemIds.map((id) => {
           const info = details[id];
-          const name = info && info.name ? info.name : 'noname';
+          const name = info ? info.name || 'noname' : id;
           const hasBarcode =
             info && info.description && info.description.barcode;
           return (
