@@ -83,6 +83,25 @@ class QuestionControllerTest {
     }
 
     @Test
+    void listQuestionIds_shouldReturnFiltered() {
+        UUID userId = UUID.randomUUID();
+        QuestionDao direct = QuestionDao.builder()
+                .id(UUID.randomUUID())
+                .toUserId(userId)
+                .audience(QuestionAudience.DIRECT)
+                .build();
+        QuestionDao publicQ = QuestionDao.builder()
+                .id(UUID.randomUUID())
+                .audience(QuestionAudience.EVERYONE)
+                .build();
+        when(questionRepository.findAll()).thenReturn(List.of(direct, publicQ));
+
+        List<UUID> result = questionController.listQuestionIds(userId.toString());
+
+        assertThat(result).containsExactlyInAnyOrder(direct.getId(), publicQ.getId());
+    }
+
+    @Test
     void fetchQuestion_shouldReturnWithAnswers() {
         UUID qid = UUID.randomUUID();
         when(questionRepository.findById(qid))

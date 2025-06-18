@@ -25,17 +25,24 @@ describe('Questions view', () => {
   });
 
   it('loads questions on mount', async () => {
-    const qs = [
-      { id: 'q1', description: 'short' },
-      { id: 'q2', description: 'a'.repeat(140) },
-    ];
-    global.fetch = vi.fn(() =>
-      Promise.resolve({ ok: true, json: () => Promise.resolve(qs) })
-    );
+    const ids = ['q1', 'q2'];
+    const q1 = { question: 'short' };
+    const q2 = { question: 'a'.repeat(140) };
+    global.fetch = vi
+      .fn()
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve(ids) })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve(q1) })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve(q2) })
+      );
     renderWithStore(<Questions />);
     await screen.findByText('short');
     expect(global.fetch).toHaveBeenCalledWith(
-      `${BACKEND_URL}/question?userId=u1`,
+      `${BACKEND_URL}/question/ids?userId=u1`,
       expect.objectContaining({
         headers: expect.objectContaining({
           Authorization: `Basic ${btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`)}`,
@@ -47,17 +54,17 @@ describe('Questions view', () => {
   });
 
   it('opens details view on click', async () => {
-    const qs = [{ id: 'q1', description: 'short' }];
+    const ids = ['q1'];
     global.fetch = vi
       .fn()
       .mockImplementationOnce(() =>
-        Promise.resolve({ ok: true, json: () => Promise.resolve(qs) })
+        Promise.resolve({ ok: true, json: () => Promise.resolve(ids) })
       )
       .mockImplementationOnce(() =>
-        Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve({ question: 'q' }),
-        })
+        Promise.resolve({ ok: true, json: () => Promise.resolve({ question: 'short' }) })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve({ question: 'q' }) })
       )
       .mockImplementationOnce(() =>
         Promise.resolve({ ok: true, json: () => Promise.resolve([]) })

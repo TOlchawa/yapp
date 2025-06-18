@@ -40,6 +40,14 @@ public class QuestionController {
         return questionManager.listQuestionsForUser(UUID.fromString(userId));
     }
 
+    @GetMapping("/ids")
+    @Operation(summary = "List question IDs", description = "Lists question IDs for the given user")
+    public List<UUID> listQuestionIds(
+            @RequestParam @Parameter(description = "ID of user to get questions for") String userId
+    ) {
+        return questionManager.listQuestionIdsForUser(UUID.fromString(userId));
+    }
+
     @GetMapping("/detail")
     @Operation(summary = "Get question", description = "Fetch single question with answers")
     public Question fetchQuestion(

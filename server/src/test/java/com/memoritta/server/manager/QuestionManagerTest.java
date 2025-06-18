@@ -101,6 +101,30 @@ class QuestionManagerTest {
     }
 
     @Test
+    void listQuestionIdsForUser_shouldFilterDirectAudience() {
+        UUID userId = UUID.randomUUID();
+        QuestionDao q1 = QuestionDao.builder()
+                .id(UUID.randomUUID())
+                .toUserId(UUID.randomUUID())
+                .audience(QuestionAudience.DIRECT)
+                .build();
+        QuestionDao q2 = QuestionDao.builder()
+                .id(UUID.randomUUID())
+                .toUserId(userId)
+                .audience(QuestionAudience.DIRECT)
+                .build();
+        QuestionDao q3 = QuestionDao.builder()
+                .id(UUID.randomUUID())
+                .audience(QuestionAudience.EVERYONE)
+                .build();
+        when(questionRepository.findAll()).thenReturn(List.of(q1, q2, q3));
+
+        List<UUID> result = questionManager.listQuestionIdsForUser(userId);
+
+        assertThat(result).containsExactlyInAnyOrder(q2.getId(), q3.getId());
+    }
+
+    @Test
     void updateQuestion_shouldSaveChangedText() {
         UUID id = UUID.randomUUID();
         QuestionDao dao = QuestionDao.builder().id(id).question("old").build();
