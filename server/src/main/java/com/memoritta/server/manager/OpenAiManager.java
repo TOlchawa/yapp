@@ -32,8 +32,8 @@ public class OpenAiManager {
     )
     public String smoothText(String text) {
         ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
-                .addUserMessage("Keep the original language. Please smooth and improve the following text while keeping it in the original language. Correct grammar, punctuation, and style, but do not translate or change the language: " + text)
-                .model(ChatModel.GPT_4_1)
+                .addUserMessage("Keep the original language. Please smooth and improve the following text while keeping it in the original language. Correct grammar, punctuation, and style, but do not translate or change the language:\\n\\n" + text)
+                .model(ChatModel.GPT_4O_MINI)
                 .build();
         ChatCompletion completion = client.chat().completions().create(params);
         if (completion.choices().isEmpty()) {
