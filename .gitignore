@@ -38,3 +38,7 @@ node_modules/
 /.run/Memoritta DEV.run.xml
 /server/.idea/misc.xml
 /server/.idea/vcs.xml
+/frontend/frontend/package.json
+/frontend/frontend/package-lock.json
+/server/src/main/resources/keys/private.der
+/server/src/main/resources/keys/secret.txt
