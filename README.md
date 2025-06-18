@@ -66,7 +66,7 @@ The project uses GitHub Actions to deploy the backend and frontend.
 
 Workflows:
 
-- `.github/workflows/deploy-prod.yml` runs after the *Integration Tests* workflow.
+- `.github/workflows/deploy-prod.yml` runs when you create a `release/*` branch.
 - `.github/workflows/deploy-on-merge.yml` runs when a branch named `release/*` is created.
 - `.github/workflows/restart-services.yml` runs whenever code is pushed to `main`.
 
