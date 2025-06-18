@@ -1,5 +1,6 @@
 server:
   port: 9090
+  log: "/home/yapp/server/yapp.log"
 
 logging:
   level:

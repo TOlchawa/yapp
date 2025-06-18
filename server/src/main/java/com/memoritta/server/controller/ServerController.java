@@ -1,6 +1,7 @@
 package com.memoritta.server.controller;
 
 import com.memoritta.server.config.ServerConfig;
+import com.memoritta.server.config.LogConfig;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,8 @@ import java.util.UUID;
 @RestController
 @AllArgsConstructor
 public class ServerController {
-    private ServerConfig serverConfig;
+    private final ServerConfig serverConfig;
+    private final LogConfig logConfig;
 
 
     @GetMapping("/version")
@@ -58,5 +60,20 @@ public class ServerController {
     )
     public ResponseEntity<String> ping() {
         return ResponseEntity.ok("pong");
+    }
+
+    @SneakyThrows
+    @GetMapping("/logs")
+    @Operation(
+            summary = "Read server log",
+            description = "Returns the content of the configured log file"
+    )
+    public ResponseEntity<String> getLogs() {
+        java.nio.file.Path path = java.nio.file.Path.of(logConfig.getLogPath());
+        if (!java.nio.file.Files.exists(path)) {
+            return ResponseEntity.notFound().build();
+        }
+        String text = java.nio.file.Files.readString(path);
+        return ResponseEntity.ok(text);
     }
 }
