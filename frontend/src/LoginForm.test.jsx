@@ -18,8 +18,10 @@ describe('LoginForm', () => {
       .split(';')
       .forEach(
         (c) =>
-          (document.cookie = c
-            .replace(/=.*/, '=;expires=' + new Date(0).toUTCString() + ';path=/'))
+          (document.cookie = c.replace(
+            /=.*/,
+            '=;expires=' + new Date(0).toUTCString() + ';path=/'
+          ))
       );
   });
   it('renders email and password inputs', () => {
@@ -51,6 +53,7 @@ describe('LoginForm', () => {
       Promise.resolve({
         ok: true,
         json: () => Promise.resolve(mockResponse),
+        text: () => Promise.resolve('1.0.0'),
       })
     );
 
@@ -85,6 +88,7 @@ describe('LoginForm', () => {
       screen.getByRole('button', { name: 'Questions' })
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Friends' })).toBeInTheDocument();
+    expect(screen.getByText('Server version: 1.0.0')).toBeInTheDocument();
   });
 
   it('stores credentials in cookies when remember is checked', async () => {
@@ -96,6 +100,7 @@ describe('LoginForm', () => {
       Promise.resolve({
         ok: true,
         json: () => Promise.resolve(mockResponse),
+        text: () => Promise.resolve('1.0.0'),
       })
     );
 
@@ -139,7 +144,9 @@ describe('LoginForm', () => {
     fireEvent.click(screen.getByRole('button', { name: /login/i }));
 
     await screen.findByText(/login failed/i);
-    const signupButton = screen.getByRole('button', { name: /create account/i });
+    const signupButton = screen.getByRole('button', {
+      name: /create account/i,
+    });
     expect(signupButton).toBeInTheDocument();
 
     fireEvent.click(signupButton);
@@ -171,6 +178,12 @@ describe('LoginForm', () => {
           return Promise.resolve({
             ok: true,
             json: () => Promise.resolve(mockResponse),
+          });
+        }
+        if (url.endsWith('/version')) {
+          return Promise.resolve({
+            ok: true,
+            text: () => Promise.resolve('1.0.0'),
           });
         }
         return Promise.resolve({ ok: false });
@@ -220,7 +233,11 @@ describe('LoginForm', () => {
       jwtToken: 'token',
     };
     global.fetch = vi.fn(() =>
-      Promise.resolve({ ok: true, json: () => Promise.resolve(mockResponse) })
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(mockResponse),
+        text: () => Promise.resolve('1.0.0'),
+      })
     );
 
     document.cookie = 'email=foo%40example.com';
