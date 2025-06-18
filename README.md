@@ -88,3 +88,12 @@ All workflows expect an environment called `PROD`. To configure it:
 `restart-services.yml` reads these values and passes them to `scripts/restart-services.sh` to restart the services on your server whenever `main` is updated.
 The script uses a lock file on the server so only one restart runs at a time.
 If another run holds the lock, the script waits up to 30 seconds plus a random 10–30 seconds before giving up.
+
+## Automating Releases
+
+Run `scripts/release.sh` to tag a new version and create a GitHub release.
+The script collects commit messages since the last tag, bumps the version
+according to commit type, pushes the tag, and (if `gh` is installed) creates
+a release with the changelog.
+
+Make the script executable once with `chmod +x scripts/release.sh`.
