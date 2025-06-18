@@ -46,3 +46,5 @@ openai:
   api-key: "${OPENAI_API_KEY:changeme}"
   organization: "org-n9AnfI7a4lvpGr50hbypFLxB"
   project: "proj_5ODKT8ABkqMtUdXihb10kbIX"
+
+"server.log": "/home/yapp/server/yapp.log"
