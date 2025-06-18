@@ -71,4 +71,12 @@ describe('Ask view', () => {
     expect(screen.queryByTestId('smooth-popup')).not.toBeInTheDocument();
     expect(screen.getByTestId('ask-textarea').value).toBe('fixed');
   });
+
+  it('shows recording popup when microphone clicked', () => {
+    renderWithStore(<Ask />);
+    fireEvent.click(screen.getByRole('button', { name: /record/i }));
+    expect(screen.getByTestId('record-popup')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /close/i }));
+    expect(screen.queryByTestId('record-popup')).not.toBeInTheDocument();
+  });
 });

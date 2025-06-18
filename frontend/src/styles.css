@@ -165,6 +165,17 @@ body.desktop .login-form {
   font-size: 0.9rem;
 }
 
+.mic-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  font-size: 1.5rem;
+}
+
 /* Ask view layout */
 
 .ask-form {
