@@ -1,6 +1,11 @@
 package com.memoritta.server.manager;
 
 import com.memoritta.server.config.OpenAiConfig;
+import com.openai.client.OpenAIClient;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.models.ChatModel;
+import com.openai.models.chat.completions.ChatCompletion;
+import com.openai.models.chat.completions.ChatCompletionCreateParams;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -16,11 +21,20 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@AllArgsConstructor
 public class OpenAiManager {
 
-    private final RestTemplate restTemplate = new RestTemplate();
     private final OpenAiConfig config;
+    private final OpenAIClient client;
+
+    public OpenAiManager(OpenAiConfig config) {
+        this.config = config;
+        this.client = OpenAIOkHttpClient.builder()
+                .apiKey(config.getApiKey())
+                .baseUrl(config.getUrl())
+                .organization(config.getOrganization())
+                .project(config.getProject())
+                .build();
+    }
 
     @Retryable(
             value = { HttpClientErrorException.TooManyRequests.class },
@@ -28,58 +42,14 @@ public class OpenAiManager {
             backoff = @Backoff(delay = 2000)
     )
     public String smoothText(String text) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(config.getApiKey());
-        if (config.getOrganization() != null && !config.getOrganization().isBlank()) {
-            headers.add("OpenAI-Organization", config.getOrganization());
-        }
-        if (config.getProject() != null && !config.getProject().isBlank()) {
-            headers.add("OpenAI-Project", config.getProject());
-        }
-
-        Map<String, Object> messageDeveloper = Map.of(
-                "role", "developer",
-                "content", List.of(
-                        Map.of(
-                                "type", "text",
-                                "text", "Keep the original language. Please smooth and check spelling of this text. Keep the original language.\\n"
-                        )
-                )
-        );
-        Map<String, Object> messageUser = Map.of(
-                "role", "user",
-                "content", List.of(
-                        Map.of(
-                                "type", "text",
-                                "text", "\n" + text
-                        )
-                )
-        );
-        Map<String, Object> body = Map.of(
-                "model", "gpt-3.5-turbo",
-                "messages", List.of(messageDeveloper, messageUser)
-        );
-
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
-        Map<?, ?> response = restTemplate.postForObject(config.getUrl(), entity, Map.class);
-        if (response == null) {
+        ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
+                .addUserMessage("Please smooth and improve the following text while keeping it in the original language. Correct grammar, punctuation, and style, but do not translate or change the language: " + text)
+                .model(ChatModel.GPT_4_1)
+                .build();
+        ChatCompletion completion = client.chat().completions().create(params);
+        if (completion.choices().isEmpty()) {
             return text;
         }
-        List<?> choices = (List<?>) response.get("choices");
-        if (choices == null || choices.isEmpty()) {
-            return text;
-        }
-        Object choice = choices.get(0);
-        if (choice instanceof Map<?,?> choiceMap) {
-            Object msg = choiceMap.get("message");
-            if (msg instanceof Map<?,?> msgMap) {
-                Object content = msgMap.get("content");
-                if (content != null) {
-                    return content.toString().trim();
-                }
-            }
-        }
-        return text;
+        return completion.choices().get(0).message().content().orElse(text).trim();
     }
 }
