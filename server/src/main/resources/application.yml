@@ -42,7 +42,7 @@ management:
     health:
       show-details: always
 openai:
-  url: "https://api.openai.com/v1/chat/completions"
-  api-key: ""
-  organization: ""
-  project: ""
+  url: "https://api.openai.com/v1"
+  api-key: "${OPENAI_API_KEY}"
+  organization: "org-n9AnfI7a4lvpGr50hbypFLxB"
+  project: "proj_5ODKT8ABkqMtUdXihb10kbIX"

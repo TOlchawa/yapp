@@ -31,3 +31,14 @@ replay_pid*
 node_modules/
 **/node_modules/
 **/dist/
+/server/.idea/.gitignore
+/server/.idea/compiler.xml
+/server/.idea/encodings.xml
+/server/.idea/jarRepositories.xml
+/.run/Memoritta DEV.run.xml
+/server/.idea/misc.xml
+/server/.idea/vcs.xml
+/frontend/frontend/package.json
+/frontend/frontend/package-lock.json
+/server/src/main/resources/keys/private.der
+/server/src/main/resources/keys/secret.txt
