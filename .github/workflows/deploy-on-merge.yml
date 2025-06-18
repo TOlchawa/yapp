@@ -1,14 +1,13 @@
-name: Deploy to PROD on merge
+name: Deploy to PROD on release branch
 
 on:
-  pull_request:
-    branches: [ main ]
-    types:
-      - closed
+  create:
+    branches:
+      - 'release/**'
 
 jobs:
   deploy:
-    if: ${{ github.event.pull_request.merged == true }}
+    if: ${{ github.ref_type == 'branch' }}
     environment: PROD
     runs-on: ubuntu-latest
     steps:

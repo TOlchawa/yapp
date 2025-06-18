@@ -67,8 +67,10 @@ The project uses GitHub Actions to deploy the backend and frontend.
 Workflows:
 
 - `.github/workflows/deploy-prod.yml` runs after the *Integration Tests* workflow.
-- `.github/workflows/deploy-on-merge.yml` runs when a pull request is merged into `main`.
+- `.github/workflows/deploy-on-merge.yml` runs when a branch named `release/*` is created.
 - `.github/workflows/restart-services.yml` runs whenever code is pushed to `main`.
+
+`deploy-on-merge.yml` starts when you create a `release/*` branch. It checks out the code and runs `scripts/restart-services.sh` to restart the services.
 
 All workflows expect an environment called `PROD`. To configure it:
 
