@@ -23,7 +23,8 @@ class OpenAiManagerTest {
         OpenAiConfig config = new OpenAiConfig();
         config.setUrl("http://test");
         config.setApiKey("secret");
-        manager = new OpenAiManager(restTemplate, config);
+        manager = new OpenAiManager(config);
+        org.springframework.test.util.ReflectionTestUtils.setField(manager, "restTemplate", restTemplate);
         server = MockRestServiceServer.createServer(restTemplate);
     }
 
