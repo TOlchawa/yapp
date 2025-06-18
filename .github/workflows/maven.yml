@@ -39,7 +39,11 @@ jobs:
           MISSED=$(echo "$LINE" | grep -o 'missed="[0-9]\+' | cut -d'"' -f2)
           COVERED=$(echo "$LINE" | grep -o 'covered="[0-9]\+' | cut -d'"' -f2)
           TOTAL=$((MISSED + COVERED))
-          PCT=$((100 * COVERED / TOTAL))
+          if [ "$TOTAL" -eq 0 ]; then
+            PCT=0
+          else
+            PCT=$((100 * COVERED / TOTAL))
+          fi
           echo "Line coverage: $PCT%" | tee coverage-summary.txt
           echo '## Coverage' >> $GITHUB_STEP_SUMMARY
           echo "Line coverage: $PCT%" >> $GITHUB_STEP_SUMMARY
