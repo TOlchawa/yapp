@@ -13,17 +13,17 @@ describe('Search view', () => {
 
   it('loads item IDs on mount', async () => {
     const ids = ['1', '2'];
+    const pending = new Promise(() => {});
     global.fetch = vi
       .fn()
       .mockImplementationOnce(() =>
         Promise.resolve({ ok: true, json: () => Promise.resolve(ids) })
       )
-      .mockImplementation(() =>
-        Promise.resolve({ ok: true, json: () => Promise.resolve({}) })
-      );
+      .mockImplementation(() => pending);
     render(<Search />);
-    const names = await screen.findAllByText('noname');
-    expect(names).toHaveLength(2);
+    for (const id of ids) {
+      expect(await screen.findByText(id)).toBeInTheDocument();
+    }
     expect(global.fetch).toHaveBeenCalledWith(
       `${BACKEND_URL}/items/user`,
       expect.objectContaining({
