@@ -43,6 +43,6 @@ management:
       show-details: always
 openai:
   url: "https://api.openai.com/v1"
-  api-key: "${OPENAI_API_KEY}"
+  api-key: "${OPENAI_API_KEY:changeme}"
   organization: "org-n9AnfI7a4lvpGr50hbypFLxB"
   project: "proj_5ODKT8ABkqMtUdXihb10kbIX"
