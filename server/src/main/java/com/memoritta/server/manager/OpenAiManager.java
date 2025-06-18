@@ -2,6 +2,7 @@ package com.memoritta.server.manager;
 
 import com.memoritta.server.config.OpenAiConfig;
 
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -12,15 +13,11 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@AllArgsConstructor
 public class OpenAiManager {
 
+    private final RestTemplate restTemplate = new RestTemplate();
     private final OpenAiConfig config;
-    private final RestTemplate restTemplate;
-
-    public OpenAiManager(OpenAiConfig config) {
-        this.config = config;
-        this.restTemplate = new RestTemplate();
-    }
 
     public String smoothText(String text) {
         HttpHeaders headers = new HttpHeaders();
