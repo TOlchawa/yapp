@@ -9,7 +9,8 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 public class OpenAiConfig {
-    @Value("${openai.url:https://api.openai.com/v1/chat/completions}")
+    // Base URL for OpenAI services. Do not include the path to a specific endpoint.
+    @Value("${openai.url:https://api.openai.com/v1}")
     private String url;
 
     @Value("${openai.api-key:changeme}")
