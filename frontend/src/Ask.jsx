@@ -16,6 +16,7 @@ export default function Ask({ onBack = () => {} }) {
   const [showLength, setShowLength] = useState(false);
   const mediaRecorderRef = useRef(null);
   const startTimeRef = useRef(null);
+  const chunksRef = useRef([]);
   const userInfo = useSelector((state) => state.user.userInfo);
 
   async function handleAsk() {
@@ -94,6 +95,12 @@ export default function Ask({ onBack = () => {} }) {
       const rec = new MediaRecorder(stream);
       mediaRecorderRef.current = rec;
       startTimeRef.current = Date.now();
+      chunksRef.current = [];
+      rec.addEventListener('dataavailable', (e) => {
+        if (e.data && e.data.size > 0) {
+          chunksRef.current.push(e.data);
+        }
+      });
       rec.start();
     } catch (err) {
       // ignore errors
@@ -103,14 +110,28 @@ export default function Ask({ onBack = () => {} }) {
   function handleStopRecord() {
     setShowRecord(false);
     if (mediaRecorderRef.current) {
-      mediaRecorderRef.current.stop();
-      if (mediaRecorderRef.current.stream) {
-        mediaRecorderRef.current.stream.getTracks().forEach((t) => t.stop());
+      const rec = mediaRecorderRef.current;
+      rec.stop();
+      if (rec.stream) {
+        rec.stream.getTracks().forEach((t) => t.stop());
       }
       const len = Math.round((Date.now() - startTimeRef.current) / 1000);
       setRecordLength(len);
       mediaRecorderRef.current = null;
       startTimeRef.current = null;
+
+      const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+      chunksRef.current = [];
+      const fd = new FormData();
+      fd.append('file', blob, 'record.webm');
+      backendFetch('/ai/transcribe', { method: 'POST', body: fd })
+        .then((r) => (r.ok ? r.text() : Promise.resolve('')))
+        .then((text) => {
+          if (text) {
+            setQuestion((prev) => (prev ? `${prev} ${text}` : text));
+          }
+        })
+        .catch(() => {});
     }
     setShowLength(true);
   }

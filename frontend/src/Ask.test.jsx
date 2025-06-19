@@ -72,16 +72,29 @@ describe('Ask view', () => {
     expect(screen.getByTestId('ask-textarea').value).toBe('fixed');
   });
 
-  it('records audio and shows length', async () => {
+  it('records audio, sends to backend and appends text', async () => {
     const mockStream = { getTracks: vi.fn(() => [{ stop: vi.fn() }]) };
     global.navigator.mediaDevices = {
       getUserMedia: vi.fn(() => Promise.resolve(mockStream)),
     };
+
+    const callbacks = {};
     global.MediaRecorder = vi.fn(function (stream) {
       this.stream = stream;
       this.start = vi.fn();
-      this.stop = vi.fn();
+      this.stop = vi.fn(() => {
+        if (callbacks.dataavailable) {
+          callbacks.dataavailable({ data: new Blob(['a']) });
+        }
+      });
+      this.addEventListener = (name, cb) => {
+        callbacks[name] = cb;
+      };
     });
+
+    global.fetch = vi.fn(() =>
+      Promise.resolve({ ok: true, text: () => Promise.resolve('hello') })
+    );
 
     renderWithStore(<Ask />);
     fireEvent.click(screen.getByRole('button', { name: /record/i }));
@@ -95,6 +108,14 @@ describe('Ask view', () => {
     await waitFor(() => {
       expect(screen.queryByTestId('record-popup')).not.toBeInTheDocument();
       expect(screen.getByTestId('length-popup')).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${BACKEND_URL}/ai/transcribe`,
+        expect.objectContaining({ method: 'POST' })
+      );
+      expect(screen.getByTestId('ask-textarea').value).toBe('hello');
     });
   });
 });

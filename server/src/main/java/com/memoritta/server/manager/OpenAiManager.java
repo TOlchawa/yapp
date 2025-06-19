@@ -4,6 +4,10 @@ import com.memoritta.server.config.OpenAiConfig;
 import com.openai.client.OpenAIClient;
 import com.openai.client.okhttp.OpenAIOkHttpClient;
 import com.openai.models.ChatModel;
+import com.openai.models.audio.AudioModel;
+import com.openai.models.audio.AudioResponseFormat;
+import com.openai.models.audio.transcriptions.TranscriptionCreateParams;
+import com.openai.models.audio.transcriptions.TranscriptionCreateResponse;
 import com.openai.models.chat.completions.ChatCompletion;
 import com.openai.models.chat.completions.ChatCompletionCreateParams;
 import org.springframework.retry.annotation.Backoff;
@@ -36,7 +40,7 @@ public class OpenAiManager {
             maxAttempts = 3,
             backoff = @Backoff(delay = 2000)
     )
-     public String smoothText(String text) {
+    public String smoothText(String text) {
         if (client == null) {
             return text;
         }
@@ -50,5 +54,30 @@ public class OpenAiManager {
             return text;
         }
         return completion.choices().get(0).message().content().orElse(text).trim();
+    }
+
+    @Retryable(
+            value = {HttpClientErrorException.TooManyRequests.class},
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 2000)
+    )
+    public String transcribeAudio(byte[] data) {
+        if (client == null) {
+            return "";
+        }
+
+        TranscriptionCreateParams params = TranscriptionCreateParams.builder()
+                .file(data)
+                .model(AudioModel.WHISPER_1)
+                .responseFormat(AudioResponseFormat.TEXT)
+                .build();
+
+        TranscriptionCreateResponse response =
+                client.audio().transcriptions().create(params);
+
+        return response.transcription()
+                .map(t -> t.text())
+                .orElse("")
+                .trim();
     }
 }
