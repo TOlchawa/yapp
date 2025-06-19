@@ -102,6 +102,20 @@ class QuestionControllerTest {
     }
 
     @Test
+    void listAllQuestionIds_shouldReturnAll() {
+        UUID id1 = UUID.randomUUID();
+        UUID id2 = UUID.randomUUID();
+        when(questionRepository.findAll()).thenReturn(List.of(
+                QuestionDao.builder().id(id1).build(),
+                QuestionDao.builder().id(id2).build()
+        ));
+
+        List<UUID> result = questionController.listAllQuestionIds();
+
+        assertThat(result).containsExactly(id1, id2);
+    }
+
+    @Test
     void fetchQuestion_shouldReturnWithAnswers() {
         UUID qid = UUID.randomUUID();
         when(questionRepository.findById(qid))

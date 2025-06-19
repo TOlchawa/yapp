@@ -125,6 +125,20 @@ class QuestionManagerTest {
     }
 
     @Test
+    void listAllQuestionIds_shouldReturnIds() {
+        UUID id1 = UUID.randomUUID();
+        UUID id2 = UUID.randomUUID();
+        when(questionRepository.findAll()).thenReturn(List.of(
+                QuestionDao.builder().id(id1).build(),
+                QuestionDao.builder().id(id2).build()
+        ));
+
+        List<UUID> result = questionManager.listAllQuestionIds();
+
+        assertThat(result).containsExactly(id1, id2);
+    }
+
+    @Test
     void updateQuestion_shouldSaveChangedText() {
         UUID id = UUID.randomUUID();
         QuestionDao dao = QuestionDao.builder().id(id).question("old").build();
