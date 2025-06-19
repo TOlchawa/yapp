@@ -26,31 +26,23 @@ describe('Questions view', () => {
 
   it('loads questions on mount', async () => {
     const ids = ['q1', 'q2'];
-    const q1 = { question: 'short' };
-    const q2 = { question: 'a'.repeat(140) };
     global.fetch = vi
       .fn()
       .mockImplementationOnce(() =>
         Promise.resolve({ ok: true, json: () => Promise.resolve(ids) })
-      )
-      .mockImplementationOnce(() =>
-        Promise.resolve({ ok: true, json: () => Promise.resolve(q1) })
-      )
-      .mockImplementationOnce(() =>
-        Promise.resolve({ ok: true, json: () => Promise.resolve(q2) })
       );
     renderWithStore(<Questions />);
-    await screen.findByText('short');
+    for (const id of ids) {
+      expect(await screen.findByText(id)).toBeInTheDocument();
+    }
     expect(global.fetch).toHaveBeenCalledWith(
-      `${BACKEND_URL}/question/ids?userId=u1`,
+      `${BACKEND_URL}/question/ids/all`,
       expect.objectContaining({
         headers: expect.objectContaining({
           Authorization: `Basic ${btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`)}`,
         }),
       })
     );
-    expect(screen.getByText('short')).toBeInTheDocument();
-    expect(screen.getByText(`${'a'.repeat(125)}...`)).toBeInTheDocument();
   });
 
   it('opens details view on click', async () => {
@@ -61,16 +53,16 @@ describe('Questions view', () => {
         Promise.resolve({ ok: true, json: () => Promise.resolve(ids) })
       )
       .mockImplementationOnce(() =>
-        Promise.resolve({ ok: true, json: () => Promise.resolve({ question: 'short' }) })
-      )
-      .mockImplementationOnce(() =>
-        Promise.resolve({ ok: true, json: () => Promise.resolve({ question: 'q' }) })
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ question: 'q' }),
+        })
       )
       .mockImplementationOnce(() =>
         Promise.resolve({ ok: true, json: () => Promise.resolve([]) })
       );
     renderWithStore(<Questions />);
-    const item = await screen.findByText('short');
+    const item = await screen.findByText('q1');
     fireEvent.click(item);
     await screen.findByRole('heading', { name: 'Question details' });
     expect(global.fetch).toHaveBeenCalledWith(

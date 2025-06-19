@@ -57,6 +57,12 @@ public class QuestionManager {
                 .toList();
     }
 
+    public List<UUID> listAllQuestionIds() {
+        return questionRepository.findAll().stream()
+                .map(QuestionDao::getId)
+                .toList();
+    }
+
     private QuestionRef toQuestionRef(QuestionDao dao) {
         String desc = dao.getQuestion();
         if (desc != null && desc.length() > descriptionMaxLength) {

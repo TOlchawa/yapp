@@ -24,30 +24,12 @@ export default function Questions({ onBack = () => {} }) {
       try {
         const token = btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`);
         const headers = { Authorization: `Basic ${token}` };
-        const resp = await fetch(
-          `${BACKEND_URL}/question/ids?userId=${userInfo.id}`,
-          { headers }
-        );
+        const resp = await fetch(`${BACKEND_URL}/question/ids/all`, {
+          headers,
+        });
         if (!cancelled && resp.ok) {
           const ids = await resp.json();
           setQuestions(ids.map((id) => ({ id, description: id })));
-          for (const id of ids) {
-            if (cancelled) {
-              break;
-            }
-            const qResp = await fetch(
-              `${BACKEND_URL}/question/detail?id=${id}`,
-              { headers }
-            );
-            if (!cancelled && qResp.ok) {
-              const data = await qResp.json();
-              setQuestions((prev) =>
-                prev.map((q) =>
-                  q.id === id ? { id, description: data.question } : q
-                )
-              );
-            }
-          }
         }
       } catch (err) {
         // ignore errors
