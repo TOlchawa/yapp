@@ -37,7 +37,7 @@ public class SecurityConfig {
                         // allow preflight OPTIONS for all endpoints
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // public endpoints
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/login", "/user")
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/login", "/user", "/version")
                         .permitAll()
                         // everything else needs authentication
                         .anyRequest().authenticated()
