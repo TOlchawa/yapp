@@ -10,6 +10,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import org.springframework.mock.web.MockMultipartFile;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -43,5 +46,15 @@ class AiControllerTest {
         String result = aiController.smooth("test");
 
         assertThat(result).isEqualTo("done");
+    }
+
+    @Test
+    void transcribe_shouldReturnText() throws Exception {
+        when(openAiManager.transcribeAudio(any())).thenReturn("hello");
+        MockMultipartFile file = new MockMultipartFile("file", new byte[] {1, 2});
+
+        String result = aiController.transcribe(file);
+
+        assertThat(result).isEqualTo("hello");
     }
 }
