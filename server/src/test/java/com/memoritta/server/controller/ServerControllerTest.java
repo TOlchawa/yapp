@@ -1,6 +1,7 @@
 package com.memoritta.server.controller;
 
 import com.memoritta.server.config.ServerConfig;
+import com.memoritta.server.config.LogConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-@ContextConfiguration(classes = {ServerController.class, ServerConfig.class})
+@ContextConfiguration(classes = {ServerController.class, ServerConfig.class, LogConfig.class})
 class ServerControllerTest {
 
     @Autowired
