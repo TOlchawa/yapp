@@ -126,6 +126,11 @@ h1 {
   object-fit: cover;
 }
 
+.item-picture {
+  max-width: 100%;
+  height: auto;
+}
+
 body.mobile .login-form {
   width: 90%;
   max-width: none;
