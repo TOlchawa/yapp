@@ -102,7 +102,7 @@ export default function ItemDetails({
         </p>
       )}
       {note && <p>{note}</p>}
-      {imgSrc && <img src={imgSrc} alt="Item" />}
+      {imgSrc && <img src={imgSrc} alt="Item" className="item-picture" />}
       <footer className="view-footer">
         <button type="button" onClick={onDelete}>
           Delete
