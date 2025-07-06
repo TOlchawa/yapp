@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaBarcode } from 'react-icons/fa';
 import { BACKEND_URL, AUTH_EMAIL, AUTH_PASSWORD } from './config.js';
+import { getItemById } from './backend.js';
 
 export default function ItemDetails({
   id,
@@ -17,10 +18,7 @@ export default function ItemDetails({
     let cancelled = false;
     async function load() {
       try {
-        const token = btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`);
-        const resp = await fetch(`${BACKEND_URL}/item?id=${id}`, {
-          headers: { Authorization: `Basic ${token}` },
-        });
+        const resp = await getItemById(id);
         if (!cancelled && resp.ok) {
           const result = await resp.json();
           setData(result);

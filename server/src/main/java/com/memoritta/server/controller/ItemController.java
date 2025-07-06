@@ -112,6 +112,25 @@ public class ItemController {
         return itemManager.fetchItem(id);
     }
 
+    /**
+     * Fetches an item by its UUID using a query parameter.
+     *
+     * @param id the UUID of the item to fetch
+     * @return the full item object
+     */
+    @GetMapping("/item")
+    @Operation(
+            summary = "Fetch a single item by ID using query parameter",
+            description = "Returns the full item object for the provided UUID via query parameter."
+    )
+    public Item fetchItemByParam(
+            @RequestParam
+            @Parameter(description = "UUID of the item to retrieve", example = "123e4567-e89b-12d3-a456-426614174000")
+            String id
+    ) throws IOException {
+        return fetchItem(id);
+    }
+
 
     @PostMapping("/items/user")
     @Operation(
