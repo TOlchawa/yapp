@@ -16,3 +16,8 @@ export async function backendFetch(path, options = {}) {
 export function getItemById(id) {
   return backendFetch(`/item/${encodeURIComponent(id)}`);
 }
+
+// Fetch friend relations for the given user ID.
+export function getFriends(userId) {
+  return backendFetch(`/friend?userId=${encodeURIComponent(userId)}`);
+}

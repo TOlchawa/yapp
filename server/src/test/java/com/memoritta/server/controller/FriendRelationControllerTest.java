@@ -64,4 +64,33 @@ class FriendRelationControllerTest {
 
         assertThat(result).hasSize(1);
     }
+
+    @Test
+    void removeFriend_shouldCallRepository() {
+        UUID userId = UUID.randomUUID();
+        UUID friendId = UUID.randomUUID();
+
+        controller.removeFriend(userId.toString(), friendId.toString());
+
+        verify(repository).deleteByUserIdAndFriendId(userId, friendId);
+    }
+
+    @Test
+    void changeFriendType_shouldReturnUpdated() {
+        UUID userId = UUID.randomUUID();
+        UUID friendId = UUID.randomUUID();
+        FriendRelationDao dao = FriendRelationDao.builder()
+                .id(UUID.randomUUID())
+                .userId(userId)
+                .friendId(friendId)
+                .type(FriendshipType.FRIENDS)
+                .build();
+        when(repository.findByUserIdAndFriendId(userId, friendId)).thenReturn(java.util.Optional.of(dao));
+        when(repository.save(any(FriendRelationDao.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        FriendRelation result = controller.changeFriendType(userId.toString(), friendId.toString(), "BEST_FRIENDS");
+
+        assertThat(result.getType()).isEqualTo(FriendshipType.BEST_FRIENDS);
+        verify(repository).save(any(FriendRelationDao.class));
+    }
 }

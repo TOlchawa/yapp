@@ -39,4 +39,27 @@ public class FriendRelationController {
     ) {
         return manager.listFriends(UUID.fromString(userId));
     }
+
+    @DeleteMapping
+    @Operation(summary = "Remove friend relation", description = "Deletes a friend relation")
+    public void removeFriend(
+            @RequestParam @Parameter(description = "User ID owning relation") String userId,
+            @RequestParam @Parameter(description = "Friend ID") String friendId
+    ) {
+        manager.removeFriend(UUID.fromString(userId), UUID.fromString(friendId));
+    }
+
+    @PatchMapping
+    @Operation(summary = "Change friend type", description = "Updates relation type")
+    public FriendRelation changeFriendType(
+            @RequestParam @Parameter(description = "User ID owning relation") String userId,
+            @RequestParam @Parameter(description = "Friend ID") String friendId,
+            @RequestParam(defaultValue = "FRIENDS") @Parameter(description = "Relation type: FRIENDS or BEST_FRIENDS") String type
+    ) {
+        return manager.changeFriendType(
+                UUID.fromString(userId),
+                UUID.fromString(friendId),
+                FriendshipType.valueOf(type)
+        );
+    }
 }

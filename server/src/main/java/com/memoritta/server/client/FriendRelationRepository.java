@@ -10,4 +10,8 @@ import java.util.UUID;
 @Repository
 public interface FriendRelationRepository extends MongoRepository<FriendRelationDao, UUID> {
     List<FriendRelationDao> findByUserId(UUID userId);
+
+    void deleteByUserIdAndFriendId(UUID userId, UUID friendId);
+
+    java.util.Optional<FriendRelationDao> findByUserIdAndFriendId(UUID userId, UUID friendId);
 }

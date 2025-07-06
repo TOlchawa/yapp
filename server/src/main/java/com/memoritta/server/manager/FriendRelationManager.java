@@ -31,4 +31,16 @@ public class FriendRelationManager {
                 .map(FriendRelationMapper.INSTANCE::toFriendRelation)
                 .toList();
     }
+
+    public void removeFriend(UUID userId, UUID friendId) {
+        repository.deleteByUserIdAndFriendId(userId, friendId);
+    }
+
+    public FriendRelation changeFriendType(UUID userId, UUID friendId, FriendshipType type) {
+        var dao = repository.findByUserIdAndFriendId(userId, friendId)
+                .orElseThrow(() -> new IllegalArgumentException("Relation not found"));
+        dao.setType(type);
+        var saved = repository.save(dao);
+        return FriendRelationMapper.INSTANCE.toFriendRelation(saved);
+    }
 }
