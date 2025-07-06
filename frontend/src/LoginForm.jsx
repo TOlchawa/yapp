@@ -7,6 +7,7 @@ import {
   MdQuestionAnswer,
   MdGroup,
   MdSubject,
+  MdStorage,
   MdVisibility,
   MdVisibilityOff,
 } from 'react-icons/md';
@@ -19,6 +20,7 @@ import Search from './Search.jsx';
 import Ask from './Ask.jsx';
 import Questions from './Questions.jsx';
 import Friends from './Friends.jsx';
+import Data from './Data.jsx';
 import Logs from './Logs.jsx';
 
 import { BACKEND_URL, AUTH_EMAIL, AUTH_PASSWORD } from './config.js';
@@ -233,16 +235,21 @@ export default function LoginForm({ onLogin }) {
                   <MdQuestionAnswer /> Questions
                 </button>
               </div>
-              <div>
-                <button onClick={() => dispatch(setCurrentView('friends'))}>
-                  <MdGroup /> Friends
-                </button>
-              </div>
-              <div>
-                <button onClick={() => dispatch(setCurrentView('logs'))}>
-                  <MdSubject /> Logs
-                </button>
-              </div>
+                <div>
+                  <button onClick={() => dispatch(setCurrentView('friends'))}>
+                    <MdGroup /> Friends
+                  </button>
+                </div>
+                <div>
+                  <button onClick={() => dispatch(setCurrentView('data'))}>
+                    <MdStorage /> Data
+                  </button>
+                </div>
+                <div>
+                  <button onClick={() => dispatch(setCurrentView('logs'))}>
+                    <MdSubject /> Logs
+                  </button>
+                </div>
               <footer className="view-footer">
                 <button
                   type="button"
@@ -271,6 +278,9 @@ export default function LoginForm({ onLogin }) {
           )}
           {currentView === 'friends' && (
             <Friends onBack={() => dispatch(setCurrentView(null))} />
+          )}
+          {currentView === 'data' && (
+            <Data onBack={() => dispatch(setCurrentView(null))} />
           )}
           {currentView === 'logs' && (
             <Logs onBack={() => dispatch(setCurrentView(null))} />

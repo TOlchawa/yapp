@@ -88,6 +88,7 @@ describe('LoginForm', () => {
       screen.getByRole('button', { name: 'Questions' })
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Friends' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Data' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Logs' })).toBeInTheDocument();
     expect(screen.getByText('Server version: 1.0.0')).toBeInTheDocument();
   });
@@ -224,6 +225,10 @@ describe('LoginForm', () => {
       await screen.findByRole('button', { name: 'Friends' });
       fireEvent.click(screen.getByRole('button', { name: 'Friends' }));
       await screen.findByRole('heading', { name: 'Friends' });
+      fireEvent.click(screen.getAllByRole('button', { name: 'Back' })[0]);
+      await screen.findByRole('button', { name: 'Data' });
+      fireEvent.click(screen.getByRole('button', { name: 'Data' }));
+      await screen.findByRole('heading', { name: 'Data' });
       fireEvent.click(screen.getAllByRole('button', { name: 'Back' })[0]);
       await screen.findByRole('button', { name: 'Logs' });
       fireEvent.click(screen.getByRole('button', { name: 'Logs' }));
