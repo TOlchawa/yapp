@@ -49,7 +49,7 @@ describe('Search view', () => {
     render(<Search />);
     await screen.findByText('Beer');
     expect(global.fetch).toHaveBeenLastCalledWith(
-      `${BACKEND_URL}/item?id=123`,
+      `${BACKEND_URL}/item/123`,
       expect.objectContaining({
         headers: expect.objectContaining({
           Authorization: `Basic ${btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`)}`,

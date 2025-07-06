@@ -52,7 +52,7 @@ describe('ItemDetails', () => {
     render(<ItemDetails id="2" />);
     await screen.findByAltText('Item');
     expect(global.fetch).toHaveBeenCalledWith(
-      `${BACKEND_URL}/item?id=2`,
+      `${BACKEND_URL}/item/2`,
       expect.objectContaining({
         headers: expect.objectContaining({
           Authorization: `Basic ${btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`)}`,

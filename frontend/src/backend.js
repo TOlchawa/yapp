@@ -12,7 +12,7 @@ export async function backendFetch(path, options = {}) {
   return response;
 }
 
-// Fetch a single item using the query-based endpoint.
+// Fetch a single item using the path-based endpoint.
 export function getItemById(id) {
-  return backendFetch(`/item?id=${encodeURIComponent(id)}`);
+  return backendFetch(`/item/${encodeURIComponent(id)}`);
 }
