@@ -296,6 +296,16 @@ describe('AddView', () => {
           }),
         })
       );
+      expect(global.fetch).toHaveBeenNthCalledWith(
+        2,
+        `${BACKEND_URL}/item/id123`,
+        expect.objectContaining({
+          method: 'PUT',
+          headers: expect.objectContaining({
+            Authorization: `Basic ${btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`)}`,
+          }),
+        })
+      );
     });
 
     const postData = global.fetch.mock.calls[0][1].body;
@@ -303,7 +313,7 @@ describe('AddView', () => {
     expect(postData.has('pictureBase64')).toBe(false);
 
     const putData = global.fetch.mock.calls[1][1].body;
-    expect(putData.get('id')).toBe('id123');
+    expect(putData.has('id')).toBe(false);
     expect(putData.get('pictureBase64')).toBe('testimg');
   });
 });
