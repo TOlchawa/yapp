@@ -20,7 +20,10 @@ describe('QuestionDetails', () => {
     global.fetch = vi
       .fn()
       .mockImplementationOnce(() =>
-        Promise.resolve({ ok: true, json: () => Promise.resolve({ question: 'q' }) })
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ question: 'q' }),
+        })
       )
       .mockImplementationOnce(() =>
         Promise.resolve({ ok: true, json: () => Promise.resolve([]) })
@@ -52,6 +55,10 @@ describe('QuestionDetails', () => {
         }),
       })
     );
+    const btn = screen.getByRole('button', { name: /answer 1/i });
+    expect(btn).toBeInTheDocument();
+    fireEvent.click(btn);
+    expect(screen.getByTestId('show-answer-popup')).toBeInTheDocument();
     expect(screen.getByText('ans')).toBeInTheDocument();
   });
 });
