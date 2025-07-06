@@ -2,6 +2,41 @@ import React, { useState, useEffect } from 'react';
 import { FaBarcode } from 'react-icons/fa';
 import { BACKEND_URL, AUTH_EMAIL, AUTH_PASSWORD } from './config.js';
 
+function ItemImage({ picture }) {
+  const [src, setSrc] = useState(() => {
+    if (!picture || !picture.picture) return null;
+    const pic = picture.picture;
+    return pic.startsWith('data:') ? pic : `data:image/jpeg;base64,${pic}`;
+  });
+
+  useEffect(() => {
+    if (!picture || src || !picture.id) return;
+    let cancelled = false;
+    async function load() {
+      try {
+        const token = btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`);
+        const resp = await fetch(`${BACKEND_URL}/data?id=${picture.id}`, {
+          headers: { Authorization: `Basic ${token}` },
+        });
+        if (!cancelled && resp.ok) {
+          const array = await resp.arrayBuffer();
+          const base64 = btoa(String.fromCharCode(...new Uint8Array(array)));
+          setSrc(`data:image/jpeg;base64,${base64}`);
+        }
+      } catch (err) {
+        // ignore errors
+      }
+    }
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [picture, src]);
+
+  if (!src) return null;
+  return <img src={src} alt="Item" className="item-picture" />;
+}
+
 export default function ItemDetails({
   id,
   info,
@@ -39,48 +74,8 @@ export default function ItemDetails({
   const name = data && data.name ? data.name : id;
   const barcode = data && data.description && data.description.barcode;
   const note = data && data.description && data.description.note;
-  const picture =
-    data &&
-    data.description &&
-    data.description.pictures &&
-    data.description.pictures[0];
-  const [imgSrc, setImgSrc] = useState(null);
-
-  useEffect(() => {
-    if (!picture || imgSrc) return;
-    if (picture.picture) {
-      const picData = picture.picture;
-      if (picData.startsWith('data:')) {
-        setImgSrc(picData);
-      } else {
-        setImgSrc(`data:image/jpeg;base64,${picData}`);
-      }
-      return;
-    }
-    if (!picture.id) return;
-    let cancelled = false;
-    async function loadPicture() {
-      try {
-        const token = btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`);
-        const resp = await fetch(`${BACKEND_URL}/data?id=${picture.id}`, {
-          headers: { Authorization: `Basic ${token}` },
-        });
-        if (!cancelled && resp.ok) {
-          const array = await resp.arrayBuffer();
-          const base64 = btoa(
-            String.fromCharCode(...new Uint8Array(array))
-          );
-          setImgSrc(`data:image/jpeg;base64,${base64}`);
-        }
-      } catch (err) {
-        // ignore errors
-      }
-    }
-    loadPicture();
-    return () => {
-      cancelled = true;
-    };
-  }, [picture, imgSrc]);
+  const pictures =
+    (data && data.description && data.description.pictures) || [];
 
   return (
     <div>
@@ -102,7 +97,9 @@ export default function ItemDetails({
         </p>
       )}
       {note && <p>{note}</p>}
-      {imgSrc && <img src={imgSrc} alt="Item" className="item-picture" />}
+      {pictures.map((pic, idx) => (
+        <ItemImage key={pic.id || idx} picture={pic} />
+      ))}
       <footer className="view-footer">
         <button type="button" onClick={onDelete}>
           Delete
