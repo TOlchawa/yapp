@@ -188,4 +188,13 @@ public class ItemManager {
                 .map(ItemDao::getId)
                 .toList();
     }
+
+    /**
+     * Delete an item by its ID.
+     *
+     * @param id the item UUID as string
+     */
+    public void deleteItem(String id) {
+        itemRepository.deleteById(UUID.fromString(id));
+    }
 }

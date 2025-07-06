@@ -159,4 +159,17 @@ public class ItemController {
         return itemManager.listItemsByBarcode(barcode);
     }
 
+    @DeleteMapping("/item/{id}")
+    @Operation(
+            summary = "Delete item",
+            description = "Removes an item using its UUID"
+    )
+    public void deleteItem(
+            @PathVariable
+            @Parameter(description = "UUID of the item to delete")
+            String id
+    ) {
+        itemManager.deleteItem(id);
+    }
+
 }
