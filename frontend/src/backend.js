@@ -11,3 +11,8 @@ export async function backendFetch(path, options = {}) {
   const response = await fetch(`${BACKEND_URL}${path}`, opts);
   return response;
 }
+
+// Fetch a single item using the query-based endpoint.
+export function getItemById(id) {
+  return backendFetch(`/item?id=${encodeURIComponent(id)}`);
+}
