@@ -4,6 +4,64 @@ import { BACKEND_URL, AUTH_EMAIL, AUTH_PASSWORD } from './config.js';
 import { getItemById } from './backend.js';
 import ItemDetails from './ItemDetails.jsx';
 
+function ItemThumbnail({ id, info, update }) {
+  const picture =
+    info &&
+    info.description &&
+    info.description.pictures &&
+    info.description.pictures[0];
+  const [src, setSrc] = useState(() => {
+    if (picture && picture.picture) {
+      const pic = picture.picture;
+      return pic.startsWith('data:') ? pic : `data:image/jpeg;base64,${pic}`;
+    }
+    return null;
+  });
+
+  useEffect(() => {
+    if (!picture || src || !picture.id) {
+      return;
+    }
+    let cancelled = false;
+    async function load() {
+      try {
+        const token = btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`);
+        const resp = await fetch(`${BACKEND_URL}/data?id=${picture.id}`, {
+          headers: { Authorization: `Basic ${token}` },
+        });
+        if (!cancelled && resp.ok) {
+          const array = await resp.arrayBuffer();
+          const base64 = btoa(String.fromCharCode(...new Uint8Array(array)));
+          const dataUri = `data:image/jpeg;base64,${base64}`;
+          setSrc(dataUri);
+          update((prev) => {
+            const item = prev[id];
+            if (!item) return prev;
+            const pic = item.description?.pictures?.[0];
+            if (pic && !pic.picture) {
+              const newPic = { ...pic, picture: base64 };
+              const newDesc = { ...item.description, pictures: [newPic] };
+              return { ...prev, [id]: { ...item, description: newDesc } };
+            }
+            return prev;
+          });
+        }
+      } catch (err) {
+        // ignore errors
+      }
+    }
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [picture, src]);
+
+  if (!src) {
+    return null;
+  }
+  return <img src={src} alt="Item" className="item-thumbnail" />;
+}
+
 export default function Search({ onBack = () => {} }) {
   const [itemIds, setItemIds] = useState([]);
   const [details, setDetails] = useState({});
@@ -132,6 +190,7 @@ export default function Search({ onBack = () => {} }) {
                 className="item-button"
                 onClick={() => setSelectedId(id)}
               >
+                <ItemThumbnail id={id} info={info} update={setDetails} />
                 <span className="item-name">{name}</span>
                 {hasBarcode && (
                   <FaBarcode className="barcode-icon" aria-label="barcode" />

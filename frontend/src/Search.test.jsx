@@ -96,20 +96,44 @@ describe('Search view', () => {
         })
       );
     render(<Search />);
+    await screen.findByAltText('Item');
     const itemEl = await screen.findByText('Beer');
     global.fetch.mockClear();
     fireEvent.click(itemEl);
-    await screen.findByAltText('Item');
-    expect(global.fetch).toHaveBeenCalledTimes(1);
-    expect(global.fetch).toHaveBeenCalledWith(
-      `${BACKEND_URL}/data?id=pic1`,
+    await screen.findByText('789');
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it('shows thumbnail for items with picture', async () => {
+    const ids = ['t1'];
+    const item = {
+      name: 'Thumb',
+      description: { pictures: [{ id: 'pic2' }] },
+    };
+    global.fetch = vi
+      .fn()
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve(ids) })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve(item) })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({
+          ok: true,
+          arrayBuffer: () => Promise.resolve(new Uint8Array([4]).buffer),
+        })
+      );
+    render(<Search />);
+    expect(await screen.findByAltText('Item')).toBeInTheDocument();
+    expect(global.fetch).toHaveBeenLastCalledWith(
+      `${BACKEND_URL}/data?id=pic2`,
       expect.objectContaining({
         headers: expect.objectContaining({
           Authorization: `Basic ${btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`)}`,
         }),
       })
     );
-    expect(screen.getByText('789')).toBeInTheDocument();
   });
 
   it('deletes item from details view', async () => {
