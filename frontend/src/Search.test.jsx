@@ -111,4 +111,37 @@ describe('Search view', () => {
     );
     expect(screen.getByText('789')).toBeInTheDocument();
   });
+
+  it('deletes item from details view', async () => {
+    const ids = ['del1'];
+    const item = { name: 'ToDelete', description: {} };
+    global.fetch = vi
+      .fn()
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve(ids) })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve(item) })
+      )
+      .mockImplementationOnce(() => Promise.resolve({ ok: true }));
+
+    render(<Search />);
+    const itemEl = await screen.findByText('ToDelete');
+    fireEvent.click(itemEl);
+    await screen.findByRole('button', { name: 'Delete' });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
+
+    await screen.findByRole('heading', { name: 'Search' });
+    expect(global.fetch).toHaveBeenLastCalledWith(
+      `${BACKEND_URL}/item/del1`,
+      expect.objectContaining({
+        method: 'DELETE',
+        headers: expect.objectContaining({
+          Authorization: `Basic ${btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`)}`,
+        }),
+      })
+    );
+    expect(screen.queryByText('ToDelete')).not.toBeInTheDocument();
+  });
 });

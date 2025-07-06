@@ -8,6 +8,26 @@ export default function Search({ onBack = () => {} }) {
   const [details, setDetails] = useState({});
   const [selectedId, setSelectedId] = useState(null);
 
+  async function handleDelete(id) {
+    try {
+      const token = btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`);
+      const resp = await fetch(`${BACKEND_URL}/item/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Basic ${token}` },
+      });
+      if (resp.ok) {
+        setItemIds((prev) => prev.filter((itemId) => itemId !== id));
+        setDetails((prev) => {
+          const { [id]: _omit, ...rest } = prev;
+          return rest;
+        });
+        setSelectedId(null);
+      }
+    } catch (err) {
+      // Ignore errors
+    }
+  }
+
   useEffect(() => {
     async function fetchItems() {
       try {
@@ -91,6 +111,7 @@ export default function Search({ onBack = () => {} }) {
         onUpdate={(data) =>
           setDetails((prev) => ({ ...prev, [selectedId]: data }))
         }
+        onDelete={() => handleDelete(selectedId)}
       />
     );
   }
