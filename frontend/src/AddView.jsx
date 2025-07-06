@@ -141,9 +141,8 @@ export default function AddView({ onBack = () => {} }) {
 
       if (photo) {
         const updateData = new FormData();
-        updateData.append('id', idText);
         updateData.append('pictureBase64', photo.split(',')[1]);
-        await fetch(`${BACKEND_URL}/item`, {
+        await fetch(`${BACKEND_URL}/item/${idText}`, {
           method: 'PUT',
           headers: { Authorization: `Basic ${token}` },
           body: updateData,
