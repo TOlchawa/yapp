@@ -131,6 +131,19 @@ h1 {
   height: auto;
 }
 
+.item-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.item-thumbnail {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
 body.mobile .login-form {
   width: 90%;
   max-width: none;
