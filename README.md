@@ -12,6 +12,7 @@ This project is being developed as a showcase of skills and as a practical tool 
 - **Mobile-Friendly:** Designed with mobile applications in mind for ease of use.
 - **Open Source:** Built with collaboration in mind, allowing contributions from others.
 - **Learning-Oriented:** Created as a platform for experimenting with new technologies and gaining practical experience.
+- **Item Removal:** Delete items when they are no longer needed.
 
 ---
 
