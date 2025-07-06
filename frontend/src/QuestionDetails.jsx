@@ -10,6 +10,8 @@ export default function QuestionDetails({ id, onBack = () => {} }) {
   const [showPopup, setShowPopup] = useState(false);
   const [answerText, setAnswerText] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [showAnswerPopup, setShowAnswerPopup] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -93,8 +95,18 @@ export default function QuestionDetails({ id, onBack = () => {} }) {
       </div>
       {question && <p>{question.question}</p>}
       <ul>
-        {answers.map((a) => (
-          <li key={a.id}>{a.text}</li>
+        {answers.map((a, idx) => (
+          <li key={a.id}>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedAnswer(a);
+                setShowAnswerPopup(true);
+              }}
+            >
+              {`Answer ${idx + 1}`}
+            </button>
+          </li>
         ))}
       </ul>
       <footer className="view-footer">
@@ -120,6 +132,18 @@ export default function QuestionDetails({ id, onBack = () => {} }) {
               </button>
               <button type="button" onClick={() => setShowPopup(false)}>
                 Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showAnswerPopup && selectedAnswer && (
+        <div className="popup-overlay" data-testid="show-answer-popup">
+          <div className="popup-window">
+            <p>{selectedAnswer.text}</p>
+            <div className="popup-buttons">
+              <button type="button" onClick={() => setShowAnswerPopup(false)}>
+                Close
               </button>
             </div>
           </div>
