@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaBarcode } from 'react-icons/fa';
 import { BACKEND_URL, AUTH_EMAIL, AUTH_PASSWORD } from './config.js';
-import { getItemById } from './backend.js';
 import ItemDetails from './ItemDetails.jsx';
 
 function ItemThumbnail({ id, info, update }) {
@@ -113,7 +112,10 @@ export default function Search({ onBack = () => {} }) {
     let cancelled = false;
     async function fetchDetail() {
       try {
-        const resp = await getItemById(selectedId);
+        const token = btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`);
+        const resp = await fetch(`${BACKEND_URL}/item/${selectedId}`, {
+          headers: { Authorization: `Basic ${token}` },
+        });
         if (!cancelled && resp.ok) {
           const data = await resp.json();
           setDetails((prev) => ({ ...prev, [selectedId]: data }));
@@ -139,7 +141,10 @@ export default function Search({ onBack = () => {} }) {
           continue;
         }
         try {
-          const resp = await getItemById(id);
+          const token = btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`);
+          const resp = await fetch(`${BACKEND_URL}/item/${id}`, {
+            headers: { Authorization: `Basic ${token}` },
+          });
           if (!cancelled && resp.ok) {
             const data = await resp.json();
             setDetails((prev) => ({ ...prev, [id]: data }));
