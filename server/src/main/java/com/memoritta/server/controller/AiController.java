@@ -35,4 +35,13 @@ public class AiController {
         byte[] data = file.getBytes();
         return openAiManager.transcribeAudio(data);
     }
+
+    @PostMapping("/ask")
+    @Operation(
+            summary = "Answer question",
+            description = "Uses OpenAI to answer given question"
+    )
+    public String ask(@RequestBody String question) {
+        return openAiManager.answerQuestion(question);
+    }
 }

@@ -57,4 +57,13 @@ class AiControllerTest {
 
         assertThat(result).isEqualTo("hello");
     }
+
+    @Test
+    void ask_shouldReturnAnswer() {
+        when(openAiManager.answerQuestion(anyString())).thenReturn("42");
+
+        String result = aiController.ask("What is the meaning of life?");
+
+        assertThat(result).isEqualTo("42");
+    }
 }

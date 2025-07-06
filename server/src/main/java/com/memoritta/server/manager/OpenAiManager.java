@@ -80,4 +80,25 @@ public class OpenAiManager {
                 .orElse("")
                 .trim();
     }
+
+    @Retryable(
+            value = {HttpClientErrorException.TooManyRequests.class},
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 2000)
+    )
+    public String answerQuestion(String question) {
+        if (client == null) {
+            return "";
+        }
+
+        ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
+                .addUserMessage(question)
+                .model(ChatModel.GPT_4O_MINI)
+                .build();
+        ChatCompletion completion = client.chat().completions().create(params);
+        if (completion.choices().isEmpty()) {
+            return "";
+        }
+        return completion.choices().get(0).message().content().orElse("").trim();
+    }
 }
