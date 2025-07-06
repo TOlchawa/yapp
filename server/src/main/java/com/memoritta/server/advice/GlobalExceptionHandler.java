@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 
 import java.util.NoSuchElementException;
 
@@ -34,6 +35,13 @@ public class GlobalExceptionHandler {
         log.warn("Missing request parameter: {}", ex.getParameterName());
         String message = "Missing required parameter: " + ex.getParameterName();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<String> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
+        log.warn("Unsupported method: {}", ex.getMethod());
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+                             .body("Method not allowed");
     }
 
     @ExceptionHandler(Exception.class)
