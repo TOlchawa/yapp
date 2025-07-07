@@ -11,11 +11,13 @@ export default function Data({ onBack = () => {} }) {
   const [details, setDetails] = useState({});
   const [selectedId, setSelectedId] = useState(null);
   const [collection, setCollection] = useState('items');
+  const [redisData, setRedisData] = useState(null);
 
   useEffect(() => {
     setIds([]);
     setDetails({});
     setSelectedId(null);
+    setRedisData(null);
   }, [collection]);
 
   useEffect(() => {
@@ -30,6 +32,8 @@ export default function Data({ onBack = () => {} }) {
           resp = await backendFetch('/question/ids/all');
         } else if (collection === 'friends') {
           resp = await backendFetch(`/friend?userId=${userInfo.id}`);
+        } else if (collection === 'redis') {
+          resp = await backendFetch('/data/ids');
         }
         if (resp && !cancelled && resp.ok) {
           const data = await resp.json();
@@ -40,6 +44,9 @@ export default function Data({ onBack = () => {} }) {
               map[r.id] = r;
             }
             setDetails(map);
+          } else if (collection === 'redis') {
+            setIds(data);
+            setRedisData(null);
           } else {
             setIds(data);
           }
@@ -55,8 +62,9 @@ export default function Data({ onBack = () => {} }) {
   }, [userInfo, collection]);
 
   useEffect(() => {
-    if (!selectedId || details[selectedId]) return;
+    if (!selectedId) return;
     if (collection === 'friends') return;
+    if (collection !== 'redis' && details[selectedId]) return;
     let cancelled = false;
     async function load() {
       try {
@@ -65,10 +73,18 @@ export default function Data({ onBack = () => {} }) {
           resp = await backendFetch(`/item/${selectedId}`);
         } else if (collection === 'questions') {
           resp = await backendFetch(`/question/detail?id=${selectedId}`);
+        } else if (collection === 'redis') {
+          resp = await backendFetch(`/data?id=${selectedId}`);
         }
         if (resp && !cancelled && resp.ok) {
-          const data = await resp.json();
-          setDetails((prev) => ({ ...prev, [selectedId]: data }));
+          if (collection === 'redis') {
+            const array = await resp.arrayBuffer();
+            const base64 = btoa(String.fromCharCode(...new Uint8Array(array)));
+            setRedisData(`data:image/jpeg;base64,${base64}`);
+          } else {
+            const data = await resp.json();
+            setDetails((prev) => ({ ...prev, [selectedId]: data }));
+          }
         }
       } catch {
         // ignore errors
@@ -106,6 +122,18 @@ export default function Data({ onBack = () => {} }) {
         />
       );
     }
+    if (collection === 'redis') {
+      return (
+        <div>
+          {redisData && <img src={redisData} alt="redis item" />}
+          <footer className="view-footer">
+            <button type="button" className="back-button" onClick={() => setSelectedId(null)}>
+              Back
+            </button>
+          </footer>
+        </div>
+      );
+    }
   }
 
   return (
@@ -120,6 +148,7 @@ export default function Data({ onBack = () => {} }) {
           <option value="items">Items</option>
           <option value="questions">Questions</option>
           <option value="friends">Friends</option>
+          <option value="redis">Redis</option>
         </select>
         <button type="button" className="back-button" onClick={onBack}>
           Back

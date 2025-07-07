@@ -21,4 +21,17 @@ public class BinaryDataManager {
     public byte[] load(UUID id) {
         return redisTemplate.opsForValue().get(id.toString());
     }
+
+    /**
+     * Get all keys stored in Redis.
+     *
+     * @return list of keys as strings
+     */
+    public java.util.List<String> listKeys() {
+        java.util.Set<String> keys = redisTemplate.keys("*");
+        if (keys == null) {
+            return java.util.List.of();
+        }
+        return new java.util.ArrayList<>(keys);
+    }
 }
