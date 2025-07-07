@@ -18,6 +18,12 @@ public class DataController {
 
     private final BinaryDataManager binaryDataManager;
 
+    @GetMapping("/data/ids")
+    @Operation(summary = "List binary data IDs", description = "Returns all keys stored in Redis")
+    public java.util.List<String> listIds() {
+        return binaryDataManager.listKeys();
+    }
+
     @GetMapping("/data")
     @Operation(summary = "Load binary data", description = "Loads binary data by ID")
     public ResponseEntity<byte[]> loadData(

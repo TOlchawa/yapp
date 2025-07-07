@@ -19,7 +19,9 @@ describe('Data view', () => {
     renderWithStore(<Data />);
     expect(screen.getByRole('heading', { name: 'Data' })).toBeInTheDocument();
     expect(screen.getAllByRole('button', { name: 'Back' })).toHaveLength(2);
-    expect(screen.getByRole('combobox')).toBeInTheDocument();
+    const select = screen.getByRole('combobox');
+    expect(select).toBeInTheDocument();
+    expect(select).toHaveValue('items');
   });
 
   it('loads item IDs on mount', async () => {
@@ -95,6 +97,32 @@ describe('Data view', () => {
     }
     expect(global.fetch).toHaveBeenLastCalledWith(
       `${BACKEND_URL}/friend?userId=u1`,
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: `Basic ${btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`)}`,
+        }),
+      })
+    );
+  });
+
+  it('switches to redis collection', async () => {
+    const ids = ['d1', 'd2'];
+    global.fetch = vi
+      .fn()
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve([]) })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve(ids) })
+      );
+    renderWithStore(<Data />);
+    const select = screen.getByRole('combobox');
+    fireEvent.change(select, { target: { value: 'redis' } });
+    for (const id of ids) {
+      expect(await screen.findByText(id)).toBeInTheDocument();
+    }
+    expect(global.fetch).toHaveBeenLastCalledWith(
+      `${BACKEND_URL}/data/ids`,
       expect.objectContaining({
         headers: expect.objectContaining({
           Authorization: `Basic ${btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`)}`,
