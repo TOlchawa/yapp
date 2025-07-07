@@ -179,7 +179,7 @@ describe('AddView', () => {
       drawImage: vi.fn(),
     });
     vi.spyOn(HTMLCanvasElement.prototype, 'toDataURL').mockReturnValue(
-      'data:image/png;base64,testimg'
+      'data:image/jpeg;base64,testimg'
     );
 
     render(<AddView />);
@@ -263,7 +263,7 @@ describe('AddView', () => {
       drawImage: vi.fn(),
     });
     vi.spyOn(HTMLCanvasElement.prototype, 'toDataURL').mockReturnValue(
-      'data:image/png;base64,testimg'
+      'data:image/jpeg;base64,testimg'
     );
 
     render(<AddView />);

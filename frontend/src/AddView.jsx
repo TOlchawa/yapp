@@ -116,7 +116,7 @@ export default function AddView({ onBack = () => {} }) {
     canvas.height = video.videoHeight;
     const ctx = canvas.getContext('2d');
     ctx.drawImage(video, 0, 0);
-    const dataUrl = canvas.toDataURL('image/png');
+    const dataUrl = canvas.toDataURL('image/jpeg');
     setPhoto(dataUrl);
 
     addDebug('Photo captured');
