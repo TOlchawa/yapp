@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { backendFetch } from './backend.js';
 import ItemDetails from './ItemDetails.jsx';
 import QuestionDetails from './QuestionDetails.jsx';
+import FriendDetails from './FriendDetails.jsx';
 
 export default function Data({ onBack = () => {} }) {
   const userInfo = useSelector((state) => state.user.userInfo);
@@ -27,10 +28,21 @@ export default function Data({ onBack = () => {} }) {
           resp = await backendFetch('/items/user', { method: 'POST' });
         } else if (collection === 'questions') {
           resp = await backendFetch('/question/ids/all');
+        } else if (collection === 'friends') {
+          resp = await backendFetch(`/friend?userId=${userInfo.id}`);
         }
         if (resp && !cancelled && resp.ok) {
           const data = await resp.json();
-          setIds(data);
+          if (collection === 'friends') {
+            setIds(data.map((r) => r.id));
+            const map = {};
+            for (const r of data) {
+              map[r.id] = r;
+            }
+            setDetails(map);
+          } else {
+            setIds(data);
+          }
         }
       } catch {
         // ignore errors
@@ -44,6 +56,7 @@ export default function Data({ onBack = () => {} }) {
 
   useEffect(() => {
     if (!selectedId || details[selectedId]) return;
+    if (collection === 'friends') return;
     let cancelled = false;
     async function load() {
       try {
@@ -85,6 +98,14 @@ export default function Data({ onBack = () => {} }) {
         <QuestionDetails id={selectedId} onBack={() => setSelectedId(null)} />
       );
     }
+    if (collection === 'friends') {
+      return (
+        <FriendDetails
+          relation={details[selectedId]}
+          onBack={() => setSelectedId(null)}
+        />
+      );
+    }
   }
 
   return (
@@ -98,6 +119,7 @@ export default function Data({ onBack = () => {} }) {
         >
           <option value="items">Items</option>
           <option value="questions">Questions</option>
+          <option value="friends">Friends</option>
         </select>
         <button type="button" className="back-button" onClick={onBack}>
           Back
@@ -111,7 +133,11 @@ export default function Data({ onBack = () => {} }) {
               className="item-button"
               onClick={() => setSelectedId(id)}
             >
-              {details[id] && details[id].name ? details[id].name : id}
+              {collection === 'friends'
+                ? `${details[id].friendId} - ${details[id].type}`
+                : details[id] && details[id].name
+                ? details[id].name
+                : id}
             </button>
           </li>
         ))}
