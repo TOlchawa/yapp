@@ -72,4 +72,34 @@ describe('Data view', () => {
       })
     );
   });
+
+  it('switches to friends collection', async () => {
+    const relations = [
+      { id: 'r1', friendId: 'f1', type: 'FRIENDS' },
+      { id: 'r2', friendId: 'f2', type: 'BEST_FRIENDS' },
+    ];
+    global.fetch = vi
+      .fn()
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve([]) })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve(relations) })
+      );
+    renderWithStore(<Data />);
+    const select = screen.getByRole('combobox');
+    fireEvent.change(select, { target: { value: 'friends' } });
+    for (const r of relations) {
+      const text = `${r.friendId} - ${r.type}`;
+      expect(await screen.findByText(text)).toBeInTheDocument();
+    }
+    expect(global.fetch).toHaveBeenLastCalledWith(
+      `${BACKEND_URL}/friend?userId=u1`,
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: `Basic ${btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`)}`,
+        }),
+      })
+    );
+  });
 });
