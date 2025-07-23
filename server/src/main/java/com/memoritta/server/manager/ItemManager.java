@@ -71,6 +71,7 @@ public class ItemManager {
             List<PictureOfItem> pictures = description.getPictures();
             if (pictures != null && !pictures.isEmpty()) {
                 PictureOfItem picture = pictures.get(0);
+                log.debug("Saving picture for item {} to Redis", item.getId());
                 UUID pictureId = binaryDataManager.save(picture.getPicture());
                 picture.setId(pictureId);
                 picture.setPicture(null);

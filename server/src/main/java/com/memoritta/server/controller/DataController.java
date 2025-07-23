@@ -4,6 +4,7 @@ import com.memoritta.server.manager.BinaryDataManager;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @AllArgsConstructor
 public class DataController {
@@ -21,6 +23,7 @@ public class DataController {
     @GetMapping("/data/ids")
     @Operation(summary = "List binary data IDs", description = "Returns all keys stored in Redis")
     public java.util.List<String> listIds() {
+        log.debug("Listing all Redis IDs");
         return binaryDataManager.listKeys();
     }
 
@@ -33,6 +36,7 @@ public class DataController {
         if (data == null) {
             return ResponseEntity.notFound().build();
         }
+        log.debug("Returning data with id {}", id);
         return ResponseEntity.ok()
                 .header("X-Data-Type", "picture")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
