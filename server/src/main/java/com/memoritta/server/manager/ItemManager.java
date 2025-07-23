@@ -11,7 +11,6 @@ import com.memoritta.server.model.PictureOfItem;
 import java.util.Base64;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,7 +26,6 @@ public class ItemManager {
 
     private final UserRepository userRepository; // TODO: add support for JWT and remove this dependency (repository is not needed for JWT)
     private final ItemRepository itemRepository;
-    private final RedisTemplate<String, String> redisTemplate;
     private final BinaryDataManager binaryDataManager;
 
     public UUID saveItem(String name,
@@ -75,6 +73,7 @@ public class ItemManager {
                 PictureOfItem picture = pictures.get(0);
                 UUID pictureId = binaryDataManager.save(picture.getPicture());
                 picture.setId(pictureId);
+                picture.setPicture(null);
             }
         }
 
