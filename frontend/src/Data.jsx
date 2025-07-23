@@ -45,6 +45,7 @@ export default function Data({ onBack = () => {} }) {
             }
             setDetails(map);
           } else if (collection === 'redis') {
+            console.debug('Loaded Redis IDs', data);
             setIds(data);
             setRedisData(null);
           } else {
@@ -80,7 +81,9 @@ export default function Data({ onBack = () => {} }) {
           if (collection === 'redis') {
             const array = await resp.arrayBuffer();
             const base64 = btoa(String.fromCharCode(...new Uint8Array(array)));
-            setRedisData(`data:image/jpeg;base64,${base64}`);
+            const img = `data:image/jpeg;base64,${base64}`;
+            console.debug('Loaded Redis data for', selectedId);
+            setRedisData(img);
           } else {
             const data = await resp.json();
             setDetails((prev) => ({ ...prev, [selectedId]: data }));
@@ -95,6 +98,12 @@ export default function Data({ onBack = () => {} }) {
       cancelled = true;
     };
   }, [selectedId, collection]);
+
+  useEffect(() => {
+    if (redisData) {
+      console.debug('Displaying Redis image');
+    }
+  }, [redisData]);
 
   if (selectedId) {
     if (collection === 'items') {
