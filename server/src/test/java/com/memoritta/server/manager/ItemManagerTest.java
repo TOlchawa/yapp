@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.util.List;
@@ -35,11 +34,6 @@ class ItemManagerTest {
         @Bean
         ItemRepository getItemRepository() {
             return mock(ItemRepository.class);
-        }
-
-        @Bean
-        RedisTemplate<String, String> getRedisTemplate() {
-            return mock(RedisTemplate.class);
         }
 
         @Bean
