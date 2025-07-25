@@ -2,13 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { BACKEND_URL, AUTH_EMAIL, AUTH_PASSWORD } from './config.js';
 import QuestionDetails from './QuestionDetails.jsx';
-
-function truncate(str, max = 128) {
-  if (str.length <= max) {
-    return str;
-  }
-  return `${str.slice(0, max - 3)}...`;
-}
+import { getDisplaySummary } from './summaryUtils.js';
 
 export default function Questions({ onBack = () => {} }) {
   const userInfo = useSelector((state) => state.user.userInfo);
@@ -63,7 +57,7 @@ export default function Questions({ onBack = () => {} }) {
               className="item-button"
               onClick={() => setSelectedId(q.id)}
             >
-              {truncate(q.description)}
+              {getDisplaySummary(q)}
             </button>
           </li>
         ))}
