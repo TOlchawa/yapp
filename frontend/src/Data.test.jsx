@@ -130,4 +130,33 @@ describe('Data view', () => {
       })
     );
   });
+
+  it('loads redis data when id clicked', async () => {
+    const ids = ['d1'];
+    global.fetch = vi
+      .fn()
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve([]) })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve(ids) })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, text: () => Promise.resolve('text data') })
+      );
+    renderWithStore(<Data />);
+    fireEvent.change(screen.getByRole('combobox'), { target: { value: 'redis' } });
+    const btn = await screen.findByRole('button', { name: 'd1' });
+    fireEvent.click(btn);
+    const textarea = await screen.findByRole('textbox');
+    expect(textarea).toHaveValue('text data');
+    expect(global.fetch).toHaveBeenLastCalledWith(
+      `${BACKEND_URL}/data?id=d1`,
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: `Basic ${btoa(`${AUTH_EMAIL}:${AUTH_PASSWORD}`)}`,
+        }),
+      })
+    );
+  });
 });

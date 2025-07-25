@@ -79,11 +79,9 @@ export default function Data({ onBack = () => {} }) {
         }
         if (resp && !cancelled && resp.ok) {
           if (collection === 'redis') {
-            const array = await resp.arrayBuffer();
-            const base64 = btoa(String.fromCharCode(...new Uint8Array(array)));
-            const img = `data:image/jpeg;base64,${base64}`;
+            const text = await resp.text();
             console.debug('Loaded Redis data for', selectedId);
-            setRedisData(img);
+            setRedisData(text);
           } else {
             const data = await resp.json();
             setDetails((prev) => ({ ...prev, [selectedId]: data }));
@@ -101,7 +99,7 @@ export default function Data({ onBack = () => {} }) {
 
   useEffect(() => {
     if (redisData) {
-      console.debug('Displaying Redis image');
+      console.debug('Displaying Redis text');
     }
   }, [redisData]);
 
@@ -133,8 +131,12 @@ export default function Data({ onBack = () => {} }) {
     }
     if (collection === 'redis') {
       return (
-        <div>
-          {redisData && <img src={redisData} alt="redis item" />}
+        <div className="redis-view">
+          <textarea
+            className="redis-textarea"
+            readOnly
+            value={redisData || ''}
+          />
           <footer className="view-footer">
             <button type="button" className="back-button" onClick={() => setSelectedId(null)}>
               Back
