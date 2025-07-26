@@ -226,6 +226,10 @@ body.desktop .login-form {
   box-sizing: border-box;
 }
 
+.redis-format-label {
+  font-weight: bold;
+}
+
 .logs-textarea {
   width: 100%;
   box-sizing: border-box;
