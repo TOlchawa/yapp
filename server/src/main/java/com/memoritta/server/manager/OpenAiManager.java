@@ -28,7 +28,7 @@ public class OpenAiManager {
         } else {
             this.client = OpenAIOkHttpClient.builder()
                     .apiKey(config.getApiKey())
-                    .baseUrl(config.getUrl())
+                    .baseUrl(config.getNormalizedUrl())
                     .organization(config.getOrganization())
                     .project(config.getProject())
                     .build();
