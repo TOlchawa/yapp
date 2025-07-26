@@ -145,7 +145,9 @@ describe('Data view', () => {
         Promise.resolve({ ok: true, text: () => Promise.resolve('text data') })
       );
     renderWithStore(<Data />);
-    fireEvent.change(screen.getByRole('combobox'), { target: { value: 'redis' } });
+    fireEvent.change(screen.getByRole('combobox'), {
+      target: { value: 'redis' },
+    });
     const btn = await screen.findByRole('button', { name: 'd1' });
     fireEvent.click(btn);
     const textarea = await screen.findByRole('textbox');
@@ -158,5 +160,50 @@ describe('Data view', () => {
         }),
       })
     );
+  });
+
+  it('shows format label for redis data', async () => {
+    const ids = ['d1'];
+    global.fetch = vi
+      .fn()
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve([]) })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve(ids) })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, text: () => Promise.resolve('{"a":1}') })
+      );
+    renderWithStore(<Data />);
+    fireEvent.change(screen.getByRole('combobox'), {
+      target: { value: 'redis' },
+    });
+    const btn = await screen.findByRole('button', { name: 'd1' });
+    fireEvent.click(btn);
+    expect(await screen.findByText('JSON')).toBeInTheDocument();
+  });
+
+  it('detects jpeg format from binary data', async () => {
+    const ids = ['d1'];
+    const jpeg = '\xFF\xD8\xFF\xE0\x00\x10JFIF';
+    global.fetch = vi
+      .fn()
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve([]) })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, json: () => Promise.resolve(ids) })
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve({ ok: true, text: () => Promise.resolve(jpeg) })
+      );
+    renderWithStore(<Data />);
+    fireEvent.change(screen.getByRole('combobox'), {
+      target: { value: 'redis' },
+    });
+    const btn = await screen.findByRole('button', { name: 'd1' });
+    fireEvent.click(btn);
+    expect(await screen.findByText('JPEG')).toBeInTheDocument();
   });
 });

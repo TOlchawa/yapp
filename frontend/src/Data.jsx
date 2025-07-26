@@ -5,6 +5,43 @@ import ItemDetails from './ItemDetails.jsx';
 import QuestionDetails from './QuestionDetails.jsx';
 import FriendDetails from './FriendDetails.jsx';
 
+function detectFormat(text) {
+  if (text.startsWith('\xFF\xD8\xFF')) {
+    return 'JPEG';
+  }
+  if (text.startsWith('\x89PNG\r\n\x1A\n')) {
+    return 'PNG';
+  }
+  if (text.startsWith('GIF87a') || text.startsWith('GIF89a')) {
+    return 'GIF';
+  }
+  if (text.startsWith('RIFF') && text.slice(8, 12) === 'WEBP') {
+    return 'WEBP';
+  }
+  try {
+    JSON.parse(text);
+    return 'JSON';
+  } catch {
+    /* ignore */
+  }
+  try {
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(text, 'application/xml');
+    if (!xml.querySelector('parsererror')) {
+      return 'XML';
+    }
+  } catch {
+    /* ignore */
+  }
+  if (/^[\s-]*[\w"']+:/.test(text)) {
+    return 'YAML';
+  }
+  if (/<html/i.test(text)) {
+    return 'HTML';
+  }
+  return 'Plain';
+}
+
 export default function Data({ onBack = () => {} }) {
   const userInfo = useSelector((state) => state.user.userInfo);
   const [ids, setIds] = useState([]);
@@ -12,12 +49,14 @@ export default function Data({ onBack = () => {} }) {
   const [selectedId, setSelectedId] = useState(null);
   const [collection, setCollection] = useState('items');
   const [redisData, setRedisData] = useState(null);
+  const [redisFormat, setRedisFormat] = useState(null);
 
   useEffect(() => {
     setIds([]);
     setDetails({});
     setSelectedId(null);
     setRedisData(null);
+    setRedisFormat(null);
   }, [collection]);
 
   useEffect(() => {
@@ -82,6 +121,7 @@ export default function Data({ onBack = () => {} }) {
             const text = await resp.text();
             console.debug('Loaded Redis data for', selectedId);
             setRedisData(text);
+            setRedisFormat(detectFormat(text));
           } else {
             const data = await resp.json();
             setDetails((prev) => ({ ...prev, [selectedId]: data }));
@@ -100,6 +140,7 @@ export default function Data({ onBack = () => {} }) {
   useEffect(() => {
     if (redisData) {
       console.debug('Displaying Redis text');
+      setRedisFormat(detectFormat(redisData));
     }
   }, [redisData]);
 
@@ -132,13 +173,18 @@ export default function Data({ onBack = () => {} }) {
     if (collection === 'redis') {
       return (
         <div className="redis-view">
+          <div className="redis-format-label">{redisFormat || 'Unknown'}</div>
           <textarea
             className="redis-textarea"
             readOnly
             value={redisData || ''}
           />
           <footer className="view-footer">
-            <button type="button" className="back-button" onClick={() => setSelectedId(null)}>
+            <button
+              type="button"
+              className="back-button"
+              onClick={() => setSelectedId(null)}
+            >
               Back
             </button>
           </footer>
@@ -176,8 +222,8 @@ export default function Data({ onBack = () => {} }) {
               {collection === 'friends'
                 ? `${details[id].friendId} - ${details[id].type}`
                 : details[id] && details[id].name
-                ? details[id].name
-                : id}
+                  ? details[id].name
+                  : id}
             </button>
           </li>
         ))}
