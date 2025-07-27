@@ -5,7 +5,28 @@ import ItemDetails from './ItemDetails.jsx';
 import QuestionDetails from './QuestionDetails.jsx';
 import FriendDetails from './FriendDetails.jsx';
 
-function detectFormat(text) {
+function detectFormat(data) {
+  if (data instanceof Uint8Array) {
+    const startsWith = (arr) => arr.every((b, i) => data[i] === b);
+    if (startsWith([0xff, 0xd8, 0xff])) return 'JPEG';
+    if (startsWith([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))
+      return 'PNG';
+    if (
+      startsWith([0x47, 0x49, 0x46, 0x38, 0x37, 0x61]) ||
+      startsWith([0x47, 0x49, 0x46, 0x38, 0x39, 0x61])
+    )
+      return 'GIF';
+    if (
+      startsWith([0x52, 0x49, 0x46, 0x46]) &&
+      data[8] === 0x57 &&
+      data[9] === 0x45 &&
+      data[10] === 0x42 &&
+      data[11] === 0x50
+    )
+      return 'WEBP';
+    return 'Binary';
+  }
+  const text = data;
   if (text.startsWith('\xFF\xD8\xFF')) {
     return 'JPEG';
   }
@@ -118,10 +139,23 @@ export default function Data({ onBack = () => {} }) {
         }
         if (resp && !cancelled && resp.ok) {
           if (collection === 'redis') {
-            const text = await resp.text();
-            console.debug('Loaded Redis data for', selectedId);
-            setRedisData(text);
-            setRedisFormat(detectFormat(text));
+            const type =
+              resp.headers && resp.headers.get
+                ? resp.headers.get('X-Data-Type')
+                : null;
+            if (type === 'picture') {
+              const array = await resp.arrayBuffer();
+              const bytes = new Uint8Array(array);
+              const base64 = btoa(String.fromCharCode(...bytes));
+              console.debug('Loaded Redis binary for', selectedId);
+              setRedisData(base64);
+              setRedisFormat(detectFormat(bytes));
+            } else {
+              const text = await resp.text();
+              console.debug('Loaded Redis data for', selectedId);
+              setRedisData(text);
+              setRedisFormat(detectFormat(text));
+            }
           } else {
             const data = await resp.json();
             setDetails((prev) => ({ ...prev, [selectedId]: data }));
@@ -136,13 +170,6 @@ export default function Data({ onBack = () => {} }) {
       cancelled = true;
     };
   }, [selectedId, collection]);
-
-  useEffect(() => {
-    if (redisData) {
-      console.debug('Displaying Redis text');
-      setRedisFormat(detectFormat(redisData));
-    }
-  }, [redisData]);
 
   if (selectedId) {
     if (collection === 'items') {

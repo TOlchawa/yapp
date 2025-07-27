@@ -186,7 +186,9 @@ describe('Data view', () => {
 
   it('detects jpeg format from binary data', async () => {
     const ids = ['d1'];
-    const jpeg = '\xFF\xD8\xFF\xE0\x00\x10JFIF';
+    const jpeg = new Uint8Array([
+      0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46,
+    ]);
     global.fetch = vi
       .fn()
       .mockImplementationOnce(() =>
@@ -196,7 +198,11 @@ describe('Data view', () => {
         Promise.resolve({ ok: true, json: () => Promise.resolve(ids) })
       )
       .mockImplementationOnce(() =>
-        Promise.resolve({ ok: true, text: () => Promise.resolve(jpeg) })
+        Promise.resolve({
+          ok: true,
+          headers: { get: () => 'picture' },
+          arrayBuffer: () => Promise.resolve(jpeg.buffer),
+        })
       );
     renderWithStore(<Data />);
     fireEvent.change(screen.getByRole('combobox'), {
